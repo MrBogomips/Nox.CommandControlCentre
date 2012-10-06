@@ -1,0 +1,8 @@
+Markdown (VERY-LOW)
+===================
+Integrate Markdown syntax in order to support a rich text-based syntax to provided formatted contents
+See:
+	http://daringfireball.net/projects/markdown/
+	https://github.com/evilstreak/markdown-js
+	http://softwaremaniacs.org/playground/showdown-highlight/
+	http://code.google.com/p/pagedown/
