@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"FOO",
+				"footer	Tag"
+			],
+			[
+				"h",
+				"h1"
+			],
+			[
 				"c",
 				"ccc	case class scaffolding"
 			]
@@ -15,9 +23,37 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 87.0,
 		"selected_items":
 		[
+			[
+				"inden",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"inden	",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"inde",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"inl",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"indent",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"fold",
+				"Code Folding: Unfold All"
+			],
+			[
+				"in",
+				"Indentation: Reindent Lines"
+			],
 			[
 				"Snippet: ",
 				"Snippet: case"
@@ -27,23 +63,41 @@
 				"Set Syntax: Scala"
 			]
 		],
-		"width": 392.0
+		"width": 575.0
 	},
 	"console":
 	{
-		"height": 0.0
+		"height": 174.0
 	},
 	"distraction_free":
 	{
 		"menu_visible": true,
 		"show_minimap": false,
-		"show_open_files": false,
-		"show_tabs": false,
+		"show_open_files": true,
+		"show_tabs": true,
 		"side_bar_visible": false,
-		"status_bar_visible": false
+		"status_bar_visible": true
 	},
 	"file_history":
 	[
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/public/css/bootstrap-slate.min.css",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/views/dashboard.scala.html",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/public/css/bootstrap.css",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/conf/routes",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/public/css/bootstrap-spacelab.min.css",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/views/master_public.scala.html",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/views/login.scala.html",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/controllers/Login.scala",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/controllers/Dashboard.scala",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/controllers/Application.scala",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/views/master_private.scala.html",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/TODO",
+		"/Users/polymath/Downloads/FortAwesome-Font-Awesome-ee55c85/css/font-awesome.css",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/views/index.scala.html",
+		"/Users/polymath/Library/Application Support/Sublime Text 2/Packages/User/Distraction Free.sublime-settings",
+		"/Users/polymath/Library/Application Support/Sublime Text 2/Packages/User/Scala.sublime-settings",
+		"/Users/polymath/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/polymath/Projects/noxst/software/CommandControlCentre/app/views/main.scala.html",
 		"/Users/polymath/.gitconfig",
 		"/etc/group",
 		"/etc/passwd",
@@ -55,13 +109,14 @@
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
 		"height": 0.0,
 		"where_history":
 		[
+			""
 		]
 	},
 	"find_state":
@@ -69,6 +124,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"bottom",
+			"small",
+			"f"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -97,7 +155,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 38.0
 	},
 	"layout":
 	{
@@ -124,7 +182,7 @@
 	"menu_visible": true,
 	"replace":
 	{
-		"height": 0.0
+		"height": 70.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -147,6 +205,6 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 189.0,
+	"side_bar_width": 267.0,
 	"status_bar_visible": true
 }

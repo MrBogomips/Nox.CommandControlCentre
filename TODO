@@ -1,3 +1,12 @@
+FontAwesome (LOW)
+=================
+A font library that fits within Bootstrap's iconic assets.
+It provides more icons both in font and in vectorial.
+See:
+	http://fortawesome.github.com/Font-Awesome/#roadmap
+
+
+
 Markdown (VERY-LOW)
 ===================
 Integrate Markdown syntax in order to support a rich text-based syntax to provided formatted contents
