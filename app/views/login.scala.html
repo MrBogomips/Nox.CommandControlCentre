@@ -1,0 +1,19 @@
+@(message: String)
+
+@master_public("Login") {
+
+<div class="hero-unit">
+	<h1>NoxST :: CCC</h1>
+	<p class="lead">Command and Control Centre</p>
+
+	<form class="form-inline" action="@routes.Dashboard.index">
+		<input type="text" placeholder="username">
+		<input type="password" class="input-small" placeholder="password">
+		<button type="submit" class="btn btn-primary">Log in</button>
+	</form>
+
+	
+</div>
+
+
+}
