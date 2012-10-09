@@ -1,3 +1,10 @@
+Features
+============
+. HIGH Tracking objects: online tracking of mobile objects on the map
+. HIGH Online Events: online tracking of all the events style «tail -f»
+. MED Collaboration: funzionalità per il «passaggio» dei task di lavoro ai colleghi via Drag-and-drop
+
+
 Alternative styles (LOW)
 ========================
 See:
