@@ -3,17 +3,24 @@
 		<div class="navbar-inner">
 			<div class="container" style="width: auto;">
 				<a class="brand" href="#">NoxST::CCC</a>
+
 				<ul class="nav" role="navigation">
 					<li class="dropdown">
-						<a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-large icon-th"></i> Vehicles<b class="caret"></b></a>
+						<a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-large icon-home"></i></a>
+					</li>
+
+					<li class="dropdown">
+						<a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"> Organization #1<b class="caret"></b></a>
 						<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-							<li><a tabindex="-1" href="http://google.com">Action</a></li>
-							<li><a tabindex="-1" href="#anotherAction">Another action</a></li>
-							<li><a tabindex="-1" href="#">Something else here</a></li>
+							<li>&nbsp;Recently used organizations:</li>
+							<li><a tabindex="-1" href="#">Organization #2 (Customer A)</a></li>
+							<li><a tabindex="-1" href="#">Organization #3 (Customer A)</a></li>
+							<li><a tabindex="-1" href="#">Organization #4 (Customer B)</a></li>
 							<li class="divider"></li>
-							<li><a tabindex="-1" href="#">Separated link</a></li>
+							<li><a tabindex="-1" href="#">Show all the organizations…</a></li>
 						</ul>
 					</li>
+
 					<li class="dropdown">
 						<a href="#" id="drop2" role="button" class="dropdown-toggle" data-toggle="dropdown">People<b class="caret"></b></a>
 						<ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
@@ -25,15 +32,49 @@
 						</ul>
 					</li>
 				</ul>
+
 				<ul class="nav pull-right">
-					<li id="fat-menu" class="dropdown">
-						<a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">My Account<b class="caret"></b></a>
-						<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
-							<li><a tabindex="-1" href="#">Action</a></li>
-							<li><a tabindex="-1" href="#">Another action</a></li>
-							<li><a tabindex="-1" href="#">Something else here</a></li>
+					@{/***** MESSAGES *****/}
+					<li class="dropdown">
+						<a href="#" role="button"><span class="badge badge-inverse">123 <i class="icon-large icon-envelope icon-white"></i></span></a>
+					</li>
+
+					@{/***** BADGE EVENTS *****/}
+					<li class="dropdown">
+						<a href="#" id="drop_events" role="button" class="dropdown-toggle" data-toggle="dropdown"><span class="badge badge-important">123</span> Events<b class="caret"></b></a>
+
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop_events">
+							<li><a tabindex="-1" href="#"><span class="badge badge-important">3</span> Important</a></li>
+							<li><a tabindex="-1" href="#"><span class="badge badge-warning">117</span> Warning</a></li>
+							<li><a tabindex="-1" href="#"><span class="badge badge-info">76</span> Informative</a></li>
 							<li class="divider"></li>
-							<li><a tabindex="-1" href="#">Log out</a></li>
+							<li><a tabindex="-1" href="#"><i class="icon-large icon-trash"></i> Reset all counters</a></li>
+						</ul>
+					</li>
+
+					@{/***** SYSTEM MANAGER MENU *****/}
+					<li class="dropdown">
+						<a href="#" id="drop_sys_menu" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-large icon-cog"></i> Manage<b class="caret"></b></a>
+
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop_sys_menu">
+							<li><a tabindex="-1" href="#"><i class="icon-large icon-th"></i> Organizations</a></li>
+							<li><a tabindex="-1" href="#"><i class="icon-large icon-lock"></i> Security</a></li>
+							<li><a tabindex="-1" href="#"><i class="icon-large icon-wrench"></i> System settings</a></li>
+						</ul>
+					</li>
+
+					@{/***** USER MENU *****/}	
+					<li class="dropdown">
+						<a href="#" id="drop_user" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-large icon-user"></i> User666<b class="caret"></b></a>
+
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop_user">
+							<li><a tabindex="-1" href="#">Account</a></li>
+							<li><a tabindex="-1" href="#">Preferences</a></li>
+							<li class="divider"></li>
+							<li><a tabindex="-1" href="#">Special task #1</a></li>
+							<li><a tabindex="-1" href="#">Special task #2</a></li>
+							<li class="divider"></li>
+							<li><a tabindex="-1" href="#"><i class="icon-large icon-off"></i> Log out</a></li>
 						</ul>
 					</li>
 				</ul>
