@@ -1,0 +1,11 @@
+@(e: LogEntry)
+
+<tr>
+  <td>@e.id</td>
+  <td><span class="label label-warning span2">@e.severity</span></td>
+  <td><i class="icon-road"></i> @e.category</td>
+  <td>@e.deviceId</td>
+  <td>@e.statusCode</td>
+  <td>@e.actions</td>
+  <td>@e.data</td>
+</tr>
