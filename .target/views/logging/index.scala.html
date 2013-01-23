@@ -1,0 +1,7 @@
+@(es: List[LogEntry])
+
+@master.authenticated("Logging") {
+
+	@events(es)	
+
+}
