@@ -1,6 +1,8 @@
-@(entries: List[LogEntry])
+@()
 
+@master.authenticated("Realtime Map") {
 
+	
 <script type="text/javascript" src="/assets/javascripts/socket.io.min.js"></script>
 <script type="text/javascript" src="/assets/javascripts/jquery-1.7.1.min.js"></script>
     
@@ -178,5 +180,5 @@ $('button#setTopic').bind('click',
 				setTopic($(event.target).siblings('input#topicSearchText').val());
 		});
 </script>
-    
-    
+
+}
