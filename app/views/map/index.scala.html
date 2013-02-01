@@ -2,32 +2,6 @@
 
 @master.authenticated("Realtime Map") {
 
-
- <style type="text/css">
-      .olControlAttribution {
-        bottom: 0px;
-        right:  220px;
-        background-color:white; 
-        padding: 4px; 
-        opacity: 0.60;
-      }
-      .olControlScaleLine {
-        bottom: 0px;
-        left: 0px;
-        background-color:white; 
-        padding: 4px; 
-        opacity: 0.60;
-      }
-      .olControlPermalink {
-        top: 0px;
-        right: 0px;
-        height: 1.2em;
-        background-color:white;
-        padding: 4px;
-        opacity: 0.60;
-    }
-    </style>
-
 <script type="text/javascript">
 var MQTT_BROKER_URI = '@mqttBrokerURI';
 </script>
@@ -56,7 +30,7 @@ function init() {
 
 </script>
 
-  <div style="width: auto; font-size: 28px; line-height: 28px; text-align: left; vertical-align: middle;"> 
+  <div style="width: auto; font-size: 45px; line-height: 45px; text-align: center; vertical-align: middle; clear: both; margin-bottom: 50px;"> 
   	Real Time Tracking Devices
   	<br>
   </div> 
@@ -64,7 +38,7 @@ function init() {
 <div id="basicMap" style="float: left; width:900px; height:750px;"></div>
 
 
-<div class="content span8 logReport" style="width: 580px; position: relative; float: right; margin-right: 5px; height: 100%; overflow: auto;">
+<div class="content span8 logReport" style="width: 580px; position: relative; height: 100%; padding-left: 10px; overflow: hidden; width: auto;">
 	<div style="width: auto; font-size: 18px; line-height: 25px; height: 25px; text-align: left; vertical-align: middle;">
     	Device Groups
     </div>
@@ -100,6 +74,12 @@ function init() {
 		   <th style="font-size: 12px;height: 100%;line-height: 20px; vertical-align: middle; font-weight: normal;">
           	LastDeviceTime
           </th>
+          <th style="font-size: 12px;height: 100%;line-height: 20px; vertical-align: middle; font-weight: normal;">
+          	Delay(s)
+          </th>
+		  <th style="font-size: 12px;height: 100%;line-height: 20px; vertical-align: middle; font-weight: normal;">
+          	Speed(m/s)
+          </th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -130,6 +110,7 @@ $('button#setTopic').bind('click',
 				}
 				
 		});
+
 </script>
 
 }

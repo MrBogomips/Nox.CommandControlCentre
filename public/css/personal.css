@@ -1,13 +1,16 @@
 .row-fluid .span10
 {
 	height: 100%;
-	overflow: auto;
+	overflow: hidden;
+	margin: 0;
+	width: auto;
 }
 
 .container-fluid
 {
 	height: 100%;
 	overflow: auto;
+	margin-bottom: 20px;
 }
 
 .row-fluid
@@ -21,5 +24,31 @@
 .row-fluid .span2
 {
 	overflow: auto;
-	width: 10%;
+	width: 160px;
+	height: 100%;
+	margin-right: 10px;
+	float: left;
+}
+
+.olControlAttribution {
+    bottom: 0px;
+    right:  220px;
+    background-color:white; 
+    padding: 4px; 
+    opacity: 0.60;
+  }
+  .olControlScaleLine {
+    bottom: 0px;
+    left: 0px;
+    background-color:white; 
+    padding: 4px; 
+    opacity: 0.60;
+  }
+  .olControlPermalink {
+    top: 0px;
+    right: 0px;
+    height: 1.2em;
+    background-color:white;
+    padding: 4px;
+    opacity: 0.60;
 }

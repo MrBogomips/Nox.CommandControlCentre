@@ -43,6 +43,9 @@ function init_map() {
     map.setCenter(mapCenterposition, zoom);
     overviewMap.maximizeControl();
 
+	markerLayer = new OpenLayers.Layer.Markers("Devices");
+	map.addLayer(markerLayer);
+    
   /*
     oll_markers = new OpenLayers.Layer.Markers("Markers");
     map.addLayer(oll_markers);
