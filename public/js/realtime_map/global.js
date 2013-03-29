@@ -7,7 +7,7 @@ var devices; 			// A collection of the devices seen so far
 var socket; 			// Websocket to the push service 
 var DeviceFactory;		// Singleton used to build new device record
 var map;				// Reference to the OpenLayer Map
-var markerLayer;		// OpenLayer layer used to place the markers
+var markerLayer;		// OpenLayer layer used to place the  markers
 
 var projLonLat   = new OpenLayers.Projection("EPSG:4326");   // WGS 1984
 var projMercator = new OpenLayers.Projection("EPSG:900913"); // Spherical Mercator
