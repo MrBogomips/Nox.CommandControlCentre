@@ -1,5 +1,5 @@
 
-function init_listner() {
+function init_listner(topic) {
 	
 	
 	var devFact = new DeviceFactory();
@@ -12,29 +12,27 @@ function init_listner() {
     socket.on('connect', function () {
         socket.on('mqtt', function (msg) {
         	
-        console.log(msg.topic+' '+msg.payload);
-  		
-        var jData = $.parseJSON(msg.payload);
+	        //console.log(msg.topic+' '+msg.payload);
+	  		
+	        var jData = $.parseJSON(msg.payload);
+	        
+	  		
+	  		var e;
+	  		if((e = devices[jData.device]) == undefined)
+	  		{
+	  			// new device found!
+	  			e = devices[jData.device]=devFact.buildDevice(jData);
+	  			
+	  		}
+	  		else
+	  		{
+	  			e.updateData(jData);
+	  		}
+        });
         
-  		
-  		var e;
-  		if((e = devices[jData.device]) == undefined)
-  		{
-  			// new device found!
-  			e = devices[jData.device]=devFact.buildDevice(jData);
-  			
-  		}
-  		else
-  		{
-  			e.updateData(jData);
-  		}
-  	
-  		
-  		  		
-         
-       });
-        
-       
+        //socket.emit('subscribe',{topic: topic});
         
       });
+    
+    
 }

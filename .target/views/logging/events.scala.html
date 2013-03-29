@@ -8,8 +8,9 @@
 	
 	
 	
-	
-  var socket = io.connect('http://localhost:5000');
+	//http://vigauto.nox.nexusat.it:5000
+	//http://localhost:5000
+  var socket = io.connect('http://vigauto.nox.nexusat.it:5000');
   
     socket.on('connect', function () {
       socket.on('mqtt', function (msg) {
@@ -138,35 +139,7 @@
           <th class="span5">Data</th>
         </tr>
       </thead>
-      <tbody>
-
-
-        <!-- <tr id="DEVICE1" >
-          <td>1</td>
-          <td><span class="label label-warning span2">Warning</span></td>
-          <td><i class="icon-road"></i> Diagnostics</td>
-          <td>DEVICE1</td>
-          <td>W00001</td>
-          <td></td>
-          <td id="DEVICE1"></td>
-        </tr>
-        
-        <tr >
-          <td>2</td>
-          <td><span class="label label-warning span2">Warning</span></td>
-          <td><i class="icon-road"></i> Diagnostics</td>
-          <td>DEVICE2</td>
-          <td>W00002</td>
-          <td></td>
-          <td id="DEVICE2"></td>
-        </tr>
-        -->
-        
-   
-        
-        
-      
-      </tbody>
+      <tbody></tbody>
     </table></div>
 <script type="text/javascript">
 $('button#setTopic').bind('click', 

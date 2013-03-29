@@ -8,7 +8,7 @@ var MQTT_BROKER_URI = '@mqttBrokerURI';
 
 
 	
-<script type="text/javascript" src="/assets/javascripts/socket.io.min.js"></script>
+<script type="text/javascript" src="/assets/javascripts/socket.io.js"></script>
 <script type="text/javascript" src="/assets/javascripts/jquery-1.7.1.min.js"></script>
 <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
 <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
@@ -38,7 +38,7 @@ function init() {
 <div id="basicMap" style="float: left; width:900px; height:750px;"></div>
 
 
-<div class="content span8 logReport" style="width: 580px; position: relative; height: 100%; padding-left: 10px; overflow: hidden; width: auto;">
+<div class="content span8 logReport" style="width: 580px; position: relative; height: 750px; padding-left: 10px; overflow: hidden; width: auto;">
 	<div style="width: auto; font-size: 18px; line-height: 25px; height: 25px; text-align: left; vertical-align: middle;">
     	Device Groups
     </div>
@@ -47,7 +47,17 @@ function init() {
        <input type="text" class="span5" id="topicSearchText">
        <button class="btn" id="setTopic">Subscribe</button>
      </div>
-   
+   	
+   	<div id="deviceDetailsBox" style="width: 500px; height: 600px; background-color: #FFFFFF; border: 2px solid #CCCCCC; position: absolute; z-index: 10000; display: none;">
+   	 		<div class="boxHeader" style="width: auto; height: 25px;">
+   			<input type="button" value="close" style="float: right; margin-right: 10px; height: 25px; font-size: 12px; line-height: 25px; vertical-align: middle;" onclick="closeDeviceDetailsBox();" />
+   		</div>
+   		<div class="content" style="width: auto; height: 600px;">
+   			
+   		</div>
+  
+   	</div>
+   	
     <table class="table table-bordered table-condensed table-striped table-hover span6" id="devices" style="width: 100%; margin: 0;">
       <thead>
         <tr style="height: 20px;">
@@ -57,7 +67,7 @@ function init() {
               Device
           </th>
 		  <th style="font-size: 12px;height: 100%;line-height: 20px; vertical-align: middle; font-weight: normal;">
-             Start
+             Session Start
           </th>
           <th style="font-size: 12px;height: 100%;line-height: 20px; vertical-align: middle; font-weight: normal;">
           	#Msg
@@ -78,7 +88,7 @@ function init() {
           	Delay(s)
           </th>
 		  <th style="font-size: 12px;height: 100%;line-height: 20px; vertical-align: middle; font-weight: normal;">
-          	Speed(m/s)
+          	Resulting Speed(m/s)
           </th>
         </tr>
       </thead>
@@ -105,9 +115,9 @@ $('button#setTopic').bind('click',
 			event.stopPropagation();
 			event.preventDefault();
 			if($.trim($(event.target).siblings('input#topicSearchText').val()).length > 0)
-				{
-				setTopic($(event.target).siblings('input#topicSearchText').val());
-				}
+			{
+				setTopic($(event.target).siblings('input#topicSearchText').val());				
+			}
 				
 		});
 
