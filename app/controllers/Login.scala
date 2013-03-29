@@ -9,12 +9,9 @@ import anorm._
 object Login extends Controller {
   
   def index = Action {
-
-
-    DB.withConnection { implicit conn =>
-      val dbversion:String = SQL("Select VERSION() as V")().head[String]("V")
-      Ok(views.html.login(s"DB Backend:: MySql $dbversion."))
+    DB.withConnection { 
+      implicit conn => val dbversion:String = SQL("Select VERSION() as V")().head[String]("V")
+      Ok(views.html.login("DB Backend:: MySql $dbversion."))
     }
   }
-  
 }
