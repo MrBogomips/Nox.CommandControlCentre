@@ -8,7 +8,6 @@ GET     /                           controllers.Application.index
 # Login page
 GET     /login                      controllers.Login.index
 GET		/dashboard					controllers.Dashboard.index
-GET		/logging					controllers.Logging.index
 GET		/map						controllers.Map.index
 
 
