@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+
+cd /root/nox/NoxSpheraWebApp
+#play "start 80"
+#play "run 80"
+
+target/start -Dhttp.port=80
+
+echo "servizio in memoria e in esecuzione..."
+
+echo "ho eseguito...";
