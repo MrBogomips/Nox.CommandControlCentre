@@ -9,6 +9,7 @@ GET     /                           controllers.Application.index
 GET     /login                      controllers.Login.index
 GET		/dashboard					controllers.Dashboard.index
 GET		/map						controllers.Map.index
+GET		/map2						controllers.Map2.index
 
 
 # Map static resources from the /public folder to the /assets URL path
