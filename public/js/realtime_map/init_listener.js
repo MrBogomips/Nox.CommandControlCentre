@@ -7,7 +7,7 @@ function init_listner(topic) {
 	//DeviceFactory = new DeviceRecordFactory(oll_markers);
 
 	devices = {};
-    socket = io.connect(MQTT_BROKER_URI); // togliere l'MQTT broker hardcoded 
+    socket = io.connect(MQTT_BROKER_URI);
   
     socket.on('connect', function () {
         socket.on('mqtt', function (msg) {
