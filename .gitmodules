@@ -1,0 +1,3 @@
+[submodule "public/aria"]
+	path = public/aria
+	url = ssh://git.nexusat.it/git/nexus/aria.git
