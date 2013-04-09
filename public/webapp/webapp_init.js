@@ -20,6 +20,7 @@ steal('aria/page','webapp/fixtures').then(function() {
 			},
 			fixtures: {
 				query_string_pattern: '', //regular expression
+				enable: false
 			}
 		};
 	
