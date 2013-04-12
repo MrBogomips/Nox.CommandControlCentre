@@ -17,3 +17,6 @@ GET		/map2						controllers.Map2.index
 
 # Channels' management
 GET		/channel/index				controllers.Channel.index
+
+# Device
+POST	/device/command				controllers.Device.receiveCommand
