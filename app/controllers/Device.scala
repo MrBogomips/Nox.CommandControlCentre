@@ -7,11 +7,13 @@ import play.api.libs.functional.syntax._
 
 object Device extends Controller {
   
-  import models.DeviceCommand
+  import models.DeviceCommandRequest
+  import models.DeviceCommandResponse._
 
   def receiveCommand = Action(parse.json) { request =>
-    request.body.validate[DeviceCommand].map{ c =>
-      Ok("Command " + c.command + " with arg "+c.arguments+"\n")
+    request.body.validate[DeviceCommandRequest].map{ c =>
+	  val response = c.sendToDevice()
+	  Ok(Json.toJson(response))
     }.recoverTotal{
       e => BadRequest("Invalid Command:"+ JsError.toFlatJson(e))
     }

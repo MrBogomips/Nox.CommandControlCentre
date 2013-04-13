@@ -4,7 +4,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 /** Represents n argument passed to the command */
-case class Argument(name:String, value:String)
+case class Argument(val name:String, val value:String)
 object Argument {
   implicit val jsonFormat = (
 	(__ \ "name").format[String] and
@@ -13,13 +13,43 @@ object Argument {
 }
 
 /** Represents a command sent to a device */
-case class DeviceCommand(deviceId: String, command: String, arguments: Seq[Argument])
-object DeviceCommand {
-   import Argument._   
+case class DeviceCommandRequest(val deviceId: String, val command: String, val arguments: Seq[Argument]) {
+  def sendToDevice(): DeviceCommandResponse = DeviceCommandResponseOK()
+}
+object DeviceCommandRequest {
+   import Argument._ 
    
    implicit val jsonFormat = ( 
 	  (__ \ "deviceId").format[String] and
       (__ \ "command").format[String] and
 	  (__ \ "arguments").format[Seq[Argument]]
-	)(DeviceCommand.apply, unlift(DeviceCommand.unapply))
+	)(DeviceCommandRequest.apply, unlift(DeviceCommandRequest.unapply))
+}
+
+class DeviceCommandResponse(val status: String, val description: String)
+object DeviceCommandResponse {
+  implicit val jsonFormat = (
+    (__ \ "status").format[String] and
+    (__ \ "description").format[String]
+  )(DeviceCommandResponse.apply, unlift(DeviceCommandResponse.unapply))
+  
+  
+  def apply(status: String, description: String = ""): DeviceCommandResponse = status match {
+     case "OK" => DeviceCommandResponseOK(description)
+     case "ERR" =>DeviceCommandResponseERR(description)
+     case null => throw new IllegalArgumentException()
+     case _ => new DeviceCommandResponse(status, description)
+   }
+  
+  def unapply(o: DeviceCommandResponse): Option[(String, String)] = if (o != null) Some((o.status,o.description)) else None
+  
+}
+
+class DeviceCommandResponseOK(description: String) extends DeviceCommandResponse("OK", description)
+object DeviceCommandResponseOK {
+  def apply(description: String = "") = new DeviceCommandResponseOK(description)
+}
+class DeviceCommandResponseERR(description: String) extends DeviceCommandResponse("ERR", description)
+object DeviceCommandResponseERR {
+  def apply(description: String = "") = new DeviceCommandResponseERR(description)
 }
