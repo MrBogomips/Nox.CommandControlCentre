@@ -2,7 +2,9 @@
 // In particular place here your stealcommon assets loading
 // steal();
 
-steal('aria/page','webapp/fixtures').then(function() {
+steal('aria/page',
+	  '/assets/webapp/fixtures/fixtures')
+.then(function() {
 	var config = {
 			localization: {
 				language: '',
@@ -16,11 +18,13 @@ steal('aria/page','webapp/fixtures').then(function() {
 			service: {
 				bases: {
 					UrlBase: ''
+				},
+				fixtures: {
+					query_string_pattern: '', //regular expression
+					enable: true
 				}
-			},
-			fixtures: {
-				query_string_pattern: '', //regular expression
 			}
+
 		};
 	
 	Aria.Page.getInstance(config);
