@@ -1,3 +1,5 @@
+.settings
+*.log
 .cache
 .target/*
 logs
