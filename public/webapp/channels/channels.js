@@ -47,8 +47,10 @@ steal( '/assets/aria/steal/less/less',
 			} ,
 
 			_subcribe : function(all, topic) {
-				this._call();
+				this._call(); 
 			} ,
+			
+			
 
 			_call : function() {
 				webapp.models.devices.findAll(

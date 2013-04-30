@@ -8,4 +8,8 @@ import anorm._
 
 object MqttProxy extends Controller {
 
+  // here gateway Java to MQTT 
+  
+  
+  
 }

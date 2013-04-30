@@ -2,6 +2,14 @@ package models
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import org.eclipse.paho.client.mqttv3.MqttClient
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.IMqttClient 
+import java.util.Date
+
+
 
 /** Represents n argument passed to the command */
 case class Argument(val name:String, val value:String)
@@ -13,16 +21,67 @@ object Argument {
 }
 
 /** Represents a command sent to a device */
-case class DeviceCommandRequest(val deviceId: String, val command: String, val arguments: Seq[Argument]) {
-  def sendToDevice(): DeviceCommandResponse = {
-    	DeviceCommandResponseERR() 
+case class DeviceCommandRequest(val device: String, val tranId: String, val command: String, val arguments: Seq[Argument]) {
+   
+  val conf = play.Configuration.root()
+  val sentTime = "" 
+   
+  def sendToDevice(jsReq : JsValue): DeviceCommandResponse = {
+   
+    
+    /** Call a MQTT Client to publish the message command */
+ 
+     println("device ["+ device + "] command[" + command + "]");
+	 try
+	 {	   
+	   //Setting ClientId to transactionId putted in the message.
+	 
+	   val mqRequestTopic = conf.getString("nox.mqtt.Command.RequestTopic")
+	   
+	   	   
+	   val mqBrokerURI = conf.getString("nox.mqtt.BrokerURI")
+	   
+	   val clientId = MqttClient.generateClientId()
+	   
+	   println("Client created..try to connect ["+ mqBrokerURI + "] on clientId[" + clientId + "]");
+	   
+	   var mqtt = new MqttClient(mqBrokerURI,clientId.substring(0, 22))
+
+	 
+	   mqtt.connect();
+	   
+	   // Add info in Json and send to MQTT
+	   
+	   //val payload = "{sendtime:""2013-03-19 16:29:34.012345"", expire-s:,maxretry:0, device:""4310516"", command:""OUT1_ACTIVATE"", parameters:[ciao,bubbo,carciofo]}";
+	   
+	   val payload = Json.stringify(jsReq); 
+	   
+	   val message = new MqttMessage(payload.getBytes());
+	   	
+	   mqtt.publish(mqRequestTopic, message)
+	   	
+	   println("Command Sended! Disconnetting..");
+	   mqtt.disconnect()
+	   println("Disconnetted!!");
+	   
+	    DeviceCommandResponseOK("Command Sended successfully")
+	 }
+	catch
+	{
+		case e: Exception => println("exception caught: " + e.printStackTrace());
+		DeviceCommandResponseERR("MAnnaggia la bubbazza")
+	}
+
+	
+    	 
   }
 }
 object DeviceCommandRequest {
    import Argument._ 
    
    implicit val jsonFormat = ( 
-	  (__ \ 'deviceId).format[String] and
+	  (__ \ 'device).format[String] and
+	  (__ \ 'tranId).format[String] and
       (__ \ 'command).format[String] and
 	  (__ \ 'arguments).format[Seq[Argument]]
 	)(DeviceCommandRequest.apply, unlift(DeviceCommandRequest.unapply))
