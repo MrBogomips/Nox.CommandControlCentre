@@ -3,7 +3,7 @@
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		<h3><%= title %></h3>
 	</div>
-	<div class="modal-body" id="modalBody" <%= plugin(plug, { 'id' : id , 'content' : content } ) %>>
+	<div class="modal-body" id="modalBody" <%= plugin('webapp_table', { 'id' : id , 'labels' : table.labels , 'values' : table.values } ) %>>
 		
 	</div>
 </div>

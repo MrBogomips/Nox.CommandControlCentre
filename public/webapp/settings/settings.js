@@ -7,7 +7,7 @@ steal( '/assets/aria/steal/less/less',
 	   '/assets/css/bootstrap.css', 
 	   '/assets/css/bootstrap-responsive.css',
 	   '/assets/webapp/modal/modal.js',
-	function($){
+	function($) {
 
 		/**
 		 * @class Webapp.settings
@@ -19,7 +19,7 @@ steal( '/assets/aria/steal/less/less',
 		},
 		/** @Prototype */
 		{
-			init : function(){
+			init : function() {
 				var that = this;
 				this._super();
 
@@ -27,27 +27,62 @@ steal( '/assets/aria/steal/less/less',
 
 				this.element.html('/assets/webapp/settings/views/settings.ejs',{});
 
+				this.channelsSettings = [];
+
 				if ($('#anchorModalSettings').length <= 0) {
 					$('body').prepend('<div id="anchorModalSettings"></div>');
 				}
 				$('#anchorModalSettings').webapp_modal({ 'id' : 'ChannelSettings' , 
 														 'title' : 'Subscribed channels' , 
-														 'plug' : 'webapp_table' , 
-														 'content' : { 'type' : 'table' , 
-														 			   'model' : webapp.models.channels , 
-														 			   'labels' : [ 'Channel' , 'All events' , 'Actions' ] , 
-														 			   'types' : [ 'string' , 'checkbox' , 'unsubscribe' ] ,
-														 			   'values' : []
-														 			 } 
+														 'table' : { 'labels' : [ 'Channel' , 'All events' , 'Actions' ] , 
+														 			 'values' : [  ] } 
 													   });
-
+				
 			} ,
 
-			'#channelSetting mousedown' : function(el, ev) {
+			'#channelSetting click' : function(el, ev) {
+				var that = this;
+				$('#modalBody').controller()._deleteRows();
+				$('#modalBody').controller()._addRows(that._createRows());
 				$("#modChannelSettings").modal('show');
 			} ,
 
-			'#modChannelSettings .close mousedown' : function(el, ev) {
+			_createRows : function() {
+				var that = this;
+				var channels = $('#channels').controller().channels;
+				var x = 0;
+				var values = [];
+				for (var i = 0; i < channels.length; i++) {
+					if (channels[i].subscribed == true) {
+						values[x] = [ { 'type' : 'string' , 
+										'description' : channels[i].value , 
+										'editable' : false } ,
+									  { 'type' : 'checkbox' , 
+									  	'description' : channels[i].events , 
+									  	'editable' : true , 
+									  	'callback' : function(index) {
+									  					$('#channels').controller().channels[index.index].events = ($('#channels').controller().channels[index.index].events == true ? false : true); 
+									  				 } , 
+									  	'parametres' : { 'index' : i } } ,
+									  { 'type' : 'button' , 
+									  	'description' : 'unsubscribe' , 
+									  	'editable' : true } ];
+						x++;
+					}
+				}
+				return values;
+			} ,
+
+			/*_eventsChannelsSettings : function(channel) {
+				for (var i = 0; i < this.channelsSettings.length; i++) {
+					if (this.channelsSettings[i].value == channel) {
+						return this.channelsSettings[i].events;
+					}
+				}
+				return true;
+			} ,*/
+
+			'#modChannelSettings .close click' : function(el, ev) {
 				$("#modChannelSettings").modal('hide');
 			}
 

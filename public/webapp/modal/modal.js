@@ -18,8 +18,7 @@ steal( '/assets/aria/steal/less/less',
 			defaults : {
 				id : '',
 				title : '',
-				plug : '',
-				content : ''
+				table : ''
 			}
 		},
 		/** @Prototype */
@@ -29,7 +28,7 @@ steal( '/assets/aria/steal/less/less',
 				this._super();
 				this.element.addClass('webapp_modal');
 				
-				this.element.html('/assets/webapp/modal/views/modal.ejs', { 'id' : that.options.id , 'title' : that.options.title , 'plug' : that.options.plug , 'content' : that.options.content } );
+				this.element.html('/assets/webapp/modal/views/modal.ejs', { 'id' : that.options.id , 'title' : that.options.title , 'table' : that.options.table } );
 
 			}
 		});

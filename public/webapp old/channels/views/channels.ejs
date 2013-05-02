@@ -1,0 +1,41 @@
+<div class="containerChannels">
+	<div id="inputChannels">
+		<input type="text" class="span2" placeholder="channel">
+		<ul id="ulChannels" class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+			<li class="channelItem" id="noresults"><a tabindex="-1" href="javascript: void(0);">No results</a></li>
+			<%
+				for (i = 0; i < channels.length; i++) {
+					if (channels[0] == "error") {
+			%>
+						<li class="channelItem visible" id="error"><a tabindex="-1" href="javascript: void(0);">Error</a></li>
+			<%
+					}
+					else {
+			%>
+						<li class="channelItem" id="<%=channels[i]%>" <%= plugin('webapp_items', { 'parent' : parent , 'anchor' : '#' + channels[i] , 'value' : channels[i] }) %>></li>
+			<%
+					}
+				}
+			%>
+		</ul>
+	</div>
+	<div id="buttonChannels">
+		<div class="btn-group">
+		    <a class="btn btn-small" id="subscribeOne">Subscribe</a>
+		    <a class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+		    	<span class="caret"></span>
+		    </a>
+		    <ul class="dropdown-menu">
+		    	<li><a id="subscribeAll" href="javascript: void(0);">Subscribe all events</a></li>
+		    </ul>
+	    </div>
+	</div>
+	<div class="alert alert-block alert-error">
+	    <button type="button" class="close" data-dismiss="alert">&times;</button>
+	    The channel's name is uncorrect.
+    </div>
+</div>
+
+
+
+

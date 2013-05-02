@@ -18,65 +18,51 @@ steal( '/assets/aria/steal/less/less',
 		/** @Static */
 		{
 			defaults : {
-				parent : '',
 				id : '',
-				content : ''
+				model : '',
+				labels : [],
+				values : []
 			}
 		},
 		/** @Prototype */
 		{
 			init : function() {
 				var that = this;
-				this.numberRow = 0;
 				this._super();
 				this.element.addClass('webapp_table');
-				switch (this.options.id) {
-					case 'ChannelSettings' :
-						this.options.content.model.findAll(
-							{  } , 
-							function(d) {
-								if (d.channels.length > 0) {
-									that.options.numberRow = that.options.numberRow + d.channels.length;
-									for (var i = 0; i < d.channels.length; i++) {
-										that.options.content.values[i] = [ d.channels[i] , '' , '' ];
-									}
-									that._callView();
-								}
-							} ,
-							function() { 
-								alert('error'); 
-							}
-						);
-						break;
-					default :
-						this._callView();
-				}
-				
+				this.numberRow = 0;
+
+				this._callView();
 			} ,
 
 			_callView : function() {
 				var that = this;
-				this.element.html('/assets/webapp/table/views/table.ejs', { 'id' : that.options.id , 'content' : that.options.content } );
+				this.element.html('/assets/webapp/table/views/table.ejs', { 'id' : that.options.id , 'labels' : that.options.labels , 'values' : that.options.values } );
 			} ,
 
 			_addRows : function(values) {
 				var that = this;
 				for (var i = 0; i < values.length; i++) {
-					that._addRow(that.options.id, that.options.content.types, values[i]);	
+					that._addRow(values[i]);	
 				}
 			} ,
 
-			_addRow : function(id, types, values){
+			_addRow : function(values) {
 					var that = this;
 					that.numberRow = that.numberRow + 1;
-					var idTr = 'row' + id + that.numberRow;
-					$('#table' + id).find('tbody').append('<tr id="' + idTr +  '"></tr>');
+					var idTr = 'row' + that.options.id + that.numberRow;
+					$('#tbl' + that.options.id).children('tbody').append('<tr id="' + idTr +  '"></tr>');
 					var newTr = this.element.find('#' + idTr);
-					Webapp.row.newInstance(newTr, { 'id' : idTr , 'types' : types , 'values' : values } );
+					Webapp.row.newInstance(newTr, { 'id' : idTr , 'values' : values } );
 				} ,
 
-			'.unsubscribe click' : function(el, ev) {
-				var channel = $(el).closest('tr').attr('id');
+			_deleteRows : function() {
+				var arrRows = this.element.find('tbody tr');
+				for (var i = 0; i < arrRows.length; i++) {
+					if ($(arrRows[i]).hasClass('noresults') == false) {
+						$(arrRows[i]).remove();
+					}
+				}
 			}
 
 

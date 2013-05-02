@@ -32,6 +32,10 @@ steal( '/assets/aria/steal/less/less',
 					{  } , 
 					function(d) {
 						if (d.channels.length > 0) {
+							that.channels = [];
+							for (var i = 0; i < d.channels.length; i++) {
+								that.channels[i] = { 'value' : d.channels[i] , 'subscribed' : false , 'events' : false };
+							}
 							that.element.html('channels/views/channels.ejs', { 'parent' : that , 'channels' : d.channels });
 						}
 					} ,
@@ -46,8 +50,20 @@ steal( '/assets/aria/steal/less/less',
 				$('#inputChannels').attr('class', '');
 			} ,
 
-			_subcribe : function(all, topic) {
-				this._call();
+			_subcribe : function(all) {
+				var valInput = $('#inputChannels input').val();
+				if ($('#ulChannels #' + valInput).length > 0) {
+					for (var i = 0; i < this.channels.length; i++) {
+						if (this.channels[i].value == valInput) {
+							this.channels[i].subscribed = true;
+							this.channels[i].events = (all == true ? true : false);
+						}
+					}
+					this._call();
+				}
+				else {
+					alert('This channel doesn\'t exist.');
+				}
 			} ,
 
 			_call : function() {
@@ -56,8 +72,8 @@ steal( '/assets/aria/steal/less/less',
 					function(devices) {
 						$('#devices').controller()._addRows(devices);
 					} ,
-					function() { 
-						alert('error'); 
+					function() {
+						alert('error');
 					}
 				);
 			} ,
@@ -66,7 +82,7 @@ steal( '/assets/aria/steal/less/less',
 				var arrItems = $('#ulChannels li');
 				if (valInput != '') {
 					var found = false;
-					for (i = 0; i < arrItems.length; i++) {
+					for (var i = 0; i < arrItems.length; i++) {
 						if (($(arrItems[i]).attr('id') != 'error') && ($(arrItems[i]).attr('id') != 'noresults')) {
 							if ($(arrItems[i]).attr('id').substring(0, valInput.length).toLowerCase() == valInput.toLowerCase()) {
 								$(arrItems[i]).addClass('visible');
@@ -108,13 +124,7 @@ steal( '/assets/aria/steal/less/less',
 			} ,
 
 			'#subscribeOne click' : function(el, ev) {
-				var valInput = $('#inputChannels input').val();
-				if ($('#ulChannels #' + valInput).length > 0) {
-					this._subcribe(false, valInput);
-				}
-				else {
-					// Error
-				}
+				this._subcribe(false);
 			} ,
 
 			'#subscribeAll click' : function(el, ev) {

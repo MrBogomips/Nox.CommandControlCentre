@@ -1,10 +1,10 @@
-<table class="table table-bordered table-condensed" id="table<%= id %>">
+<table class="table table-bordered table-condensed" id="tbl<%= id %>">
 	<thead>
 		<tr>
 			<%
-				for (var i = 0; i < content.labels.length; i++) {
+				for (var i = 0; i < labels.length; i++) {
 			%>
-				<th class="<%= content.types[i] %>"><%= content.labels[i] %></th>
+				<th class="<%= labels[i] %>"><%= labels[i] %></th>
 			<%
 				}
 			%>
@@ -12,21 +12,26 @@
 	</thead>
 	<tbody>
 	<%
-		for (var i = 0; i < content.values.length; i++) {
-			if (content.values[0 , 0] == "error") {
+		if (values.length > 0) {
+			for (var i = 0; i < values.length; i++) {
+				if (values[0].type == "error") {
 	%>
-				<tbody>
 					<tr class="error" id="error"><td colspan="<%= content.types.length %>">Error</td></tr>
-				</tbody>
 	<%
-			}
-			else {
+				}
+				else {
 	%>
-				<tr id="row<%= id + i %>" <%= plugin('webapp_row', { 'id' : 'row' + id + i , 'types' : content.types , 'values' : content.values[i] } ) %>>
-
-				</tr>
+					<tr id="row<%= id + '-' + i %>" <%= plugin('webapp_row', { 'id' : id + '-' + i , 'values' : values[i] } ) %>>
+					
+					</tr>
 	<%
+				}
 			}
+		}
+		else {
+	%>
+			<tr class="noresults"><td colspan="<%= labels.length %>">No Results</td></tr>
+	<%
 		}
 	%>
 	</tbody>

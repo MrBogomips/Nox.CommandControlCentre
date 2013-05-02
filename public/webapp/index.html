@@ -28,11 +28,11 @@
                   '/assets/webapp/table/table.js',
                   '/assets/webapp/fixtures/fixtures.js')
             .then('/assets/webapp/webapp.less',
-                  function(){
+                  function() {
                     //$('.popover').draggable();
                     $('#channels').webapp_channels();
                     $('#settings').webapp_settings();
-                    $('#devices').webapp_table({ 'id' : 'DevicesList' , 'content' : { 'model' : webapp.models.devices , 'labels' : [ '#' , '' , 'Device' , 'Events' , 'Ignition' , 'Moving' , 'Speed' , '' ] , 'types' : [ 'string' , 'alarm' , 'device' , 'events' , 'bool' , 'bool' , 'string' , 'more' ] , 'values' : [] } });
+                    $('#devices').webapp_table({ 'id' : 'DevicesList' , 'model' : webapp.models.devices , 'labels' : [ '#' , '' , 'Device' , 'Events' , 'Ignition' , 'Moving' , 'Speed' , '' ] , 'types' : [ 'string' , 'alarm' , 'device' , 'events' , 'bool' , 'bool' , 'string' , 'more' ] , 'values' : [] });
             })
         </script>
     </body>

@@ -14,8 +14,10 @@ steal( '/assets/aria/steal/less/less',
 			defaults : {
 				parent : '',
 				id : '' ,
+				value : true ,
 				editable : true ,
-				value : 'on'
+				callback : null ,
+				parametres : {}
 			}
 		},
 		/** @Prototype */
@@ -24,10 +26,12 @@ steal( '/assets/aria/steal/less/less',
 				var that = this;
 				this._super();
 				this.element.addClass('webapp_checkbox');
-				$('#' + this.options.id).html('/assets/webapp/checkbox/views/checkbox.ejs', { 'id' : that.options.id , 'editable' : that.options.editable , 'value' : that.options.value });
+				var value = this.options.value == true ? 'on' : 'off';
+				$('#' + this.options.id).html('/assets/webapp/checkbox/views/checkbox.ejs', { 'id' : that.options.id , 'editable' : that.options.value.editable , 'value' : value });
 			} ,
 
 			'.switch click' : function(el, ev) {
+				var that = this;
 				if (this.options.editable == true) {
 					if ($(el).hasClass('on') == true) {
 						$(el).removeClass('on');
@@ -39,15 +43,11 @@ steal( '/assets/aria/steal/less/less',
 						$(el).addClass('on');
 						$(el).find('input').attr('checked' , true);
 					}
-					this._recall();
+					if (this.options.callback != null) {
+						this.options.callback(that.options.parametres);
+					}
 				}
-			} ,
-
-			_recall : function() {
-				
 			}
-
-
 
 		});
 

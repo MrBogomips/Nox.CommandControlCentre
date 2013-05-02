@@ -11,9 +11,12 @@
 		<div>
 			Settings <a class="repeat" href="#"><i class="icon-repeat"></i></a>
 		</div>
-		<div class="popup-body" id="popupBody" <%= plugin(plug, { 'id' : idTable , 'content' : content } ) %>>
+		<div class="popup-body" id="popupBody" <%= plugin('webapp_table', { 'id' : table.id , 'labels' : table.labels , 'values' : table.values } ) %>>
 		
 		</div>
-
+		<div>
+			<a class="btn btn-small cancel" type="button" href="#">Cancel</a>
+			<a class="btn btn-small save" type="button" href="#">Save</a>
+		</div>
 	</div>
 </div>

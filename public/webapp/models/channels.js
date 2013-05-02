@@ -1,6 +1,6 @@
 steal('jquery/model', 
 	  'jquery/dom/fixture',
-	function(){
+	function() {
 
 		/**
 		 * @class webapp.channels
@@ -22,8 +22,8 @@ steal('jquery/model',
 					});
 				} ,
 		  	//findOne : "/channels/{id}.json", 
-		  	//create : "/channels.json",
-		 	//update : "/channels/{id}.json",
+		  	create : "/channels.json",
+		 	update : "/channels/{id}.json",
 		  	//destroy : "/channels/{id}.json"
 		},
 		/* @Prototype */

@@ -47,13 +47,8 @@ steal( '/assets/aria/steal/less/less',
 			_create : function(info) {
 				var that = this;
 				var html;
-				$.when(html = $.View('popup/views/popup.ejs', { 'id' : info.id , 'title' : info.title , 'general' : info.general , 'attributes' : info.attributes , 'plug' : 'webapp_table' , 'idTable' : info.id , 'content' : { 'labels' : [ 'Attribute' , 'Current Value' ] , 'types' : [ 'string' , 'string' ] , 'values' : [] } }))
-				.done(function(){
-					that.element.append(html);
-					for (var i = 0; i < info.attributes.length; i++) {
-						$('#table' + info.id).closest('.webapp_table').controller()._addRow(info.id , [ 'string' , info.attributes[i].type ] , [ info.attributes[i].label , info.attributes[i].value ] );
-					}
-				});
+				var id = 'pop' + this.options.id;
+				this.element.html('popup/views/popup.ejs', { 'id' : id , 'title' : info.title , 'general' : info.general , 'table' : { 'id' : that.options.id , 'labels' : [ 'Attribute' , 'Current Value' ] , 'values' : info.values } } );
 			} ,
 
 			'.restart.btn click' : function(el, ev) {
@@ -70,6 +65,14 @@ steal( '/assets/aria/steal/less/less',
 
 			'.close click' : function(el, ev) {
 				this.destroy();
+			} ,
+
+			'.cancel.btn click' : function(el, ev) {
+				alert('Cancel');
+			} ,
+
+			'.save.btn click' : function(el, ev) {
+				alert('Save');
 			}
 
 

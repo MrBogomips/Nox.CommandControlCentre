@@ -18,18 +18,17 @@ steal( '/assets/aria/steal/less/less',
 		{
 			defaults : {
 				id : '',
-				types : '',
 				values : ''
 			}
 		},
 		/** @Prototype */
 		{
-			init : function(){
+			init : function() {
 				var that = this;
 				this._super();
 				this.element.addClass('webapp_table_row');
-				this.attributes = { 'id' : that.options.id , 'types' : that.options.types , 'values' : that.options.values };
-				this.element.html('/assets/webapp/table/row/views/row.ejs', { 'id' : that.options.id , 'types' : that.options.types , 'values' : that.options.values } );
+				this.attributes = { 'id' : that.options.id , 'values' : that.options.values };
+				this.element.html('/assets/webapp/table/row/views/row.ejs', { 'id' : that.options.id , 'values' : that.options.values } );
 			} ,
 
 			'.tool mousein' : function(el, ev) {
@@ -40,10 +39,22 @@ steal( '/assets/aria/steal/less/less',
 				$(el).tooltip('hide');
 			} ,
 
-			'.more .btn click' : function(el, ev) {
+			'#tblDevicesList .btn.more click' : function(el, ev) {
 				var that = this;
-				var anchor = $(el).closest('.more').find('.anchorInfo');
-				$(anchor).webapp_popup({ 'id' : that.options.id , 'title' : that.options.values[2] , 'model' : webapp.models.info });
+				var anchor = $(el).closest('.button').find('.anchorInfo');
+				$(anchor).webapp_popup({ 'id' : that.options.id , 'title' : that.options.values[2].description , 'model' : webapp.models.info });
+			} ,
+
+			'#tblChannelSettings .btn.unsubscribe click' : function(el, ev) {
+				var that = this;
+				var channel = $.trim($(el).closest('tr').find('td.string').html());
+				var channels = $('#channels').controller().channels;
+				for (var i = 0; i < channels.length; i++) {
+					if (channels[i].value == channel) {
+						$('#channels').controller().channels[i].subscribed = false;
+						$(el).closest('tr').remove();
+					}
+				}
 			}
 
 		});

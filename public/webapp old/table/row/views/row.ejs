@@ -1,0 +1,64 @@
+<%
+	for (i = 0; i < types.length; i++) {
+%>
+	<td class="<%= types[i] %>">
+		<%
+			switch (types[i]) {
+				case "string":
+		%>
+					<%= values[i] %>
+		<%
+					break;
+				case "device":
+		%>
+					<%= values[i] %> <a class="tool" data-original-title="Show on map" href="#" data-toggle="tooltip" data-placement="top" title=""><i class="icon-map-marker"></i></a>
+		<%
+					break;
+				case "alarm":
+		%>
+					<i class="icon-warning-sign"></i>
+		<%
+					break;
+				case "checkbox":
+		%>
+					<div id="chk<%=id%>" <%= plugin('webapp_checkbox', { 'id' : 'chk' + id , 'value' : (values[i] == true ? 'on' : 'off') } ) %>>
+						
+					</div>
+		<%
+					break;
+				case "bool":
+					if (values[i] == true) {
+		%>
+						<span class="label label-success">Yes</span>
+		<%
+					}
+					else {
+		%>
+						<span class="label label-important">No</span>
+		<%
+					}
+					break;
+				case "events":
+					for (x = 0; x < values[i].length; x++) {
+		%>
+						<a class="tool" data-original-title="<%=values[i][x].message%>" href="#" data-toggle="tooltip" data-placement="top" title=""><span class="label label-<%=values[i][x].class%>"><%=values[i][x].code%></span></a>
+		<%
+					}
+					break;
+				case "more":
+		%>
+					<a class="btn btn-info btn-small" type="button" href="#"><i class="icon-info-sign icon-white"></i>More</a>
+					<div class="anchorInfo"></div>
+		<%
+					break;
+				case "unsubscribe":
+		%>
+					<a class="btn btn-danger btn-small unsubscribe" type="button" href="#"><i class="icon-trash icon-white"></i>Unsubrscibe</a>
+		<%
+					break;
+		}
+		%>
+	</td>
+<%
+	}
+%>
