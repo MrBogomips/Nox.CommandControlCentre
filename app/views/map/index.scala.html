@@ -1,9 +1,9 @@
-@(mqttBrokerURI: String)
+@()
 
 @master.authenticated("Realtime Map") {
 
 <script type="text/javascript">
-var MQTT_BROKER_URI = '@mqttBrokerURI';
+var MQTT_BROKER_URI = '@config.getString("nox.webapp.mqttBrokerURI")';
 </script>
 
 
@@ -23,7 +23,6 @@ var MQTT_BROKER_URI = '@mqttBrokerURI';
 <script type="text/javascript">
    
 function init() {
-	
 	
 	init_map();
 	init_listner();
@@ -45,8 +44,14 @@ function init() {
     </div>
     
      <div class="input-append">
-       <input type="text" class="span5" id="topicSearchText">
+       <input type="text" class="span3" id="topicSearchText">
        <button class="btn" id="setTopic">Subscribe</button>
+     </div>
+
+     <div class="input-append">
+       <input type="text" class="span3" id="deviceIdText" value="4310516">
+       <input type="text" class="span3" id="CommandText" value="OUT1_ACTIVATE">
+       <button class="btn" id="sendCommand">Send Sample Command</button>
      </div>
    	
    	<div id="deviceDetailsBox" style="width: 500px; height: 600px; background-color: #FFFFFF; border: 2px solid #CCCCCC; position: absolute; z-index: 10000; display: none;">
@@ -109,19 +114,30 @@ jQuery(document).ready(function() {
    });
 
 
-
-
 $('button#setTopic').bind('click', 
 		function(event){
 			event.stopPropagation();
 			event.preventDefault();
 			if($.trim($(event.target).siblings('input#topicSearchText').val()).length > 0)
 			{
-				setTopic($(event.target).siblings('input#topicSearchText').val());				
+				subscribe($(event.target).siblings('input#topicSearchText').val());				
+			}
+				
+		});
+		
+
+$('button#sendCommand').bind('click', 
+		function(event){
+			event.stopPropagation();
+			event.preventDefault();
+			if($.trim($(event.target).siblings('input#deviceIdText').val()).length > 0 && $.trim($(event.target).siblings('input#CommandText').val()).length > 0)
+			{
+				sendCommand($(event.target).siblings('input#deviceIdText').val(), $(event.target).siblings('input#CommandText').val());				
 			}
 				
 		});
 
 </script>
+
 
 }

@@ -7,7 +7,7 @@ import play.api.libs.json._
 object Channel extends Controller {
   def index = Action {
     val channels = Json.obj(
-    		"channels" -> Json.arr("MCT1", "NOXT1", "NOXCOM")
+    		"channels" -> Json.arr("MTC1", "NOXT1", "NOXCOM")
     		)
     Ok(channels)
   }

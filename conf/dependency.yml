@@ -1,0 +1,6 @@
+repositories:
+  - provided:
+      type:       local
+      artifact:   "${application.path}/lib/[module].jar"
+      contains:
+        - provided -> *
