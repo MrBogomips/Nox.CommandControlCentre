@@ -153,8 +153,8 @@ function addTableRow(jData, numMsg, rate, startAt, lastAt, delay, speed){
 
 function DeviceFactory ()
 {
-	this.buildDevice = function(jData)  {
-		return new Device(jData);
+	this.buildDevice = function(messageType, jData)  {
+		return new Device(messageType, jData);
 	}
 
 }
@@ -163,7 +163,7 @@ function DeviceFactory ()
  *	Device is internal struct
  */
 
-function Device(jData) { // internal scope
+function Device(topic, jData) { // internal scope
 	
 	// properties
 	this.jData = jData; //
@@ -175,80 +175,83 @@ function Device(jData) { // internal scope
 	this.rate = 0;
 	this.device = jData.device;
 	
+	
+	var tokens = topic.split("/");
+     
+     //the first one token in topic is COMMAND_RESPONSE
+    var messageType = tokens[0];
+     
 
-	//// Adding Martker and feature on marker
-	
-	this.position = new OpenLayers.LonLat(jData.data.coords.lon,jData.data.coords.lat).transform(projLonLat, projMercator);
-	
-	this.feature = new OpenLayers.Feature(markerLayer, this.position);
-	
-	this.feature.closeBox = true;
-	
-	
-	//this.feature.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored, {contentSize: new OpenLayers.Size(100, 50) } );
-	
-	this.feature.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored, {'autoSize': true} );
-	
-	this.feature.data.popupContentHTML = 'device: ' + this.device;
-	this.feature.data.overflow = "hidden";
-    
-    var icon = new OpenLayers.Icon("/assets/img/marker_icon_openlayer.png");
-    
-	
-	this.marker = new OpenLayers.Marker(this.position,icon); //qui puoi passare la icona custom
+	switch(messageType)
+	{
+	case "COMMAND_RESPONSE":
+		alert("M'è arrivata a rispost!!!!!");
 		
-	this.marker.feature = this.feature;
+		
+		
+		
+		
+		break;
 	
-    var markerClick = function(evt) {
-        if (this.popup == null) {
-            this.popup = this.createPopup(this.closeBox);
-            map.addPopup(this.popup);
-            this.popup.show();
-        } else {
-            this.popup.toggle();
-        }
-        OpenLayers.Event.stop(evt);
-    };
-	
-    this.marker.events.register("mousedown", this.feature, markerClick);
-    
-	markerLayer.addMarker(this.marker);
-	
-	//
+	default: //Position Messagetype
+		//// Adding Martker and feature on marker
+		
+		this.position = new OpenLayers.LonLat(jData.data.coords.lon,jData.data.coords.lat).transform(projLonLat, projMercator);		
+		this.feature = new OpenLayers.Feature(markerLayer, this.position);
+		this.feature.closeBox = true;
+		
+		//this.feature.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored, {contentSize: new OpenLayers.Size(100, 50) } );
+		this.feature.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored, {'autoSize': true} );
+		this.feature.data.popupContentHTML = 'device: ' + this.device;
+		this.feature.data.overflow = "hidden";
+	    var icon = new OpenLayers.Icon("/assets/img/marker_icon_openlayer.png");
+	    this.marker = new OpenLayers.Marker(this.position,icon); //qui puoi passare la icona custom
+		this.marker.feature = this.feature;
+		
+		var markerClick = function(evt) {
+	        if (this.popup == null) {
+	            this.popup = this.createPopup(this.closeBox);
+	            map.addPopup(this.popup);
+	            this.popup.show();
+	        } else {
+	            this.popup.toggle();
+	        }
+	        OpenLayers.Event.stop(evt);
+	    };
+		
+	    this.marker.events.register("mousedown", this.feature, markerClick);
+	    markerLayer.addMarker(this.marker);
+	}
 
 	//***** Adding a row in table device startAt, lastAt
 	addTableRow(this.jData, this.numMsg, this.rate, this.startAt, this.lastAt, this.delay, this.speed);
-	
 
 	//***** Use this function to update internal data of Device
 	
-	
-	this.updateData = function(jData) {
+	this.updateData = function(messageType, jData) {
 
 		var oldData = this.jData;
 		this.jData = jData;
 		this.speed = 1;
 		this.numMsg++;
-		this.position = new OpenLayers.LonLat(jData.data.coords.lon,jData.data.coords.lat).transform(projLonLat, projMercator);
 		
+		switch(messageType)
+		{
+		case "COMMAND_RESPONSE":
+			alert("M'è arrivata a rispost!!!!!");
+			break;
 		
-		
-		this.lastAt = new Date();
-		
-		this.delay = (this.lastAt - new Date(this.jData.data.ts))/1000; //
-		
-		var num = this.numMsg/(this.lastAt - this.startAt)*Math.pow(10,3); //ms
-		
-		this.rate = Math.round(num*Math.pow(10,2))/Math.pow(10,2);
-		
-		// Math.round(price*Math.pow(10,2))/Math.pow(10,2);
-		//var dist = Math.sqrt((oldData.lat - jData.lat) * (oldData.lat - jData.lat) + (oldData.lon - jData.lon) * (oldData.lon - jData.lon));
-		//var elaps = jData.ts - oldTime.ts;
-		//this.speed = dist / elaps;
-		
-		//  Move the Marker on the Layer
-		var newPx = map.getLayerPxFromViewPortPx(map.getPixelFromLonLat(this.position));
-		this.marker.moveTo(newPx);
+		default: //Position Messagetype
+			this.position = new OpenLayers.LonLat(jData.data.coords.lon,jData.data.coords.lat).transform(projLonLat, projMercator);
+			this.lastAt = new Date();
+			this.delay = (this.lastAt - new Date(this.jData.data.ts))/1000; //
+			var num = this.numMsg/(this.lastAt - this.startAt)*Math.pow(10,3); //ms
+			this.rate = Math.round(num*Math.pow(10,2))/Math.pow(10,2);
+			
+			//  Move the Marker on the Layer
+			var newPx = map.getLayerPxFromViewPortPx(map.getPixelFromLonLat(this.position));
+			this.marker.moveTo(newPx);
+		}
 		
 		// table info
 		updateTableRow(this.jData, this.numMsg, this.rate, this.startAt, this.lastAt, this.delay, this.speed);
@@ -258,23 +261,54 @@ function Device(jData) { // internal scope
 				updateDeviceDetailsBox(this.jData)
 			}
 		}
-			
-			
-		
-		
 		
 	}
+}
+
+
+
+function createUUID(){
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+	    return v.toString(16);
+	});
+}
+
+function sendCommand(deviceId, command){
 	
+	var tranId = createUUID();
+	//subscribe response for specific TranId
 	
+	var topic ="COMMAND_RESPONSE/" + tranId; 
+	subscribe(topic);
+	
+	$.ajax({
+		  type: "POST",
+		  url: "/device/command",
+		  
+	     contentType: "application/json; charset=UTF-8",
+		 
+		 dataType: "json",
+		 		  
+		 data: JSON.stringify({
+			  device: deviceId,
+			  tranId:tranId,
+			  command: command,
+			  sent_time: new Date(),
+			  arguments : [
+			        {name: 'ciccio1', value: '1234'}
+		    		]
+				}),
+		
+		success: function(data,textStatus,jqXHR){alert(JSON.stringify(data));},
+		error: function(jqXHR,textStatus,errorThrown){alert("request failed " + textStatus)}
+	
+		});	
 	
 }
-	
 
 
-
-
-function setTopic(topic){	
-	//$('table#devices > tbody').empty();
+function subscribe(topic){	
 	socket.emit('subscribe',{topic: topic});
 }
 

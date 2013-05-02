@@ -1,10 +1,7 @@
 
 function init_listner(topic) {
-	
-	
+		
 	var devFact = new DeviceFactory();
-	
-	//DeviceFactory = new DeviceRecordFactory(oll_markers);
 
 	devices = {};
     socket = io.connect(MQTT_BROKER_URI);
@@ -12,27 +9,25 @@ function init_listner(topic) {
     socket.on('connect', function () {
         socket.on('mqtt', function (msg) {
         	
-	        //console.log(msg.topic+' '+msg.payload);
-	  		
 	        var jData = $.parseJSON(msg.payload);
+	        var tokens = msg.topic.split("/");
+	       
+	        //The message type is the last one token in array
+	        var messageType = tokens[0];
 	        
-	  		
 	  		var e;
 	  		if((e = devices[jData.device]) == undefined)
 	  		{
 	  			// new device found!
-	  			e = devices[jData.device]=devFact.buildDevice(jData);
+	  			e = devices[jData.device]=devFact.buildDevice(messageType, jData);
 	  			
 	  		}
 	  		else
 	  		{
-	  			e.updateData(jData);
+	  			e.updateData(messageType, jData);
 	  		}
         });
-        
-        //socket.emit('subscribe',{topic: topic});
-        
+            
       });
-    
     
 }

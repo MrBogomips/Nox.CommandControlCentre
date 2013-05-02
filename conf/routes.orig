@@ -1,0 +1,24 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+
+# Login page
+GET     /login                      controllers.Login.index
+GET		/dashboard					controllers.Dashboard.index
+GET		/map						controllers.Map.index
+GET		/map2						controllers.Map2.index
+
+# Channels' management
+GET		/channel/index				controllers.Channel.index
+
+<<<<<<< HEAD
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+=======
+# Device
+POST	/device/command				controllers.Device.receiveCommand
+>>>>>>> da2f1bd2a30253006506031092b0e2541e07efb1

@@ -1,0 +1,38 @@
+<table class="table table-bordered table-condensed" id="tbl<%= id %>">
+	<thead>
+		<tr>
+			<%
+				for (var i = 0; i < labels.length; i++) {
+			%>
+				<th class="<%= labels[i] %>"><%= labels[i] %></th>
+			<%
+				}
+			%>
+		</tr>
+	</thead>
+	<tbody>
+	<%
+		if (values.length > 0) {
+			for (var i = 0; i < values.length; i++) {
+				if (values[0].type == "error") {
+	%>
+					<tr class="error" id="error"><td colspan="<%= content.types.length %>">Error</td></tr>
+	<%
+				}
+				else {
+	%>
+					<tr id="row<%= id + '-' + i %>" <%= plugin('webapp_row', { 'id' : id + '-' + i , 'values' : values[i] } ) %>>
+					
+					</tr>
+	<%
+				}
+			}
+		}
+		else {
+	%>
+			<tr class="noresults"><td colspan="<%= labels.length %>">No Results</td></tr>
+	<%
+		}
+	%>
+	</tbody>
+</table>

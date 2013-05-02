@@ -12,7 +12,7 @@ object Device extends Controller {
 
   def receiveCommand = Action(parse.json) { request =>
     request.body.validate[DeviceCommandRequest].map{ c =>
-	  val response = c.sendToDevice()
+	  val response = c.sendToDevice(request.body)
 	  Ok(Json.toJson(response))
     }.recoverTotal{
       e => BadRequest("Invalid Command:"+ JsError.toFlatJson(e))
