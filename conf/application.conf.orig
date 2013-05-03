@@ -47,7 +47,7 @@ logger.com.jolbox=DEBUG // for EBean
 # You can also configure logback (http://logback.qos.ch/), by providing a logger.xml file in the conf directory .
 
 # Root logger:
-logger=DEBUG
+logger.root=ERROR
 
 # Logger used by the framework:
 logger.play=DEBUG
@@ -55,11 +55,16 @@ logger.play=DEBUG
 # Logger provided to your application:
 logger.application=DEBUG
 
+<<<<<<< HEAD
+application.mode=dev
+application.log=DEBUG
+=======
 nox.webapp.mqttBrokerURI="http://nox01.prod.nexusat.int:5000"
 nox.mqtt.BrokerURI="tcp://nox01.prod.nexusat.int:1969"
 nox.mqtt.Command.RequestTopic="COMMAND_REQUEST"
 nox.mqtt.Command.ResponseTopic="COMMAND_RESPONSE"
 
+>>>>>>> ce19292da121a457989f47607b7e13b60e5f3fb5
 
 
 
