@@ -1,11 +1,5 @@
-steal( '/assets/aria/steal/less/less',
-	   '/assets/aria/aria/controller/controller',
-	   '/assets/aria/jquery/view/ejs/ejs')
-.then( '/assets/webapp/channels/views/channels.ejs', 
+steal( '/assets/webapp/channels/views/channels.ejs', 
 	   './css/channels.less', 
-	   '/assets/js/bootstrap.js', 
-	   '/assets/css/bootstrap.css', 
-	   '/assets/css/bootstrap-responsive.css',
 	   '/assets/webapp/models/channels.js',
 	   '/assets/webapp/channels/items/items.js',
 	function($){
@@ -132,6 +126,4 @@ steal( '/assets/aria/steal/less/less',
 			}
 
 		});
-		
-		
 });

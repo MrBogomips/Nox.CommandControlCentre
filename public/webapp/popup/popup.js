@@ -1,11 +1,5 @@
-steal( '/assets/aria/steal/less/less',
-	   '/assets/aria/aria/controller/controller',
-	   '/assets/aria/jquery/view/ejs/ejs')
-.then( '/assets/webapp/popup/views/popup.ejs', 
+steal( '/assets/webapp/popup/views/popup.ejs', 
 	   './css/popup.less', 
-	   '/assets/js/bootstrap.js', 
-	   '/assets/css/bootstrap.css', 
-	   '/assets/css/bootstrap-responsive.css',
 	   '/assets/webapp/models/info.js',
 	function($){
 

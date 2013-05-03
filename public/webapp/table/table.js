@@ -1,13 +1,7 @@
-steal( '/assets/aria/steal/less/less',
-	   '/assets/aria/aria/controller/controller',
-	   '/assets/aria/jquery/view/ejs/ejs',
-	   '/assets/webapp/models/channels.js',
+steal( '/assets/webapp/models/channels.js',
 	   '/assets/webapp/models/devices.js')
 .then( '/assets/webapp/table/views/table.ejs', 
-	   './css/table.less', 
-	   '/assets/js/bootstrap.js', 
-	   '/assets/css/bootstrap.css', 
-	   '/assets/css/bootstrap-responsive.css',
+	   './css/table.less',
 	   '/assets/webapp/table/row/row.js',
 	function($){
 

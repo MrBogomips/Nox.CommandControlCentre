@@ -1,7 +1,4 @@
-steal( '/assets/aria/steal/less/less',
-	   '/assets/aria/aria/controller/controller',
-	   '/assets/aria/jquery/view/ejs/ejs')
-.then( '/assets/Webapp/channels/items/views/items.ejs', 
+steal( '/assets/Webapp/channels/items/views/items.ejs', 
 	   './css/items.less', 
 	function($){
 
