@@ -1,0 +1,9 @@
+@(title: String, header_more: Html = Html(""), footer_more: Html = Html(""))(content: Html)
+
+@header(title, header_more)
+<div class="content">
+	<div >
+		@content
+	</div>
+</div>
+@footer(footer_more)

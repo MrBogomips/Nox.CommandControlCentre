@@ -1,16 +1,10 @@
-@(title: String)
+@(title: String, more: Html = Html(""))
 
-<!DOCTYPE html>
-<!-- @@author: Giovanni Costagliola <giovanni.costagliola@@gmail.com> -->
-<html lang="en">
 <head>
-	<title>NoxST::CCC  @title</title>
+	<title>@config.getString("nox.ccc.page_title_prefix") @title</title>
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("css/bootstrap.css")">
 	<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("css/personal.css")">
-	<script type='text/javascript' 
-            src='/assets/aria/steal/steal.js'>
-    </script>
 	
+	@more
 </head>
-<body>

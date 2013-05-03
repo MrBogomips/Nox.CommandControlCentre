@@ -1,0 +1,26 @@
+@(title: String, header_more: Html = Html(""), footer_more: Html = Html(""))(content: Html)
+
+<!DOCTYPE html>
+<!-- @@author: Giovanni Costagliola <giovanni.costagliola@@gmail.com> -->
+<html lang="en">
+@header(title, header_more)
+<body>
+
+<div class="navbar">
+	@navbar.top()
+</div>
+
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span2">
+			@sidebar.index()
+		</div>
+		<div class="span10" style="overflow: hidden; width: auto;">
+			@content
+		</div>
+	</div>
+</div>
+
+@footer(footer_more)
+</body>
+</html>	
