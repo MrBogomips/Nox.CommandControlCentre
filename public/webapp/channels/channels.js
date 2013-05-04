@@ -30,7 +30,7 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 							for (var i = 0; i < d.channels.length; i++) {
 								that.channels[i] = { 'value' : d.channels[i] , 'subscribed' : false , 'events' : false };
 							}
-							that.element.html('channels/views/channels.ejs', { 'parent' : that , 'channels' : d.channels });
+							that.element.html('/assets/webapp/channels/views/channels.ejs', { 'parent' : that , 'channels' : d.channels });
 						}
 					} ,
 					function() { 
