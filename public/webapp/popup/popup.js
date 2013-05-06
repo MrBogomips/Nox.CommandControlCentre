@@ -42,7 +42,7 @@ steal( '/assets/webapp/popup/views/popup.ejs',
 				var that = this;
 				var html;
 				var id = 'pop' + this.options.id;
-				this.element.html('popup/views/popup.ejs', { 'id' : id , 'title' : info.title , 'general' : info.general , 'table' : { 'id' : that.options.id , 'labels' : [ 'Attribute' , 'Current Value' ] , 'values' : info.values } } );
+				this.element.html('/assets/webapp/popup/views/popup.ejs', { 'id' : id , 'title' : info.title , 'general' : info.general , 'table' : { 'id' : that.options.id , 'labels' : [ 'Attribute' , 'Current Value' ] , 'values' : info.values } } );
 			} ,
 
 			'.restart.btn click' : function(el, ev) {

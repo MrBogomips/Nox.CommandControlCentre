@@ -3,9 +3,6 @@ steal( '/assets/aria/steal/less/less',
 	   '/assets/aria/jquery/view/ejs/ejs')
 .then( '/assets/webapp/table/row/views/row.ejs', 
 	   './css/row.less', 
-	   '/assets/js/bootstrap.js', 
-	   '/assets/css/bootstrap.css', 
-	   '/assets/css/bootstrap-responsive.css',
 	   '/assets/webapp/checkbox/checkbox.js',
 	   '/assets/webapp/popup/popup.js',
 	function($){

@@ -25,13 +25,24 @@ steal( '/assets/webapp/models/channels.js',
 				this._super();
 				this.element.addClass('webapp_table');
 				this.numberRow = 0;
-
+				this.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_MQTT");
+				this.WS_Channel.subscribe('new_data', that._updateContent);
 				this._callView();
 			} ,
+			
+			_updateContent : function(data) {
+				$("#counter").html(parseInt($("#counter").html()) + 1);
+				//console.log(data);
+			},
 
 			_callView : function() {
 				var that = this;
-				this.element.html('/assets/webapp/table/views/table.ejs', { 'id' : that.options.id , 'labels' : that.options.labels , 'values' : that.options.values } );
+				this.element.html('/assets/webapp/table/views/table.ejs', 
+						{ 
+							'id' : that.options.id , 
+							'labels' : that.options.labels , 
+							'values' : that.options.values 
+						} );
 			} ,
 
 			_addRows : function(values) {

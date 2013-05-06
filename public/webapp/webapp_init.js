@@ -31,6 +31,7 @@ steal('aria/page')
 .then('/assets/aria/steal/less/less',
 	  '/assets/aria/aria/controller/controller',
 	  '/assets/aria/jquery/view/ejs/ejs',
-	  '/assets/js/bootstrap.js', 
-	  '/assets/css/bootstrap.css', 
-	  '/assets/css/bootstrap-responsive.css');
+	  '/assets/js/bootstrap.js'
+	  //'/assets/css/bootstrap.css'
+	  //'/assets/css/bootstrap-responsive.css'
+	  );

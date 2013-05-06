@@ -1,5 +1,14 @@
 @()
 
+
+@header_more = {
+<style>
+	.devices_table {
+		min-width: 650px;
+	}
+</style>
+}
+
 @footer_scripts = {
 <script type='text/javascript'>
             steal('/assets/webapp/webapp_init.js')
@@ -7,9 +16,12 @@
                   '/assets/webapp/settings/settings.js',
                   '/assets/webapp/table/table.js',
                   '/assets/webapp/fixtures/fixtures.js',
-                  '/assets/webapp/webapp.less'
+                  '/assets/webapp/webapp.less',
+                  '/assets/webapp/wslistner/wslistner.js'
                   )
             .then(function() {
+            		var wslistner = new webapp.wslistner(window);
+            		
                     //$('.popover').draggable();
                     $('#channels').webapp_channels();
                     $('#settings').webapp_settings();
@@ -24,12 +36,15 @@
 </script>
 }
 
-@aria.master.authenticated("Realtime Map", footer_more = footer_scripts) {
-<!-- <div class='container page'> -->
+@aria.master.authenticated("Realtime Map", header_more = header_more, footer_more = footer_scripts) {
+<div class='devices_table'>
     <div>
-        <div id='channels'></div>
         <div id='settings'></div>
+        <div id='channels'></div>
+        
     </div>
     <div id='devices'></div>
-<!-- </div> -->
+    
+    <div id='counter'>0000</div>
+</div>
 }

@@ -1,7 +1,7 @@
 <div class="containerChannels">
-	<div id="inputChannels">
-		<input type="text" class="span2" placeholder="channel">
-		<ul id="ulChannels" class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+	<div class="inputChannels">
+		<input type="text" placeholder="channel" class="channel_name">
+		<ul class="ulChannels dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
 			<li class="channelItem" id="noresults"><a tabindex="-1" href="javascript: void(0);">No results</a></li>
 			<%
 				for (i = 0; i < channels.length; i++) {
@@ -11,8 +11,12 @@
 			<%
 					}
 					else {
+			
+						
 			%>
-						<li class="channelItem" id="<%=channels[i]%>" <%= plugin('webapp_items', { 'parent' : parent , 'anchor' : '#' + channels[i] , 'value' : channels[i] }) %>></li>
+						<li class="channelItem webapp_items" id="<%=channels[i]%>">
+						<a class="webapp_items" tabindex="-1" href="javascript: void(0);" data-channel-id="<%=channels[i]%>"><%=channels[i]%></a>
+						</li>
 			<%
 					}
 				}
@@ -21,7 +25,7 @@
 	</div>
 	<div id="buttonChannels">
 		<div class="btn-group">
-		    <a class="btn btn-small" id="subscribeOne">Subscribe</a>
+		    <a class="btn btn-small subscribeOne">Subscribe</a>
 		    <a class="btn btn-small dropdown-toggle" data-toggle="dropdown">
 		    	<span class="caret"></span>
 		    </a>

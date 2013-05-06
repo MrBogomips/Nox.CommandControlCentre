@@ -1,12 +1,24 @@
-.webapp_table table { font-size:12px; }
+.webapp_table {
+  table { font-size:12px; }
 
-.webapp_table .table-bordered tr th, .webapp_table .table-bordered tr td { line-height:26px; vertical-align:middle; }
+ .table-bordered tr th, .webapp_table .table-bordered tr td { line-height:26px; vertical-align:middle; }
 
-.webapp_table #tableChannelSettings { width:96%; margin-left:2%; }
-.webapp_table #tableChannelSettings .unsubscribe { width:112px; padding:3px 0px; margin:0px 5px; color:#FFFFFF; }
-.webapp_table .btn i { margin-right:3px; }
+ #tableChannelSettings { width:96%; margin-left:2%; }
+ #tableChannelSettings .unsubscribe { width:112px; padding:3px 0px; margin:0px 5px; color:#FFFFFF; }
+ .btn i { margin-right:3px; }
 
-.webapp_table #tableDevicesList { width:100%; }
+ #tableDevicesList { width:100%; }
 
-.webapp_table tr.noresults { display:none; }
-.webapp_table tr:nth-last-child(1).noresults { display:block; }
+ tr.noresults { display:none; } 
+ tr:nth-last-child(1).noresults { display:table-row; }
+ 
+ .label {
+ 	*display: inline;/* for IE7*/
+    *zoom:1;/* for IE7*/
+ 	display:inline-block;
+ 	min-width:30px;
+ 	margin-left:auto;
+ 	margin-right:auto
+ }
+
+}
