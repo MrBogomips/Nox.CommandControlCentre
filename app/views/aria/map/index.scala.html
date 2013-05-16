@@ -6,6 +6,21 @@
 	.devices_table {
 		min-width: 650px;
 	}
+	body, html {height: 100%}
+	.page-container {height: 90%}
+	#map {
+		margin-top: -20px;
+		width: 100%; height: 100%;
+	}
+	.devices_table {
+		width: 500px; 
+		position:absolute; 
+		zindex: 100; 
+		float: right; 
+		right: 10px; 
+		top: 50px;
+		backgrund-color: white;
+	}
 </style>
 }
 
@@ -24,27 +39,44 @@
             		
                     //$('.popover').draggable();
                     $('#channels').webapp_channels();
-                    $('#settings').webapp_settings();
-                    $('#devices').webapp_table({
-                    	'id' : 'DevicesList' , 
-                    	'model' : webapp.models.devices , 
-                    	'labels' : [ '#' , '' , 'Device' , 'Events' , 'Ignition' , 'Moving' , 'Speed' , '' ] , 
-                    	'types' : [ 'string' , 'alarm' , 'device' , 'events' , 'bool' , 'bool' , 'string' , 'more' ] , 
-                    	'values' : [] 
-					});
-            })
+                    //$('#settings').webapp_settings();
+                    $('#devices').webapp_table();
+                    
+                    var resizeMapArea = function(){
+                    	$('.page-container').height(
+                    		$('body').height() - 
+                    		$('.navbar').height() -
+                    		$('.page-footer').height()
+                    	);
+                    	console.log("Windows.resize done");
+                    }; 
+                    
+                    $(window).resize(resizeMapArea);
+                    
+                    resizeMapArea();
+            });
+            
+            steal('/assets/leaflet/leaflet.js', 
+            	'/assets/leaflet/leaflet.css'
+            ).then(function() {
+            	navigator.geolocation.getCurrentPosition(function (pos) {
+	            	var map = L.map('map', {attributionControl: false}).setView([pos.coords.latitude, pos.coords.longitude], 13);
+	            	L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+	    				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
+					    maxZoom: 18
+					}).addTo(map);
+            	});
+            });
 </script>
 }
 
 @aria.master.authenticated("Realtime Map", header_more = header_more, footer_more = footer_scripts) {
-<div class='devices_table'>
+<div id='map'></div>
+<div class='devices_table' style="">
     <div>
         <div id='settings'></div>
         <div id='channels'></div>
-        
     </div>
     <div id='devices'></div>
-    
-    <div id='counter'>0000</div>
 </div>
 }

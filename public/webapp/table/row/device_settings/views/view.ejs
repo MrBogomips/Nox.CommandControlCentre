@@ -1,0 +1,30 @@
+<!-- Device Commands -->
+<div class="modal hide fade commands" tabindex="-1" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Device «<%=device%>»</h3>
+  </div>
+  <div class="alerts"></div>
+  <div class="modal-body">
+    <div class="progress progress-striped active">
+  		<div class="bar" style="width: 100%;"></div>
+	</div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="modal hide fade confirmation" tabindex="-1" aria-hidden="true">
+  <div class="modal-header">
+    <h3 id="myModalLabel">Confirmation <%=device%></h3>
+  </div>
+  <div class="modal-body">
+    Do you confirm the execution of the command?
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-success confirm" data-dismiss="modal" aria-hidden="true">Confirm</button>
+  </div>
+</div>

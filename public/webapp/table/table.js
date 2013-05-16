@@ -1,7 +1,5 @@
 steal( '/assets/webapp/models/channels.js',
-	   '/assets/webapp/models/devices.js')
-.then( '/assets/webapp/table/views/table.ejs', 
-	   './css/table.less',
+	   '/assets/webapp/models/device.js',
 	   '/assets/webapp/table/row/row.js',
 	function($){
 
@@ -21,28 +19,38 @@ steal( '/assets/webapp/models/channels.js',
 		/** @Prototype */
 		{
 			init : function() {
-				var that = this;
+				var self = this;
 				this._super();
 				this.element.addClass('webapp_table');
-				this.numberRow = 0;
+				
+				// ascolta sul canale degli eventi direttamente
 				this.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_MQTT");
-				this.WS_Channel.subscribe('new_data', that._updateContent);
-				this._callView();
+				this.WS_Channel.subscribe('new_data', this.proxy(self._updateContent));
+				
+				// monitora gli eventi dei modelli
+				webapp.models.device.bind('created', function(ev, device) {
+					self._newDeviceFound(device);
+				});
+				
+				this.element.html('/assets/webapp/table/views/table.ejs', {})
 			} ,
 			
-			_updateContent : function(data) {
-				$("#counter").html(parseInt($("#counter").html()) + 1);
+			_newDeviceFound : function(device) {
+				console.log('New device arrived ' + device);
+			} ,
+			
+			_updateContent : function(event, data) {
+				//$("#counter").html(parseInt($("#counter").html()) + 1);
+				this._addRow(data);
 				//console.log(data);
 			},
 
 			_callView : function() {
 				var that = this;
-				this.element.html('/assets/webapp/table/views/table.ejs', 
-						{ 
-							'id' : that.options.id , 
-							'labels' : that.options.labels , 
-							'values' : that.options.values 
-						} );
+				/*
+				var r = this.element.find("tbody").append("<tr></tr>");
+				r.webapp_row({});
+				*/
 			} ,
 
 			_addRows : function(values) {
@@ -52,13 +60,15 @@ steal( '/assets/webapp/models/channels.js',
 				}
 			} ,
 
-			_addRow : function(values) {
-					var that = this;
-					that.numberRow = that.numberRow + 1;
-					var idTr = 'row' + that.options.id + that.numberRow;
-					$('#tbl' + that.options.id).children('tbody').append('<tr id="' + idTr +  '"></tr>');
-					var newTr = this.element.find('#' + idTr);
-					Webapp.row.newInstance(newTr, { 'id' : idTr , 'values' : values } );
+			_addRow : function(data) {
+					var row = this.element.find("[data-device-id='" + data.device +"']")[0];
+					if (row) {
+						$(row).controller().updateData(data);
+					} else if (data.device){
+						$('<tr data-device-id="'+data.device+'"></tr>')
+							.appendTo(this.element.find('tbody'))
+							.webapp_row(data);
+					}
 				} ,
 
 			_deleteRows : function() {
@@ -69,7 +79,6 @@ steal( '/assets/webapp/models/channels.js',
 					}
 				}
 			}
-
 
 		});
 

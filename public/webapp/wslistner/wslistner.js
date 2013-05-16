@@ -1,5 +1,5 @@
-steal('/assets/js/socket.io.js',
-	function($){
+steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
+	.then( function($){
 		/**
 		 * @class Webapp.channels
 		 */
@@ -11,24 +11,18 @@ steal('/assets/js/socket.io.js',
 		/** @Prototype */
 		{
 			init : function() {
-				var that = this;
+				var me = this;
 				this._super();
 				
-				//this.element.addClass('webapp_channels');
-
-				alert("Hello world listner");
-
-				//var devFact = new DeviceFactory();
-
 				devices = {};
-			    this.socket = io.connect("http://nox01.prod.nexusat.int:5000");  // events_ws_uri
+				me.socket = io.connect("http://nox01.prod.nexusat.int:5000");  // events_ws_uri
 			  
-			    this.socket.on('connect', function () {
-			        that.socket.on('mqtt', that.proxy(that._onNewMsg));
+				me.socket.on('connect', function () {
+					me.socket.on('mqtt', me.proxy(me._onNewMsg));
 			      });
 			    
-			    this.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_MQTT");
-			    this.WS_Channel.subscribe("new_topic", that.proxy(that._onNewSubscription))
+				me.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_MQTT");
+				me.WS_Channel.subscribe("new_topic", me.proxy(me._onNewSubscription))
 			},
 			
 			_onNewMsg: function(msg) {
@@ -38,21 +32,15 @@ steal('/assets/js/socket.io.js',
 		        //The message type is the last one token in array
 		        var messageType = tokens[0];
 		        
-		        this.WS_Channel.trigger("new_data", jData);
+		        if (jData.device) {
+		        	//var device = new webapp.models.device($.parseJSON(msg.payload));
+		        	var device = new webapp.models.device(jData);
+		        	//this.WS_Channel.trigger("new_data", jData);
+		        	this.WS_Channel.trigger("new_data", device);
+		        }
+		        
+		        
 		        //console.log(jData);
-		        /*
-		  		var e;
-		  		
-		  		if((e = devices[jData.device]) == undefined)
-		  		{
-		  			// new device found!
-		  			e = devices[jData.device]=devFact.buildDevice(messageType, jData);
-		  		}
-		  		else
-		  		{
-		  			e.updateData(messageType, jData);
-		  		}
-		  		*/
 			},
 			
 			_onNewSubscription: function(event, data) {

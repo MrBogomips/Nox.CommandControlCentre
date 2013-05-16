@@ -5,22 +5,16 @@
 <html lang="en">
 @header(title, header_more)
 <body>
-
 <div class="navbar">
-	@navbar.top()
+	@aria.navbar.top()
 </div>
 
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span2">
-			@{sidebar.index()}
-		</div>
-		<div class="" style="overflow: hidden; float: right">
+<div class="page-container">
 			@content
-		</div>
-	</div>
 </div>
 
+<div class="page-footer">
 @footer(footer_more)
+</div>
 </body>
 </html>	

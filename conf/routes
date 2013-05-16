@@ -19,4 +19,5 @@ GET		/map2						controllers.Map2.index
 GET		/channel/index				controllers.Channel.index
 
 # Device
-POST	/device/command				controllers.Device.receiveCommand
+POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
+GET		/device/:id/configure		controllers.Device.configureDevice(id: String)

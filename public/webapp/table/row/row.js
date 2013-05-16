@@ -1,10 +1,5 @@
-steal( '/assets/aria/steal/less/less',
-	   '/assets/aria/aria/controller/controller',
-	   '/assets/aria/jquery/view/ejs/ejs')
-.then( '/assets/webapp/table/row/views/row.ejs', 
-	   './css/row.less', 
-	   '/assets/webapp/checkbox/checkbox.js',
-	   '/assets/webapp/popup/popup.js',
+steal( '/assets/webapp/table/row/device_info/device_info.js',
+	   '/assets/webapp/table/row/device_settings/device_settings.js',
 	function($){
 
 		/**
@@ -24,8 +19,8 @@ steal( '/assets/aria/steal/less/less',
 				var that = this;
 				this._super();
 				this.element.addClass('webapp_table_row');
-				this.attributes = { 'id' : that.options.id , 'values' : that.options.values };
-				this.element.html('/assets/webapp/table/row/views/row.ejs', { 'id' : that.options.id , 'values' : that.options.values } );
+				//this.attributes = { 'id' : that.options.id , 'values' : that.options.values };
+				this.element.html('/assets/webapp/table/row/views/row2.ejs', that.options );
 			} ,
 
 			'.tool mousein' : function(el, ev) {
@@ -36,11 +31,16 @@ steal( '/assets/aria/steal/less/less',
 				$(el).tooltip('hide');
 			} ,
 
-			'#tblDevicesList .btn.more click' : function(el, ev) {
-				var that = this;
-				var anchor = $(el).closest('.button').find('.anchorInfo');
-				$(anchor).webapp_popup({ 'id' : that.options.id , 'title' : that.options.values[2].description , 'model' : webapp.models.info });
+			'.btn.settings click' : function(el, ev) {
+				var ai = this.element.find('.anchorInfo'); 
+				ai.webapp_device_settings(this.data);
 			} ,
+			
+			'.btn.more click' : function(el, ev) {
+				var ai = this.element.find('.anchorInfo'); 
+				ai.webapp_device_info(this.data);
+			} ,
+			
 
 			'#tblChannelSettings .btn.unsubscribe click' : function(el, ev) {
 				var that = this;
@@ -52,6 +52,13 @@ steal( '/assets/aria/steal/less/less',
 						$(el).closest('tr').remove();
 					}
 				}
+			},
+			
+			updateData : function(data) {
+				this.data = data;
+				//console.log(data.data.ts);
+				var e = $(this.element.find(".event-position-counter:eq(0)"));
+				e.html(parseInt(e.html()) + 1);
 			}
 
 		});

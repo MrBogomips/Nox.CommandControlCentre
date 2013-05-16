@@ -1,5 +1,12 @@
 .webapp_table {
+  background: white;
+  box-shadow: 3px 3px 5px #888888;
   table { font-size:12px; }
+
+  .button {
+    .anchorInfo { position:relative; }
+    .more.btn { width:80px; }
+  }
 
  .table-bordered tr th, .webapp_table .table-bordered tr td { line-height:26px; vertical-align:middle; }
 
@@ -21,4 +28,31 @@
  	margin-right:auto
  }
 
+}
+
+.device_settings, .device_info {
+	.btn.command {
+		width: 80px;
+	}
+	.tlabel {width: 100px;}
+	.basic-info {
+		.data {
+			float: left;
+			width: 50%;
+		}
+		.mini-map {
+			float: right;
+			width: 49%;
+			height: 115px;
+			border: solid 1px #ddd;
+			background-color: #eee;
+		}	
+	}
+	.available-commands {
+		width: 100%
+	}
+}
+
+.device_info {
+	.extended-info th.attribute {width: 100px;}
 }

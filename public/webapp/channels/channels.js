@@ -2,7 +2,6 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 	   './css/channels.less', 
 	   '/assets/webapp/models/channels.js',
 	function($){
-
 		/**
 		 * @class Webapp.channels
 		 */
@@ -68,15 +67,7 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 			} ,
 
 			_call : function() {
-				webapp.models.devices.findAll(
-					{  } , 
-					function(devices) {
-						$('#devices').controller()._addRows(devices);
-					} ,
-					function() {
-						alert('error');
-					}
-				);
+
 			} ,
 
 			_subscribe_channel: function(name, all_events) {

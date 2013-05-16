@@ -1,6 +1,5 @@
 steal( '/assets/webapp/settings/views/settings.ejs', 
 	   './css/settings.less',
-	   '/assets/webapp/modal/modal.js',
 	function($) {
 
 		/**
