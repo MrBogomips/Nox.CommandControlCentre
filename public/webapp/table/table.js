@@ -25,6 +25,7 @@ steal( '/assets/webapp/models/channels.js',
 				
 				// ascolta sul canale degli eventi direttamente
 				this.TrackingChannel = Aria.Page.getInstance().getChannelByName("tracking");
+				this.MapChannel = Aria.Page.getInstance().getChannelByName("map");
 				
 				this.TrackingChannel.subscribe('position info', this.proxy(self._updateInfo));
 				this.TrackingChannel.subscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus)); 
@@ -51,7 +52,15 @@ steal( '/assets/webapp/models/channels.js',
 						.appendTo(this.element.find('tbody'))
 						.webapp_row(data);
 				}
-				//console.log(data);
+				
+				// prepare data for map {marker: "marker id", lat: <double>, lng: <double>, title: <text>}
+				var markerInfo = {
+					marker: data.device,
+					lat: data.data.coords.lat,
+					lng: data.data.coords.lon,
+					title: data.device
+				};
+				this.MapChannel.trigger("marker_position", markerInfo);
 			},
 			
 			_updateCommandStatus : function(event, data) {

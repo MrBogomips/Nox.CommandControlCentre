@@ -18,7 +18,8 @@ steal( '/assets/webapp/models/channels.js',
 					latitude: null,
 					longitude: null			
 				},
-				cloudmadeAppKey: ""
+				cloudmadeAppKey: "",
+				markerChannel: undefined	// An aria channel where to monitor the event "marker_position"
 			}
 		},
 		/** @Prototype */
@@ -27,7 +28,7 @@ steal( '/assets/webapp/models/channels.js',
 				var self = this;
 				this._super();
 				this.element.addClass('map');
-				
+				this.markers = {};
 				
 				//projMercator = new OpenLayers.Projection("EPSG:900913"); 
 				
@@ -43,6 +44,17 @@ steal( '/assets/webapp/models/channels.js',
 	    				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
 					    maxZoom: 18
 					}).addTo(self.map);
+	            	
+	            	
+	            	
+	            	// DEMO MARKER
+	            	var marker = L.marker([pos.coords.latitude, pos.coords.longitude], {draggable:true}).addTo(self.map)
+	            	
+	            	
+	            	if (self.options.markerChannel !== undefined) {
+	            		self.options.markerChannel.subscribe("marker_position", self.proxy(self._updateMarker));
+	            	}
+	            	
 				}
 				
 				if (self.options.autoposition)
@@ -51,19 +63,18 @@ steal( '/assets/webapp/models/channels.js',
 					var pos = {coords: self.options.coords};
 					initMap(pos);
 				}
-				
-				// ascolta sul canale degli eventi direttamente
-				//this.TrackingChannel = Aria.Page.getInstance().getChannelByName("tracking");
-				
-				// this.TrackingChannel.subscribe('position info', this.proxy(self._updateInfo));
-				// this.TrackingChannel.subscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus)); 
-				
-				// monitora gli eventi dei modelli
-				// webapp.models.device.bind('created', function(ev, device) {
-				//	self._newDeviceFound(device);
-				//});
-				
-				//this.element.html('/assets/webapp/table/views/table.ejs', {})
-			}	
+			},
+			
+			/*
+			 * data is expected to be {marker: "marker id", lat: <double>, lng: <double>, title: <text>}
+			 */
+			_updateMarker: function(event, data) {
+				var marker;
+				if ((marker = this.markers[data.marker]) === undefined) {
+					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title}).addTo(this.map);
+				} else {
+					marker.setLatLng([data.lat, data.lng])
+				}
+			}
 		});  // Aria-class
 }); // steal

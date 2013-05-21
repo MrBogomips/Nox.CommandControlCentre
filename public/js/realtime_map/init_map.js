@@ -26,7 +26,6 @@ function init_map() {
                              } 
                             );
 
-
     
     map.addLayer(new OpenLayers.Layer.OSM.Mapnik("Mapnik"));
     
