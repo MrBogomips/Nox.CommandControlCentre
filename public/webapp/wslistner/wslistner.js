@@ -20,6 +20,7 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 			  
 				self.socket.on('connect', function () {
 					self.socket.on('mqtt', self.proxy(self._onNewMsg));
+					console.log('socket.io::connect');
 			      });
 			    
 				self.WS_Channel = self.app.getChannelByName("WS_MQTT");
