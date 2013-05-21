@@ -2,8 +2,7 @@
 // In particular place here your stealcommon assets loading
 // steal();
 
-steal('aria/page',
-	  '/assets/webapp/fixtures/fixtures')
+steal('aria/page')
 .then(function() {
 	var config = {
 			localization: {
@@ -28,5 +27,30 @@ steal('aria/page',
 		};
 	
 	Aria.Page.getInstance(config);
-}
-);
+	})
+.then('/assets/aria/steal/less/less',
+	  '/assets/aria/aria/controller/controller',
+	  '/assets/aria/jquery/view/ejs/ejs',
+	  '/assets/js/bootstrap.js',
+	  '/assets/js/bootstrap-modalmanager.js',
+	  '/assets/js/bootstrap-modal.js',
+	  '/assets/css/bootstrap.css',
+	  '/assets/css/bootstrap-responsive.css',
+	  '/assets/css/bootstrap-modal.css',
+	  '/assets/js/underscore.js'
+	  )
+.then('/assets/webapp/style/global.less', function() {
+	$.ajax({
+		   type: 'GET',
+		    url: '/app/configuration',
+		    async: false,
+		    contentType: "application/json",
+		    dataType: 'json',
+		    success: function(json) {
+		    	Aria.Page.getInstance().configuration = json;
+		    },
+		    error: function(e) {
+		       alert("FATAL ERROR: unable to retrieve application configuration");
+		    }
+		});
+});

@@ -1,0 +1,17 @@
+@(more: Html = Html(""))
+
+<script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("js/bootstrap.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("js/noxccc.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("aria/steal/steal.js")" type="text/javascript"></script>
+
+@more
+
+<footer>
+	<div class="modal-footer">
+		<small>
+			<strong>@Configuration.getString("nox.ccc.page_footer_signature")</strong>
+			<br>
+		</small>
+	</div>
+</footer>

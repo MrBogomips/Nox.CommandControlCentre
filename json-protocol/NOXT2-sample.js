@@ -1,0 +1,41 @@
+{
+	"device":"dev_0",
+	"data":{
+		"speed":26,
+		"objs":{
+			"input2":1,
+			"input3":0,
+			"direction":0,
+			"input1":1,
+			"input4":1,
+			"output2":1,
+			"output3":0,
+			"gps_antenna_fail":0,
+			"output1":1,
+			"power_fail":0,
+			"anti_theft_status":1,
+			"voice_call":1,
+			"battery_charging":1,
+			"moving_status":1,
+			"sleep":1,
+			"waypoint_leaving":1,
+			"battery_fault":0,
+			"waypoint_entering":1,
+			"waypoint_restricted":0,
+			"gprs_conn":0,
+			"gps_fix":0,
+			"GSM_jamming":1,
+			"max_speed_exceeded":1,
+			"ignition":0,
+			"accessory_missing":0,
+			"panic":1,
+			"tampering_sensor":1,
+			"cell_id_present":0
+		},
+		"coords":{
+			"lat":"-20.262686",						// KO
+			"lon":"-40.323989"						// KO
+		},
+		"ts":"2013-05-16 16:46:05.596000"			
+	}
+}

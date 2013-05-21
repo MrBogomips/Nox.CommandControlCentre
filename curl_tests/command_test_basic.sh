@@ -1,10 +1,10 @@
 #!/bin/bash
 
-SERVLET=http://localhost:9000/device/command
+SERVLET=http://localhost:9000/device/123/execute
 
 read -d '' DATA <<EOF
 {
-  "deviceId": "1234",
+  "device": "1234",
   "command": "CMD1",
   "arguments" : [
     {"name": "ciccio1", "value": "1234"}

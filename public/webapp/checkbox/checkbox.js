@@ -1,7 +1,4 @@
-steal( '/assets/aria/steal/less/less',
-	   '/assets/aria/aria/controller/controller',
-	   '/assets/aria/jquery/view/ejs/ejs')
-.then( '/assets/webapp/checkbox/views/checkbox.ejs', 
+steal( '/assets/webapp/checkbox/views/checkbox.ejs', 
 	   './css/checkbox.less',
 	function($){
 

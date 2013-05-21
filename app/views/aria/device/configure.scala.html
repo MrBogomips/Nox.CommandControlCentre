@@ -1,0 +1,77 @@
+@(deviceId:String)
+
+<div class="basic-info">
+	<h4>Basic Info</h4>
+	<div class="data">
+		<table class="table table-condensed table-bordered table-striped">
+			<tbody>
+				<tr>
+					<td class="tlabel"><b>Manufacturer</b></td>
+					<td>Texas Instruments</td>
+				</tr>
+				<tr>
+					<td class="tlabel"><b>Model</b></td>
+					<td>TI-KD234-L</td>
+				</tr>
+				<tr>
+					<td class="tlabel"><b>Serial Number</b></td>
+					<td>2398479238472-X</td>
+				</tr>
+				<tr>
+					<td class="tlabel"><b>Uptime</b></td>
+					<td>34 days and 23 hours</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="mini-map">Mini map</div>
+</div>
+
+<div class="available-commands">
+	<table class="table table-condensed table-bordered table-striped">
+		<caption>Available commands</caption>
+		<thead>
+			<tr>
+				<th>Command</th>
+				<th colspan="2">Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><em>Reset</em></td>
+				<td>Reset the device.</td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="RESET" data-command-confirm="true">Execute</button></td>
+			</tr>
+			<tr>
+				<td><em>Power Off</em></td>
+				<td>Switch off the device.</td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="POWEROFF" data-command-confirm="true">Execute</button></td>
+			</tr>
+			<tr>
+				<td><em>Activate Out 1</em></td>
+				<td>Activate the output line no. 1</td>
+				<td><button class="btn btn-mini command" data-command-name="OUT1_ACTIVATE">Execute</button></td>
+			</tr>
+			<tr>
+				<td><em>Deactivate Out 1</em></td>
+				<td>Deactivate the output line no. 1</td>
+				<td><button class="btn btn-mini command" data-command-name="OUT1_DEACTIVATE">Execute</button></td>
+			</tr>
+			<tr>
+				<td><em>Deactivate «Panic»</em></td>
+				<td>Deactivate the panic status</td>
+				<td><button class="btn btn-mini command" data-command-name="DEACTIVATE_PANIC">Execute</button></td>
+			</tr>
+			
+			<tr>
+				<td><em>Set Max Speed</em></td>
+				<td>Set the maximum speed threshold</td>
+				<td><button class="btn btn-mini command" data-command-name="MAX_SPEED" data-command-args="true">Execute</button></td>
+			</tr>
+		
+		
+		
+		
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,43 @@
+{
+	"message_type": "",
+	"message_subtype": "",
+	"device":4000,
+	"data":{
+		"speed":0,
+		"objs":{
+			"input2":false,
+			"input3":0,
+			"direction":0,
+			"input1":false,
+			"input4":false,
+			"output2":false,
+			"output3":false,
+			"gps_antenna_fail":false,
+			"output1":false,
+			"power_fail":false,
+			"anti_theft_status":0,
+			"voice_call":false,
+			"battery_charging":true,
+			"moving_status":false,
+			"sleep":false,
+			"waypoint_leaving":false,
+			"battery_fault":false,
+			"waypoint_entering":false,
+			"waypoint_restricted":false,
+			"gprs_conn":true,
+			"gps_fix":true,
+			"GSM_jamming":false,
+			"max_speed_exceeded":false,
+			"ignition":true,
+			"accessory_missing":false,
+			"panic":true,
+			"tampering_sensor":false,
+			"cell_id_present":true
+		},
+		"coords":{
+			"lat":-20.262663,
+			"lon":-40.324045
+		},
+		"ts":"2013-03-21 16:01:56.000000"
+	}
+}

@@ -1,0 +1,58 @@
+@()
+
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+            steal('/assets/webapp/webapp_init.js')
+            .then('/assets/webapp/channels/channels.js',
+                  '/assets/webapp/settings/settings.js',
+                  '/assets/webapp/table/table.js',
+                  '/assets/webapp/fixtures/fixtures.js',
+                  '/assets/webapp/webapp.less',
+                  '/assets/webapp/wslistner/wslistner.js',
+                  '/assets/webapp/map/map.js'
+                  )
+            .then(function() {
+            		var wslistner = new webapp.wslistner(window);
+            		
+                    $('#channels').webapp_channels();
+                    $('#devices').webapp_table();
+                    
+                    var resizeMapArea = function(){
+                    	$('.page-container').height(
+                    		$('body').height() - 
+                    		$('.navbar').height() -
+                    		$('.page-footer').height()
+                    	);
+                    }; 
+                    
+                    $(window).resize(resizeMapArea);
+                    
+                    resizeMapArea();
+                    
+                    var map_opts = {
+                    	autoposition: false, 
+                    	coords:{
+                    		latitude: -20.308891, 
+                    		longitude: -40.301285
+						},
+						cloudmadeAppKey : "e7848c2072dc4807bd7b06877dcd872a"
+					};
+                    
+                    $("#map").webapp_map(map_opts);
+            });
+</script>
+}
+
+@aria.master.authenticated("Realtime Map", header_more = header_more, footer_more = footer_scripts) {
+<div id='map' class="map fullscreen"></div>
+<div class='devices_table' style="">
+    <div>
+        <div id='settings'></div>
+        <div id='channels'></div>
+    </div>
+    <div id='devices'></div>
+</div>
+}

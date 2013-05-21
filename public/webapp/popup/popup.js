@@ -1,11 +1,5 @@
-steal( '/assets/aria/steal/less/less',
-	   '/assets/aria/aria/controller/controller',
-	   '/assets/aria/jquery/view/ejs/ejs')
-.then( '/assets/webapp/popup/views/popup.ejs', 
+steal( '/assets/webapp/popup/views/popup.ejs', 
 	   './css/popup.less', 
-	   '/assets/js/bootstrap.js', 
-	   '/assets/css/bootstrap.css', 
-	   '/assets/css/bootstrap-responsive.css',
 	   '/assets/webapp/models/info.js',
 	function($){
 
@@ -48,7 +42,7 @@ steal( '/assets/aria/steal/less/less',
 				var that = this;
 				var html;
 				var id = 'pop' + this.options.id;
-				this.element.html('popup/views/popup.ejs', { 'id' : id , 'title' : info.title , 'general' : info.general , 'table' : { 'id' : that.options.id , 'labels' : [ 'Attribute' , 'Current Value' ] , 'values' : info.values } } );
+				this.element.html('/assets/webapp/popup/views/popup.ejs', { 'id' : id , 'title' : info.title , 'general' : info.general , 'table' : { 'id' : that.options.id , 'labels' : [ 'Attribute' , 'Current Value' ] , 'values' : info.values } } );
 			} ,
 
 			'.restart.btn click' : function(el, ev) {

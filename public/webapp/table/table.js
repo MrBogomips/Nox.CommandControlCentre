@@ -1,13 +1,5 @@
-steal( '/assets/aria/steal/less/less',
-	   '/assets/aria/aria/controller/controller',
-	   '/assets/aria/jquery/view/ejs/ejs',
-	   '/assets/webapp/models/channels.js',
-	   '/assets/webapp/models/devices.js')
-.then( '/assets/webapp/table/views/table.ejs', 
-	   './css/table.less', 
-	   '/assets/js/bootstrap.js', 
-	   '/assets/css/bootstrap.css', 
-	   '/assets/css/bootstrap-responsive.css',
+steal( '/assets/webapp/models/channels.js',
+	   '/assets/webapp/models/device.js',
 	   '/assets/webapp/table/row/row.js',
 	function($){
 
@@ -27,34 +19,57 @@ steal( '/assets/aria/steal/less/less',
 		/** @Prototype */
 		{
 			init : function() {
-				var that = this;
+				var self = this;
 				this._super();
 				this.element.addClass('webapp_table');
-				this.numberRow = 0;
-
-				this._callView();
+				
+				// ascolta sul canale degli eventi direttamente
+				this.TrackingChannel = Aria.Page.getInstance().getChannelByName("tracking");
+				
+				this.TrackingChannel.subscribe('position info', this.proxy(self._updateInfo));
+				this.TrackingChannel.subscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus)); 
+				
+				// monitora gli eventi dei modelli
+				//webapp.models.device.bind('created', function(ev, device) {
+				//	self._newDeviceFound(device);
+				//});
+				
+				this.element.html('/assets/webapp/table/views/table.ejs', {})
 			} ,
+			
+			_newDeviceFound : function(device) {
+				console.log('New device arrived ' + device);
+			} ,
+			
+			_updateInfo : function(event, data) {
+				//$("#counter").html(parseInt($("#counter").html()) + 1);
+				var row = this.element.find("[data-device-id='" + data.device +"']")[0];
+				if (row) {
+					$(row).controller().updateData(data);
+				} else if (data.device){
+					$('<tr data-device-id="'+data.device+'"></tr>')
+						.appendTo(this.element.find('tbody'))
+						.webapp_row(data);
+				}
+				//console.log(data);
+			},
+			
+			_updateCommandStatus : function(event, data) {
+				var row = this.element.find("[data-device-id='" + data.device +"']")[0];
+				if (row) {
+					$(row).controller().updateData(data);
+				} else {
+					alert("FATAL ERROR: I've received a command request/response message for an unmonitored device ["+data.device+"]")
+				}
+			},
 
 			_callView : function() {
 				var that = this;
-				this.element.html('/assets/webapp/table/views/table.ejs', { 'id' : that.options.id , 'labels' : that.options.labels , 'values' : that.options.values } );
+				/*
+				var r = this.element.find("tbody").append("<tr></tr>");
+				r.webapp_row({});
+				*/
 			} ,
-
-			_addRows : function(values) {
-				var that = this;
-				for (var i = 0; i < values.length; i++) {
-					that._addRow(values[i]);	
-				}
-			} ,
-
-			_addRow : function(values) {
-					var that = this;
-					that.numberRow = that.numberRow + 1;
-					var idTr = 'row' + that.options.id + that.numberRow;
-					$('#tbl' + that.options.id).children('tbody').append('<tr id="' + idTr +  '"></tr>');
-					var newTr = this.element.find('#' + idTr);
-					Webapp.row.newInstance(newTr, { 'id' : idTr , 'values' : values } );
-				} ,
 
 			_deleteRows : function() {
 				var arrRows = this.element.find('tbody tr');
@@ -64,7 +79,6 @@ steal( '/assets/aria/steal/less/less',
 					}
 				}
 			}
-
 
 		});
 

@@ -3,6 +3,7 @@
 # ~~~~
 
 # Map static resources from the /public folder to the /assets URL path
+GET 	/assets/js/routes			controllers.Application.javascriptRoutes
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Home page
@@ -14,8 +15,12 @@ GET		/dashboard					controllers.Dashboard.index
 GET		/map						controllers.Map.index
 GET		/map2						controllers.Map2.index
 
+# Client configuration
+GET		/app/configuration			controllers.Application.clientConfiguration
+
 # Channels' management
 GET		/channel/index				controllers.Channel.index
 
 # Device
-POST	/device/command				controllers.Device.receiveCommand
+POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
+GET		/device/:id/configure		controllers.Device.configureDevice(id: String)

@@ -1,5 +1,11 @@
 import play.api._
 
+package object globals {
+  lazy val Configuration = play.Configuration.root()
+}
+
+
+
 object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
