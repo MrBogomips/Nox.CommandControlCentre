@@ -36,11 +36,18 @@ case class DeviceCommandRequest(val device: String, /*val tranId: String, */ val
 	
 	      val mqRequestTopic = conf.getString("nox.mqtt.Command.RequestTopic")
 	      val mqBrokerURI = conf.getString("nox.mqtt.BrokerURI")
-	      val clientId = MqttClient.generateClientId()
+	      val clientId = { // MqttClient constructors requires a 22 long string
+	        val t = MqttClient.generateClientId()
+	        if (t.length() > 22)
+	          t.substring(0, 22)
+	        else
+	          t
+	      }
+	      
 	
 	      Logger.debug(s"MQTT: Client created... try to connect [$mqBrokerURI] on clientId[$clientId]");
 	
-	      val mqtt = new MqttClient(mqBrokerURI, clientId.substring(0, 22))
+	      val mqtt = new MqttClient(mqBrokerURI, clientId)
 	
 	      mqtt.connect();
 	

@@ -124,7 +124,7 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 					this._filterList(el.val());
 				}
 				else {
-					this.element.fin('.inputChannels').attr('class', '');
+					this.element.find('.inputChannels').attr('class', '');
 				}
 			} ,
 
