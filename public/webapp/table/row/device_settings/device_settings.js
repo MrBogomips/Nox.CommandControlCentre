@@ -36,6 +36,7 @@ steal(
 				
 				var showAlertInfo = function(isSuccess, message) {
 					var el = self.element.find('.alerts');
+					
 					var html = $('<div class="alert ' + (isSuccess ? 'alert-success' : 'alert-error') + ' fade in">'+
 							     '<button type="button" class="close" data-dismiss="alert">x</button>'+
 							     '<div class="message">'+message+'</div></div>');
@@ -53,7 +54,7 @@ steal(
 						 dataType: "json",
 						 data: JSON.stringify(command),
 						 success: function(data,textStatus,jqXHR){
-							 showAlertInfo(true, "Command ["+data.tranId+"]: " + data.description );
+							 showAlertInfo(data.status != "ERR", "Command ["+data.tranId+"]: " + data.description );
 							 data.device = self.options.device;
 							 data.message_type = "tracking";
 							 data.message_subtype = "commandRequest";

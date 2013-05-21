@@ -59,8 +59,8 @@ case class DeviceCommandRequest(val device: String, /*val tranId: String, */ val
 	      DeviceCommandResponseOK(cmdReqEnh.tranId, "Command sent successfully")
 	    } catch {
 	      case e: Exception =>
-	        Logger.error("exception caught: " + e.printStackTrace());
-	        DeviceCommandResponseERR(cmdReqEnh.tranId, "MAnnaggia la bubbazza")
+	        Logger.error("exception caught: " + e.printStackTrace())
+	        DeviceCommandResponseERR(cmdReqEnh.tranId, e.getMessage())
 	    }
 	  }
     
