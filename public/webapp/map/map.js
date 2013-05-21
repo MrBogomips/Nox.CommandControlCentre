@@ -48,7 +48,7 @@ steal( '/assets/webapp/models/channels.js',
 	            	
 	            	
 	            	// DEMO MARKER
-	            	var marker = L.marker([pos.coords.latitude, pos.coords.longitude], {draggable:true}).addTo(self.map)
+	            	//var marker = L.marker([pos.coords.latitude, pos.coords.longitude], {draggable:true}).addTo(self.map)
 	            	
 	            	
 	            	if (self.options.markerChannel !== undefined) {

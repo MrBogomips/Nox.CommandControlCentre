@@ -68,7 +68,7 @@ steal( '/assets/webapp/models/channels.js',
 				if (row) {
 					$(row).controller().updateData(data);
 				} else {
-					alert("FATAL ERROR: I've received a command request/response message for an unmonitored device ["+data.device+"]")
+					console.log("WARNING: I've received a command request/response message for an unmonitored device ["+data.device+"]")
 				}
 			},
 
