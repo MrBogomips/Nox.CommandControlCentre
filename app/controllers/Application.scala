@@ -33,7 +33,8 @@ object Application extends Controller {
         "mqttClientTopic" -> Demo.mqttClientTopic,
         "mqttApplicationTopic" -> Demo.mqttApplicationTopic,
         "mqttUserTopic" -> Demo.mqttUserTopic,
-        "mqttSessionTopic" -> Demo.mqttSessionTopic
+        "mqttSessionTopic" -> Demo.mqttSessionTopic,
+        "eventsWebSocket" -> app.eventsWebSocket
     )
       
       

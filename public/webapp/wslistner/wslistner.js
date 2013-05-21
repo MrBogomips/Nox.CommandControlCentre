@@ -16,7 +16,7 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 				this._super();
 				
 				devices = {};
-				self.socket = io.connect("http://nox01.prod.nexusat.int:5000");  // events_ws_uri
+				self.socket = io.connect(Aria.Page.getInstance().configuration.eventsWebSocket);  // events_ws_uri
 			  
 				self.socket.on('connect', function () {
 					self.socket.on('mqtt', self.proxy(self._onNewMsg));
