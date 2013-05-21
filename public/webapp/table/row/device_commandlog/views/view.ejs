@@ -1,0 +1,47 @@
+<!-- Device Commands -->
+<div class="modal hide fade log" tabindex="-1" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>Device «<%=device%>» command queue</h3>
+  </div>
+  <div class="alerts"></div>
+  <div class="modal-body">
+    <table class="table table-condensed table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Transaction Id</th>
+				<th>Command</th>
+				<th>Replies</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% 
+				for (var tx in txs)
+				{
+			%>
+			<tr>
+				<td><em><%=tx%></em></td>
+				<td><%if (txs[tx].request !== null ) {%>
+					<%=txs[tx].request.command.command%>
+					<%}%>
+				</td> 
+				<td>
+				<ul>
+				<% for (var r in txs[tx].responses) { %> 
+					<li><span class="label label-<%if (txs[tx].responses[r].exitstatus == "FAILED") {%>important<%} else {%>success <%}%>">
+						<%=txs[tx].responses[r].exitstatus%>
+						</span>
+						<%=txs[tx].responses[r].message%>
+					</li>
+				<% } %>
+				</ul>
+				</td>
+			</tr>
+			<%  }  %>
+		</tbody>
+	</table>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>

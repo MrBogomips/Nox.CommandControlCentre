@@ -44,17 +44,29 @@ steal(
 				}
 				
 				this.pendingCommand = function () {
+						var self = this;
+						var command = this._buildCommand(cmdName, cmdArgs);
 						$.ajax({
 						 type: "POST",
 						 url: "/device/"+this.options.device+"/execute",
 					     contentType: "application/json; charset=UTF-8",
 						 dataType: "json",
-						 data: this._buildCommand(cmdName, cmdArgs),
+						 data: JSON.stringify(command),
 						 success: function(data,textStatus,jqXHR){
-							 showAlertInfo(true, "Command executed successfully");
+							 showAlertInfo(true, "Command ["+data.tranId+"]: " + data.description );
+							 data.device = self.options.device;
+							 data.message_type = "tracking";
+							 data.message_subtype = "commandRequest";
+							 data.command = command;
+							 var app = Aria.Page.getInstance();
+							 var ch = app.getChannelByName("tracking");
+							 ch.trigger(data.message_subtype, data);
 						},
 						 error: function(jqXHR,textStatus,errorThrown){
-							 showAlertInfo(false, "Ouch! Something went wrong…");
+							 var msg = "HTTP-" + jqXHR.status;
+							 msg += ": " + jqXHR.statusText + "<br>";
+							 msg += "Server response: " + jqXHR.responseText;
+							 showAlertInfo(false, msg);
 						 }
 					});
 				}
@@ -80,21 +92,23 @@ steal(
 				this.pendingCommand = undefined;
 			},
 			
+			/*
 			_createUUID: function (){
 				return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 				    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 				    return v.toString(16);
 				});
-			}, 
+			},
+			*/ 
 			
 			_buildCommand : function (command, args) {
-				return JSON.stringify({
+				return {
 				  device: this.options.device,
-				  tranId: this._createUUID(),
+				  //tranId: this._createUUID(),
 				  command: command,
 				  sent_time: new Date(),
 				  arguments : args === undefined ? [] : args
-				})
+				};
 			}
 		});
 

@@ -9,6 +9,7 @@ object Channel extends Controller {
     val channels = Json.obj(
     		"channels" -> Json.arr("MTC1", "NOXCOM", "NOXT1", "NOXT2")
     		)
+    		
     Ok(channels)
   }
 }

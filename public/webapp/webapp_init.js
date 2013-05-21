@@ -39,5 +39,18 @@ steal('aria/page')
 	  '/assets/css/bootstrap-modal.css',
 	  '/assets/js/underscore.js'
 	  )
-.then('/assets/webapp/style/global.less'
-		);
+.then('/assets/webapp/style/global.less', function() {
+	$.ajax({
+		   type: 'GET',
+		    url: '/app/configuration',
+		    async: false,
+		    contentType: "application/json",
+		    dataType: 'json',
+		    success: function(json) {
+		    	Aria.Page.getInstance().configuration = json;
+		    },
+		    error: function(e) {
+		       alert("FATAL ERROR: unable to retrieve application configuration");
+		    }
+		});
+});

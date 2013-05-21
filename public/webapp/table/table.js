@@ -24,13 +24,15 @@ steal( '/assets/webapp/models/channels.js',
 				this.element.addClass('webapp_table');
 				
 				// ascolta sul canale degli eventi direttamente
-				this.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_MQTT");
-				this.WS_Channel.subscribe('new_data', this.proxy(self._updateContent));
+				this.TrackingChannel = Aria.Page.getInstance().getChannelByName("tracking");
+				
+				this.TrackingChannel.subscribe('position info', this.proxy(self._updateInfo));
+				this.TrackingChannel.subscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus)); 
 				
 				// monitora gli eventi dei modelli
-				webapp.models.device.bind('created', function(ev, device) {
-					self._newDeviceFound(device);
-				});
+				//webapp.models.device.bind('created', function(ev, device) {
+				//	self._newDeviceFound(device);
+				//});
 				
 				this.element.html('/assets/webapp/table/views/table.ejs', {})
 			} ,
@@ -39,10 +41,26 @@ steal( '/assets/webapp/models/channels.js',
 				console.log('New device arrived ' + device);
 			} ,
 			
-			_updateContent : function(event, data) {
+			_updateInfo : function(event, data) {
 				//$("#counter").html(parseInt($("#counter").html()) + 1);
-				this._addRow(data);
+				var row = this.element.find("[data-device-id='" + data.device +"']")[0];
+				if (row) {
+					$(row).controller().updateData(data);
+				} else if (data.device){
+					$('<tr data-device-id="'+data.device+'"></tr>')
+						.appendTo(this.element.find('tbody'))
+						.webapp_row(data);
+				}
 				//console.log(data);
+			},
+			
+			_updateCommandStatus : function(event, data) {
+				var row = this.element.find("[data-device-id='" + data.device +"']")[0];
+				if (row) {
+					$(row).controller().updateData(data);
+				} else {
+					alert("FATAL ERROR: I've received a command request/response message for an unmonitored device ["+data.device+"]")
+				}
 			},
 
 			_callView : function() {
@@ -52,24 +70,6 @@ steal( '/assets/webapp/models/channels.js',
 				r.webapp_row({});
 				*/
 			} ,
-
-			_addRows : function(values) {
-				var that = this;
-				for (var i = 0; i < values.length; i++) {
-					that._addRow(values[i]);	
-				}
-			} ,
-
-			_addRow : function(data) {
-					var row = this.element.find("[data-device-id='" + data.device +"']")[0];
-					if (row) {
-						$(row).controller().updateData(data);
-					} else if (data.device){
-						$('<tr data-device-id="'+data.device+'"></tr>')
-							.appendTo(this.element.find('tbody'))
-							.webapp_row(data);
-					}
-				} ,
 
 			_deleteRows : function() {
 				var arrRows = this.element.find('tbody tr');

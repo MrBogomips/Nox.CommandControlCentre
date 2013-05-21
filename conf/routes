@@ -15,6 +15,9 @@ GET		/dashboard					controllers.Dashboard.index
 GET		/map						controllers.Map.index
 GET		/map2						controllers.Map2.index
 
+# Client configuration
+GET		/app/configuration			controllers.Application.clientConfiguration
+
 # Channels' management
 GET		/channel/index				controllers.Channel.index
 

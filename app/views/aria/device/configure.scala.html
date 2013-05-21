@@ -38,20 +38,40 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td><em>Power off</em></td>
+				<td><em>Reset</em></td>
+				<td>Reset the device.</td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="RESET" data-command-confirm="true">Execute</button></td>
+			</tr>
+			<tr>
+				<td><em>Power Off</em></td>
 				<td>Switch off the device.</td>
-				<td><button class="btn btn-mini btn-danger command" data-command-name="power-off" data-command-confirm="true">Execute</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="POWEROFF" data-command-confirm="true">Execute</button></td>
 			</tr>
 			<tr>
-				<td><em>Bell ring</em></td>
-				<td>Produce an isolated bell ring</td>
-				<td><button class="btn btn-mini command" data-command-name="bell-ring">Execute</button></td>
+				<td><em>Activate Out 1</em></td>
+				<td>Activate the output line no. 1</td>
+				<td><button class="btn btn-mini command" data-command-name="OUT1_ACTIVATE">Execute</button></td>
 			</tr>
 			<tr>
-				<td><em>Set consumption</em></td>
-				<td>Set the maximum consumption level before sending a warning</td>
-				<td><button class="btn btn-mini command" data-command-name="set-consumption" data-command-args="true">Execute…</button></td>
+				<td><em>Deactivate Out 1</em></td>
+				<td>Deactivate the output line no. 1</td>
+				<td><button class="btn btn-mini command" data-command-name="OUT1_DEACTIVATE">Execute</button></td>
 			</tr>
+			<tr>
+				<td><em>Deactivate «Panic»</em></td>
+				<td>Deactivate the panic status</td>
+				<td><button class="btn btn-mini command" data-command-name="DEACTIVATE_PANIC">Execute</button></td>
+			</tr>
+			
+			<tr>
+				<td><em>Set Max Speed</em></td>
+				<td>Set the maximum speed threshold</td>
+				<td><button class="btn btn-mini command" data-command-name="MAX_SPEED" data-command-args="true">Execute</button></td>
+			</tr>
+		
+		
+		
+		
 		</tbody>
 	</table>
 </div>

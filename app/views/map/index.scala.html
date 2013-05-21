@@ -3,7 +3,7 @@
 @master.authenticated("Realtime Map") {
 
 <script type="text/javascript">
-var MQTT_BROKER_URI = '@config.getString("nox.ccc.events_ws_uri")';
+var MQTT_BROKER_URI = '@Configuration.getString("nox.ccc.events_ws_uri")';
 </script>
 	
 <script type="text/javascript" src="/assets/javascripts/socket.io.js"></script>

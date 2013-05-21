@@ -11,35 +11,38 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 		/** @Prototype */
 		{
 			init : function() {
-				var me = this;
+				var self = this;
+				this.app = Aria.Page.getInstance();
 				this._super();
 				
 				devices = {};
-				me.socket = io.connect("http://nox01.prod.nexusat.int:5000");  // events_ws_uri
+				self.socket = io.connect("http://nox01.prod.nexusat.int:5000");  // events_ws_uri
 			  
-				me.socket.on('connect', function () {
-					me.socket.on('mqtt', me.proxy(me._onNewMsg));
+				self.socket.on('connect', function () {
+					self.socket.on('mqtt', self.proxy(self._onNewMsg));
 			      });
 			    
-				me.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_MQTT");
-				me.WS_Channel.subscribe("new_topic", me.proxy(me._onNewSubscription))
+				self.WS_Channel = self.app.getChannelByName("WS_MQTT");
+				self.WS_Channel.subscribe("new_topic", self.proxy(self._onNewSubscription));
+				
+				
+				self._onNewSubscription(null, {topic: self.app.configuration.mqttClientTopic});
+				self._onNewSubscription(null, {topic: self.app.configuration.mqttApplicationTopic});
+				self._onNewSubscription(null, {topic: self.app.configuration.mqttUserTopic});
+				self._onNewSubscription(null, {topic: self.app.configuration.mqttSessionTopic});
 			},
 			
 			_onNewMsg: function(msg) {
-				var jData = $.parseJSON(msg.payload);
-		        var tokens = msg.topic.split("/");
-		       
-		        //The message type is the last one token in array
-		        var messageType = tokens[0];
-		        
-		        if (jData.device) {
-		        	//var device = new webapp.models.device($.parseJSON(msg.payload));
-		        	var device = new webapp.models.device(jData);
-		        	//this.WS_Channel.trigger("new_data", jData);
-		        	this.WS_Channel.trigger("new_data", device);
-		        }
-		        
-		        
+				try {
+			        var payload = $.parseJSON(msg.payload);
+			        var channel = this.app.getChannelByName(payload.message_type);  // es.: tracking, chat, …
+			        channel.trigger(payload.message_subtype, payload); // es.: position, info, beginchat, …
+			        if (payload.message_subtype == "commandResponse") {
+			        	console.log(payload);
+			        }
+				} catch(err) {
+					console.log("Ws listner: [" + msg + "] wasn't a valid JSON or wasn't in the expected format => Ignored");
+				}
 		        //console.log(jData);
 			},
 			

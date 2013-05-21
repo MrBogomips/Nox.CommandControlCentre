@@ -3,7 +3,7 @@
 @master.authenticated("Realtime Map") {
 
 <script type="text/javascript">
-var MQTT_BROKER_URI = '@config.getString("nox.webapp.mqttBrokerURI")';
+var MQTT_BROKER_URI = '@Configuration.getString("nox.webapp.mqttBrokerURI")';
 </script>
 	
 <script type="text/javascript" src="/assets/javascripts/socket.io.js"></script>

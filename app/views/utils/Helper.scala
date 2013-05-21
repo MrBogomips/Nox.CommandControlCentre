@@ -1,5 +1,6 @@
 package views.utils
 
 object Helper {
-	val config = play.Configuration.root()
+	val Configuration = globals.Configuration
+	val Applicaton = globals.Application
 }
