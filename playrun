@@ -2,10 +2,8 @@
 #
 
 cd /root/nox/NoxSpheraWebApp
-#play "start 80"
-#play "run 80"
 
-target/start -Dhttp.port=80
+target/start -Dhttp.port=80 -Dconfig.file=conf/application.prod.conf
 
 echo "servizio in memoria e in esecuzione..."
 

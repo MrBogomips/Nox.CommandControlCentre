@@ -69,6 +69,9 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					this.data = data;
 					var e = $(this.element.find(".event-position-counter:eq(0)"));
 					e.html(parseInt(e.html()) + 1);
+					
+					
+					
 					break;
 				case "position":
 					alert("controller row: TODO: update position data only");
