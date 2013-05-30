@@ -24,6 +24,7 @@ object Application extends Controller {
   
   // -- Client Confguration
   def clientConfiguration = Action { implicit request =>
+    val config = globals.Configuration
     val app = globals.Application
     val json = Json.obj(
         "applicationId" -> app.applicationId,
@@ -34,7 +35,8 @@ object Application extends Controller {
         "mqttApplicationTopic" -> Demo.mqttApplicationTopic,
         "mqttUserTopic" -> Demo.mqttUserTopic,
         "mqttSessionTopic" -> Demo.mqttSessionTopic,
-        "eventsWebSocket" -> app.eventsWebSocket
+        "eventsWebSocket" -> app.eventsWebSocket,
+        "eventsOutOfSequencePolicy" -> config.getString("nox.ccc.events_out_of_seq_policy")
     )
       
       

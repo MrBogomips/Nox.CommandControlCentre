@@ -61,6 +61,10 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					}
 				}
 			},
+			// Check if the passed data is older than the current
+			checkOldData : function(data) {
+				return this.data.data.ts > data.data.ts;
+			},
 			
 			updateData : function(data) {
 				var data_type = data.message_subtype

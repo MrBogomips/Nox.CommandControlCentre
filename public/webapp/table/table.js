@@ -43,10 +43,14 @@ steal( '/assets/webapp/models/channels.js',
 			} ,
 			
 			_updateInfo : function(event, data) {
-				//$("#counter").html(parseInt($("#counter").html()) + 1);
 				var row = this.element.find("[data-device-id='" + data.device +"']")[0];
+				var discard = false;
 				if (row) {
-					$(row).controller().updateData(data);
+					if (Aria.Page.getInstance().configuration.eventsOutOfSequencePolicy == "DISCARD") {
+						discard = $(row).controller().checkOldData(data);
+					}
+					if (!discard)
+						$(row).controller().updateData(data);
 				} else if (data.device){
 					$('<tr data-device-id="'+data.device+'"></tr>')
 						.appendTo(this.element.find('tbody'))
@@ -54,13 +58,15 @@ steal( '/assets/webapp/models/channels.js',
 				}
 				
 				// prepare data for map {marker: "marker id", lat: <double>, lng: <double>, title: <text>}
-				var markerInfo = {
-					marker: data.device,
-					lat: data.data.coords.lat,
-					lng: data.data.coords.lon,
-					title: data.device
-				};
-				this.MapChannel.trigger("marker_position", markerInfo);
+				if (!discard) {
+					var markerInfo = {
+						marker: data.device,
+						lat: data.data.coords.lat,
+						lng: data.data.coords.lon,
+						title: data.device
+					};
+					this.MapChannel.trigger("marker_position", markerInfo);
+				}
 			},
 			
 			_updateCommandStatus : function(event, data) {
