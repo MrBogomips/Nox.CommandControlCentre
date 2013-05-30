@@ -42,7 +42,7 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 			        	console.log(payload);
 			        }
 				} catch(err) {
-					console.log("Ws listner: [" + msg + "] wasn't a valid JSON or wasn't in the expected format => Ignored");
+					console.log("Ws listner: [" + msg + "] with err [" + err.message + "] wasn't a valid JSON or wasn't in the expected format => Ignored");
 				}
 		        //console.log(jData);
 			},

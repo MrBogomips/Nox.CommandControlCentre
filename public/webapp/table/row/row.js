@@ -71,11 +71,33 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 				switch (data_type) {
 				case "info":
 					this.data = data;
-					var e = $(this.element.find(".event-position-counter:eq(0)"));
+					var e = $(this.element.find(".counter:eq(0)"));
 					e.html(parseInt(e.html()) + 1);
-					
-					
-					
+					// ignition
+					var e = $(this.element.find(".ignition:eq(0)"));
+					if (data.data.objs.ignition == 1) {
+						e.html("on")
+						 .addClass("label-success")
+						 .removeClass("label-important");
+					} else {
+						e.html("off")
+						 .addClass("label-important")
+						 .removeClass("label-success");
+					}
+					// moving
+					var e = $(this.element.find(".moving:eq(0)"));
+					if (data.data.objs.ignition == 1) {
+						e.html("moving")
+						 .addClass("label-success")
+						 .removeClass("label-important");
+					} else {
+						e.html("stop")
+						 .addClass("label-important")
+						 .removeClass("label-success");
+					}
+					// speed
+					var e = $(this.element.find(".speed:eq(0)"));
+					e.html(data.data.speed+"Km/h");
 					break;
 				case "position":
 					alert("controller row: TODO: update position data only");
