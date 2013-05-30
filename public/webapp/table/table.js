@@ -38,6 +38,13 @@ steal( '/assets/webapp/models/channels.js',
 				this.element.html('/assets/webapp/table/views/table.ejs', {})
 			} ,
 			
+			destroy : function(){
+				var self = this;
+				this.TrackingChannel.unsubscribe('position info', this.proxy(self._updateInfo));
+				this.TrackingChannel.unsubscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus)); 
+			    this._super();
+			},
+			
 			_newDeviceFound : function(device) {
 				console.log('New device arrived ' + device);
 			} ,
