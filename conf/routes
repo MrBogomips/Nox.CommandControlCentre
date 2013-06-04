@@ -7,11 +7,17 @@ GET 	/assets/js/routes			controllers.Application.javascriptRoutes
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                           controllers.Application.login
 
-# Login page
-GET     /login                      controllers.Login.index
+# Login / Logout
+GET     /login                      controllers.Application.login
+POST    /authenticate               controllers.Application.authenticate
+GET		/logout						controllers.Application.logout
+
+# Dashboard
 GET		/dashboard					controllers.Dashboard.index
+
+# Maps
 GET		/map						controllers.Map.index
 GET		/map2						controllers.Map2.index
 

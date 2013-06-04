@@ -1,4 +1,4 @@
-@(message: String)
+@(form: play.api.data.Form[(String,String)], action: String)(implicit flash: Flash)
 
 @master.public("Login") {
 
@@ -6,38 +6,26 @@
 	<h1>NoxST :: CCC</h1>
 	<p class="lead">Command and Control Centre</p>
 
-	<form name="login" class="form-inline" onsubmit="javascript:return doSimulateLogin();">
-		<input type="text" id="username" placeholder="username">
-		<input type="password" id="password" class="input-small" placeholder="password">
+	<form name="login" class="form-inline" action="@action" method="POST">
+		
+        
+        
+		<input type="text" name="login" placeholder="login">
+		<input type="password" name="password" class="input-small" placeholder="password">
 		<button type="submit" class="btn btn-primary">Log in</button>
+		@flash.get("success").map { message =>
+            <p class="success">
+                <small>@message</small>
+            </p>
+        }
+		@form.globalError.map { error =>
+            <p class="error">
+                <small>@error.message</small>
+            </p>
+        }
 	</form>
-
-
-<script type="text/javascript">
-
-	function doSimulateLogin(){
-		var username = document.getElementById('username').value;
-		var password = document.getElementById('password').value;
-		
-		if(username == 'admin' && password == 'admin'){
-			document.forms['login'].action="@routes.Map.index";
-			document.forms['login'].submit();
-			return true;
-		}
-		
-		else{
-			alert('Access Denied');
-			return false;
-			
-		}
-		
-	}
-	
-	
-
-</script>
 	
 </div>
 
-<pre>@message</pre>
+
 }
