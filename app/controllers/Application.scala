@@ -71,6 +71,7 @@ object Application extends ControllerBase {
    * Login page.
    */
   def login = Action { implicit request =>
+    play.api.mvc.Request
     Ok(html.login(loginForm, loginActionUrl))
   }
 

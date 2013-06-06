@@ -36,6 +36,17 @@ object User {
   }
   
   /**
+   * Retrieve a User from login.
+   */
+  def findByLogin(login: String): Option[User] = {
+    DB.withConnection { implicit connection =>
+      SQL("select * from user where login = {email}").on(
+        'login -> login
+      ).as(User.simple.singleOpt)
+    }
+  }
+  
+  /**
    * Retrieve all users.
    */
   def findAll: Seq[User] = {
