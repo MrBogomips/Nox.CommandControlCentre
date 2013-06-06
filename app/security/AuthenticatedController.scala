@@ -60,27 +60,34 @@ trait AuthenticatedController[User] {
    */
   object WithAuthentication {
 	  /** 
+	   * Action for authenticated users with a custom bodyparser
+	   * 
+	   * Block can access to the pair (user, request)
+	   */
+	  def apply[C](bodyParser: BodyParser[C])(f: (User, Request[C]) => Result) : EssentialAction = Security.Authenticated(user, onUnauthenticated) { user =>
+	    Action(bodyParser)(request => f(user, request))
+	  }
+	  
+      /** 
 	   * Action for authenticated users
 	   * 
 	   * Block can access to the pair (user, request)
 	   */
-	  def apply(f: (User, Request[AnyContent]) => Result) : EssentialAction = Security.Authenticated(user, onUnauthenticated) { user =>
-	    Action(request => f(user, request))
-	  }
+	  def apply(f: (User, Request[AnyContent]) => Result) : EssentialAction = apply(BodyParsers.parse.anyContent)(f)
 	  
 	  /** 
 	   * Action for authenticated users
 	   * 
 	   * Block can access to the request
 	   */
-	  def apply(f: Request[AnyContent] => Result) : EssentialAction = apply((u:User, r:Request[AnyContent]) => f(r)) 
+	  def apply(f: Request[AnyContent] => Result) : EssentialAction = apply(BodyParsers.parse.anyContent)((u:User, r:Request[AnyContent]) => f(r)) 
 	  
 	  /** 
 	   * Action for authenticated users
 	   * 
 	   * Block doesn't require user nor request
 	   */
-	  def apply(f: => Result) : EssentialAction =apply((u:User, r:Request[AnyContent]) => f) 
+	  def apply(f: => Result) : EssentialAction =apply(BodyParsers.parse.anyContent)((u:User, r:Request[AnyContent]) => f) 
   }
   
   /**
@@ -90,12 +97,12 @@ trait AuthenticatedController[User] {
    * @param unauthorizedHandler An optional custom handler to manage the unauthorized event
    */
   case class WithAuthorization(rule : AuthorizationRule, unauthorizedHandler : (User, RequestHeader) => Result = onUnauthorized) {
-   /** 
-   * Action for authorization users.
-   * 
-   * Block can access to the pair (user, request)
-   */
-    def apply(f: (User, Request[AnyContent]) => Result): EssentialAction = WithAuthentication { (user, request) =>
+    /** 
+	   * Action for authenticated users with a custom bodyparser
+	   * 
+	   * Block can access to the pair (user, request)
+	   */
+	  def apply[C](bodyParser: BodyParser[C])(f: (User, Request[C]) => Result) : EssentialAction = WithAuthentication(bodyParser) { (user, request) =>
 	    implicit val authorizationContext = AuthorizationContext(user, request)
 	    if(rule.eval) {
 	      f(user, request)
@@ -103,19 +110,25 @@ trait AuthenticatedController[User] {
 	      unauthorizedHandler(user, request)
 	    } 
 	  }
+    /** 
+   * Action for authorization users.
+   * 
+   * Block can access to the pair (user, request)
+   */
+    def apply(f: (User, Request[AnyContent]) => Result): EssentialAction = apply(BodyParsers.parse.anyContent)(f)
    /** 
    * Action for authorization users.
    * 
    * Block can access to the request
    */ 
-   def apply(f: Request[AnyContent] => Result): EssentialAction  = apply((u:User, r:Request[AnyContent]) => f(r)) 
+   def apply(f: Request[AnyContent] => Result): EssentialAction  = apply(BodyParsers.parse.anyContent)((u:User, r:Request[AnyContent]) => f(r)) 
   
     /** 
    * Action for authorization users.
    * 
    * Block doesn't require user nor request
    */
-   def apply(f: => Result) : EssentialAction = apply((u:User, r:Request[AnyContent]) => f)
+   def apply(f: => Result) : EssentialAction = apply(BodyParsers.parse.anyContent)((u:User, r:Request[AnyContent]) => f)
   }
   
   /**

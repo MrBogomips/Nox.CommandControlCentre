@@ -1,6 +1,7 @@
 package security
 
 import security._
+import play.api.libs.json.JsValue
 
 case class IsMemberOf(name: String) extends AuthorizationRule {
   def eval[U,C](implicit cx : AuthorizationContext[U,C]): Boolean = {
@@ -29,3 +30,11 @@ case object AclDefault extends AuthorizationRule {
   }
 }
  
+case object JsonCheckSomething extends AuthorizationRule {
+  def eval[U,C](implicit cx : AuthorizationContext[U,C]): Boolean = {
+	// Todo
+    
+    
+    true
+  }
+}

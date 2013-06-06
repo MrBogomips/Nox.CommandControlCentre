@@ -37,6 +37,13 @@ object Map2 extends Secured {
   
   
   
+  def receiveJsonAuthenticated = WithAuthentication(parse.json) { (user, json) =>
+    Ok
+  }
+  
+  def receiveJsonAuthorized = WithAuthorization(Allow)(parse.json) { (user, json) =>
+    Ok
+  }
   
   def public = Action {Ok}
   
