@@ -4,9 +4,9 @@ import play.api._
 import play.api.mvc._
 import java.net.URLEncoder
 import java.net.URL
-
 import models.User
 import security._
+import playguard.AuthenticatedController
 
 
 /**

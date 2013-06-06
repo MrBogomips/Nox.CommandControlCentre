@@ -2,6 +2,8 @@ package security
 
 import security._
 import play.api.libs.json.JsValue
+import playguard.AuthorizationRule
+import playguard.AuthorizationContext
 
 case class IsMemberOf(name: String) extends AuthorizationRule {
   def eval[U,C](implicit cx : AuthorizationContext[U,C]): Boolean = {

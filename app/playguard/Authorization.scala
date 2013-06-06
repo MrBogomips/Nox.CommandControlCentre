@@ -3,11 +3,10 @@
  * 
  * @author Giovanni Costagliola
  */
-package security
+package playguard
 
 import play.api._
-import models.User
-import play.api.mvc.{Request, AnyContent}
+import play.api.mvc.Request
 
 /**
  * The context passed amongst the authorization rules during the validation process

@@ -2,10 +2,10 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-
 import controllers._
 import models._
 import security._
+import playguard.Allow
 
 object Map2 extends Secured {
   def index = WithAuthentication {  (user, request) =>

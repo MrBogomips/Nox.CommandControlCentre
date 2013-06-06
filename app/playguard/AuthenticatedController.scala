@@ -1,6 +1,6 @@
-package security
+package playguard
 
-import play.api.mvc._
+import play.api.mvc._ 
 
 /**
  * This mixin provides authentication and authorization features to basic controllers.
@@ -27,6 +27,12 @@ object MyController extends MySecuredControllerBase {
   def authorizedWithUserAndRequest = WithAuthorization(Allow) { (user, request) => Ok}
   def authorizedWithRequest = WithAuthorization(Allow) { request => Ok }
   def authorized = WithAuthorization(Allow) {Ok}
+  def receiveJsonAuthenticated = WithAuthentication(parse.json) { (user, json) =>
+    Ok
+  }
+  def receiveJsonAuthorized = WithAutorization(Allow)(parse.json) { (user, json) =>
+    Ok
+  }
 }
  * }}}
  * 

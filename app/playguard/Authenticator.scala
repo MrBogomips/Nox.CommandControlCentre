@@ -1,4 +1,4 @@
-package security
+package playguard
 
 import play.api.mvc._
 
@@ -8,8 +8,10 @@ trait Authenticator[U] {
   def onUnauthorized: RequestHeader => Result 
 }
 
+/*
 abstract case class WithAuthentication[U](block: Request[AnyContent] => Result) extends Authenticator[U] {
   def apply = Security.Authenticated(user, onUnauthorized) { _ =>
     Action(request => block(request))
   }
 }
+*/
