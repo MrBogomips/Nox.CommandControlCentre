@@ -81,7 +81,7 @@ object Application extends ControllerBase {
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors, loginActionUrl)),
-      login => {
+      loginForm => {
         //Logger.debug(s"uri = [${request.uri}]")
         //Logger.debug(s"auth_cb = [$auth_cb]")
         //Logger.debug(s"request.getQueryString(auth_cb) = [${request.getQueryString(auth_cb)}]")
@@ -91,7 +91,7 @@ object Application extends ControllerBase {
         }.getOrElse{
           Logger.debug(s"Redirecting to default authenticated page [$default_auth_uri]")
           Redirect(default_auth_uri) 
-        }.withSession("login" -> login._1)
+        }.withSession("login" -> loginForm._1)
       }
     )
   }

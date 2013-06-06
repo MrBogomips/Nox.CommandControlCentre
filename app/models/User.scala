@@ -6,9 +6,24 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-case class User(login: String, password: String)
+/**
+ * Represents a user
+ */
+case class User(login: String, password: String) {
+  /**
+   * Verify that the password is correct
+   */
+  def verifyPassword(passwordHash: String) = passwordHash == password
+  
+  /**
+   * Verify that the user can login in the system provided the password
+   */
+  def canLogin(passwordHash: String) = verifyPassword(passwordHash: String)
+}
 
-
+/**
+ * @author Giovanni Costagliola
+ */
 object User {
   // -- Parsers
   
@@ -38,12 +53,9 @@ object User {
   /**
    * Retrieve a User from login.
    */
-  def findByLogin(login: String): Option[User] = {
-    DB.withConnection { implicit connection =>
-      SQL("select * from user where login = {email}").on(
-        'login -> login
-      ).as(User.simple.singleOpt)
-    }
+  def findByLogin(login: String): Option[User] = login match {
+    case "giovanni" => Some(User("giovanni", "password"))
+    case _ => None
   }
   
   /**
@@ -58,24 +70,8 @@ object User {
   /**
    * Authenticate a User.
    */
-  def authenticate(login: String, password: String): Option[User] = {
-    /*
-    DB.withConnection { implicit connection =>
-      SQL(
-        """
-         select * from user where 
-         email = {email} and password = {password}
-        """
-      ).on(
-        'email -> email,
-        'password -> password
-      ).as(User.simple.singleOpt)
-    } */
-    if(login == "ciccio" && password == "buffo")
-      Some(User(login, password))
-	else
-	  None
-  }
+  def authenticate(login: String, password: String): Option[User] = 
+    findByLogin(login).filter(_.canLogin(password))
   
   /**
    * Check whether the User is member of any of the passed groups
