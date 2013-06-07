@@ -30,5 +30,5 @@ trait Secured extends ControllerBase with AuthenticatedController[User] {
   /**
    * Just for the sake of explanation: default beahviour already return a 403 code
    */
-  override def onUnauthorized(user: User, request: RequestHeader) = Results.Forbidden
+  override def onUnauthorizedUser(user: User, request: RequestHeader) = Results.Forbidden
 }

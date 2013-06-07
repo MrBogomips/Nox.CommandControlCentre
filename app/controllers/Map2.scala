@@ -5,9 +5,14 @@ import play.api.mvc._
 import controllers._
 import models._
 import security._
-import playguard.Allow
+import playguard._
 
 object Map2 extends Secured {
+  
+  val rule1 = Allow
+  val rule2 = Allow
+  val rule3 = Allow
+  
   def index = WithAuthentication {  (user, request) =>
     implicit val u = user
     implicit val r = request
@@ -40,8 +45,8 @@ object Map2 extends Secured {
   def receiveJsonAuthenticated = WithAuthentication(parse.json) { (user, json) =>
     Ok
   }
-  
-  def receiveJsonAuthorized = WithAuthorization(Allow)(parse.json) { (user, json) =>
+  def receiveWithASimpleRule = WithRule((rule1 && rule2) || rule3)(parse.json) { json => Ok }
+  def receiveJsonAuthorized = WithRule(Allow)(parse.json) { json =>
     Ok
   }
   
@@ -53,7 +58,7 @@ object Map2 extends Secured {
   
   
   
-  
+  implicit val userContext = UserAuthorizationContext(User("",""))
   
   def authorizedWithUserAndRequest = WithAuthorization(Allow) { (user, request) =>
     Ok
