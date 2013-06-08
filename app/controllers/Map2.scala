@@ -36,7 +36,7 @@ object Map2 extends Secured {
 	}{
 		Logger.debug("Plicy doesn't hold")
 	}
-    
+	
     Ok(views.html.aria.map.index())
   }
   
@@ -58,7 +58,7 @@ object Map2 extends Secured {
   
   
   
-  implicit val userContext = UserAuthorizationContext(User("",""))
+  implicit val userContext = UserAuthorizationContext(Anonymous)
   
   def authorizedWithUserAndRequest = WithAuthorization(Allow) { (user, request) =>
     Ok
