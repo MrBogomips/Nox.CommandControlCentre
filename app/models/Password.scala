@@ -27,8 +27,11 @@ trait Password {
 case class ClearPassword(val clearPassword: String) extends Password  {
   require(clearPassword.length >= 8, "password must be at least 8 charaters")
   lazy val secretPassword = calculateSecret(clearPassword)
+  override def toString="ClearPassword(***)"
 }
 /**
  * Represents a secret password
  */
-case class SecretPassword(val secretPassword: String) extends Password
+case class SecretPassword(val secretPassword: String) extends Password {
+  override def toString="SecretPassword(***)"
+}

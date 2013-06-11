@@ -10,7 +10,6 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
-
 /**
  * User status control the access to the system
  */
@@ -25,48 +24,59 @@ import UserStatus._
 object UserSuspensionReason extends Enumeration {
   type UserSuspensionReason = Value
   val TOO_MANY_LOGIN_ATTEMPT = Value("too_many_login_attempt")
-  
+
 }
 import UserSuspensionReason._
 
+case class User private[models] (id: Option[Int], login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) {
+  def this(login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) =
+    this(None, login, password, status, suspensionReason)
 
-case class User private[models](id: Option[Int], login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) {
-  def this (login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) =
-      this (None, login, password, status, suspensionReason)
-  
   /**
    * Material implication
    */
-  private implicit def extendedBoolean(a : Boolean) = new {
-    def implies(b : => Boolean) = !a || b
+  private implicit def extendedBoolean(a: Boolean) = new {
+    def implies(b: => Boolean) = !a || b
   }
-  
+
   require(login.length >= 6, "login must be at least 6 characters")
-  require(status == UserStatus.SUSPENDED implies suspensionReason != None)
-  
+  require(status == UserStatus.SUSPENDED implies suspensionReason != None, "suspended users requires a reason")
+  require(suspensionReason != None implies status == UserStatus.SUSPENDED, "suspeension requires that the user is suspended")
+
   /**
    * Verify that the password is correct
-   * 
+   *
    * @param secretPassword is a base64 encoded string of the sha1 of the clear password
    */
-  def verifyPassword(secretPassword: String): Boolean = 
-    password.map( p => p.checkSecretPassword(secretPassword) ).getOrElse(false)
+  def verifyPassword(secretPassword: String): Boolean =
+    password.map(p => p.checkSecretPassword(secretPassword)).getOrElse(false)
+    
+  /**
+   * Verify that the password is correct
+   *
+   * @param clearPassword is a base64 encoded string of the sha1 of the clear password
+   */
+  def verifyClearPassword(clearPassword: String): Boolean =
+    password.map(p => p.checkClearPassword(clearPassword)).getOrElse(false)
 
   /**
    * Verify that the user can login in the system provided the password
-   * 
+   *
    * @param secretPassword is a base64 encoded string of the sha1 of the clear password
    */
-  def canLogin(secretPassword: String) = 
+  def canLogin(secretPassword: String) =
     status == UserStatus.ACTIVE && verifyPassword(secretPassword: String)
-  
-  def setStatus(status: UserStatus): User = User(id, login, password, status, suspensionReason)
-  
-  def setSuspensionReason(reason: UserSuspensionReason): User = User(id, login, password, UserStatus.SUSPENDED, Some(reason))
-  
-  def save() = {
-    
-  }
+
+  def setStatus(status: UserStatus): User = 
+    User(id, login, password, status, suspensionReason)
+
+  def setSuspensionReason(reason: UserSuspensionReason): User = 
+    User(id, login, password, UserStatus.SUSPENDED, Some(reason))
+   
+  def setPassword(clearPassword: String): User =
+    User(id, login, Some(ClearPassword(clearPassword)), status, suspensionReason)
+
+  def save() = Users.update(this)
 }
 
 /**
@@ -74,24 +84,23 @@ case class User private[models](id: Option[Int], login: String, password: Option
  */
 object Anonymous extends User(None, "Anonymous", None, UserStatus.ACTIVE, None)
 
-
 object Users extends Table[User]("users") {
   val db = Database.forDataSource(DB.getDataSource())
-  implicit val statusMapper = MappedTypeMapper.base[UserStatus, String] (_.toString, UserStatus.withName(_)) 
-  implicit val suspensionMapper = MappedTypeMapper.base[UserSuspensionReason, String] (_.toString, UserSuspensionReason.withName(_))
-  implicit val passwordMapper = MappedTypeMapper.base[Password, String] (_.secretPassword, SecretPassword(_))
-  
+  implicit val statusMapper = MappedTypeMapper.base[UserStatus, String](_.toString, UserStatus.withName(_))
+  implicit val suspensionMapper = MappedTypeMapper.base[UserSuspensionReason, String](_.toString, UserSuspensionReason.withName(_))
+  implicit val passwordMapper = MappedTypeMapper.base[Password, String](_.secretPassword, SecretPassword(_))
+
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def login = column[String]("login")
   def password = column[Password]("password")
   def status = column[UserStatus]("status")
   def suspensionReason = column[UserSuspensionReason]("suspension_reason")
-  
+
   def * = id.? ~ login ~ password.? ~ status ~ suspensionReason.? <> (User, User.unapply _)
   def forInsert = login ~ password.? ~ status ~ suspensionReason.? <> (
-      { t => User(None, t._1, t._2, t._3, t._4)}, 
-      { (u: User) => Some((u.login, u.password, u.status, u.suspensionReason))})
-  
+    { t => User(None, t._1, t._2, t._3, t._4) },
+    { (u: User) => Some((u.login, u.password, u.status, u.suspensionReason)) })
+
   // -- Queries
 
   /**
@@ -108,7 +117,7 @@ object Users extends Table[User]("users") {
   /**
    * Retrieve all users.
    */
-  def findAll: Seq[User] = db withSession {Query(Users).list}
+  def findAll: Seq[User] = db withSession { Query(Users).list }
 
   /**
    * Authenticate a User.
@@ -128,9 +137,11 @@ object Users extends Table[User]("users") {
 
   /**
    * Create a User.
+   *
+   * @return The user id
    */
   def create(user: User): Int = db withSession {
-    val q = Users.forInsert returning Users.id 
+    val q = Users.forInsert returning Users.id
     Logger.debug(q.insertStatement)
     q insert user
   }
@@ -139,9 +150,25 @@ object Users extends Table[User]("users") {
    *
    * @param login the login name
    * @param password the password in clear
+   * @param status the initial status of the user (default: INACTIVE)
+   *
+   * @return The user id
    */
-  def create(login: String, password: String): User = {
-    //User(0, login, password)
-    Anonymous
+  def create(login: String, password: String, status: UserStatus = UserStatus.INACTIVE): Int = {
+    val u = new User(login, Some(ClearPassword(password)), status, None)
+    create(u)
+  }
+
+  def update(user: User): Boolean = db withSession {
+    val updateQuery = sqlu"""
+    UPDATE "users"
+       SET "password" = ${user.password.map(_.secretPassword)},
+    	   "status" = ${user.status.toString},
+           "suspension_reason" = ${user.suspensionReason.map(_.toString)},
+           "_mtime" = NOW(),
+           "_ver" = "_ver" + 1
+	 WHERE "id" = ${user.id}"""
+	 Logger.debug(updateQuery.getStatement)
+	 updateQuery.first == 1
   }
 }
