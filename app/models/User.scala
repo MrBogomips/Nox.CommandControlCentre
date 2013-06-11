@@ -4,6 +4,8 @@ import play.api.Logger
 import play.api.db._
 import play.api.Play.current
 
+import java.sql.Timestamp
+
 import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.session.Database
 import Database.threadLocalSession
@@ -28,9 +30,11 @@ object UserSuspensionReason extends Enumeration {
 }
 import UserSuspensionReason._
 
-case class User private[models] (id: Option[Int], login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) {
+case class User private[models] (id: Option[Int], login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason], recordInfo: Option[RecordInfo]) {
+  def this(login: String, password: Option[Password] = None) =
+    this(None, login, password, UserStatus.INACTIVE, None, None)
   def this(login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) =
-    this(None, login, password, status, suspensionReason)
+    this(None, login, password, status, suspensionReason, None)
 
   /**
    * Material implication
@@ -50,7 +54,7 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
    */
   def verifyPassword(secretPassword: String): Boolean =
     password.map(p => p.checkSecretPassword(secretPassword)).getOrElse(false)
-    
+
   /**
    * Verify that the password is correct
    *
@@ -66,23 +70,52 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
    */
   def canLogin(secretPassword: String) =
     status == UserStatus.ACTIVE && verifyPassword(secretPassword: String)
+  /**
+   * Returns a new user object with the status updated
+   */
+  def setStatus(status: UserStatus): User =
+    User(id, login, password, status, suspensionReason, recordInfo)
 
-  def setStatus(status: UserStatus): User = 
-    User(id, login, password, status, suspensionReason)
-
-  def setSuspensionReason(reason: UserSuspensionReason): User = 
-    User(id, login, password, UserStatus.SUSPENDED, Some(reason))
-   
+  /**
+   * Returns a new user object with the suspension reason updated
+   */
+  def setSuspensionReason(reason: UserSuspensionReason): User =
+    User(id, login, password, UserStatus.SUSPENDED, Some(reason), recordInfo)
+  /**
+   * Returns a new user with the password changed
+   */
   def setPassword(clearPassword: String): User =
-    User(id, login, Some(ClearPassword(clearPassword)), status, suspensionReason)
+    User(id, login, Some(ClearPassword(clearPassword)), status, suspensionReason, recordInfo)
 
+  /**
+   * Save current user without checking the version of the record, that means that other updates
+   * occurred between the fetch of the record and this update are silently ignored
+   *
+   * @return true if the update was executed successfully
+   */
   def save() = Users.update(this)
+  
+  /**
+   * Save current user checking the version of the record, that means that no other updates
+   * have been occurred since the fetch of the record
+   *
+   * @return true if the update was executed successfully
+   */
+  def saveWithVersion() = Users.updateWithVersion(this)
+  
+  /** 
+   *  Retrieve a refreshed version of the user from the DB
+   */
+  def refetch() = {
+    require(id != None, "this user is not persisted on the DB")
+    Users.findById(id.get)
+  }
 }
 
 /**
  * Represents an unauthenticated user
  */
-object Anonymous extends User(None, "Anonymous", None, UserStatus.ACTIVE, None)
+object Anonymous extends User(None, "Anonymous", None, UserStatus.ACTIVE, None, None)
 
 object Users extends Table[User]("users") {
   val db = Database.forDataSource(DB.getDataSource())
@@ -95,23 +128,36 @@ object Users extends Table[User]("users") {
   def password = column[Password]("password")
   def status = column[UserStatus]("status")
   def suspensionReason = column[UserSuspensionReason]("suspension_reason")
+  def _ctime = column[Timestamp]("_ctime")
+  def _mtime = column[Timestamp]("_mtime")
+  def _ver = column[Int]("_ver")
 
-  def * = id.? ~ login ~ password.? ~ status ~ suspensionReason.? <> (User, User.unapply _)
+  def * = id.? ~ login ~ password.? ~ status ~ suspensionReason.? ~ _ctime ~ _mtime ~ _ver <> (
+    { t => User(t._1, t._2, t._3, t._4, t._5, Some(RecordInfo(t._6, t._7, t._8))) },
+    { (u: User) => Some((u.id, u.login, u.password, u.status, u.suspensionReason, u.recordInfo.get.creationTime, u.recordInfo.get.modificationTime, u.recordInfo.get.version)) } //User, User.unapply _
+    )
   def forInsert = login ~ password.? ~ status ~ suspensionReason.? <> (
-    { t => User(None, t._1, t._2, t._3, t._4) },
+    { t => User(None, t._1, t._2, t._3, t._4, None) },
     { (u: User) => Some((u.login, u.password, u.status, u.suspensionReason)) })
 
   // -- Queries
 
   /**
-   * Retrieve a User from login.
+   * Retrieve a User by id.
    */
-  def findByLogin(login: String): Option[User] = {
-    db withSession {
-      val q = Query(Users).filter(_.login === login)
-      Logger.debug(q.selectStatement)
-      q.firstOption
-    }
+  def findById(id: Int): Option[User] = db withSession {
+    val q = Query(Users).filter(_.id === id)
+    Logger.debug(q.selectStatement)
+    q.firstOption
+  }
+
+  /**
+   * Retrieve a User by login.
+   */
+  def findByLogin(login: String): Option[User] = db withSession {
+    val q = Query(Users).filter(_.login === login)
+    Logger.debug(q.selectStatement)
+    q.firstOption
   }
 
   /**
@@ -158,8 +204,15 @@ object Users extends Table[User]("users") {
     val u = new User(login, Some(ClearPassword(password)), status, None)
     create(u)
   }
-
+  /**
+   * Update a user data without checking the version of the record, that means that other updates
+   * occurred between the fetch of the record and this update are silently ignored
+   *
+   * @return true if the update was executed successfully
+   */
   def update(user: User): Boolean = db withSession {
+    require(user.id != None, "user is not persisted yet")
+
     val updateQuery = sqlu"""
     UPDATE "users"
        SET "password" = ${user.password.map(_.secretPassword)},
@@ -168,7 +221,28 @@ object Users extends Table[User]("users") {
            "_mtime" = NOW(),
            "_ver" = "_ver" + 1
 	 WHERE "id" = ${user.id}"""
-	 Logger.debug(updateQuery.getStatement)
-	 updateQuery.first == 1
+    Logger.debug(updateQuery.getStatement)
+    updateQuery.first == 1
+  }
+  /**
+   * Update a user checking the version of the record, that means that no other updates
+   * have been occurred since the fetch of the record
+   *
+   * @return true if the update was executed successfully
+   */
+  def updateWithVersion(user: User): Boolean = db withSession {
+    require(user.id != None, "user is not persisted yet")
+
+    val updateQuery = sqlu"""
+    UPDATE "users"
+       SET "password" = ${user.password.map(_.secretPassword)},
+    	   "status" = ${user.status.toString},
+           "suspension_reason" = ${user.suspensionReason.map(_.toString)},
+           "_mtime" = NOW(),
+           "_ver" = "_ver" + 1
+	 WHERE "id" = ${user.id}
+	   AND "_ver" = ${user.recordInfo.get.version}"""
+    Logger.debug(updateQuery.getStatement)
+    updateQuery.first == 1
   }
 }
