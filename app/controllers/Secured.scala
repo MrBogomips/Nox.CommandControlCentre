@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import java.net.URLEncoder
 import java.net.URL
-import models.User
+import models._
 import security._
 import playguard.AuthenticatedController
 
@@ -16,7 +16,7 @@ trait Secured extends ControllerBase with AuthenticatedController[User] {
   /**
    * Retrieve the connected user email.
    */
-  def user(request: RequestHeader): Option[User] = request.session.get("login").flatMap(User.findByLogin(_))
+  def user(request: RequestHeader): Option[User] = request.session.get("login").flatMap(Users.findByLogin(_))
 
   /**
    * Redirect to login if the user in not authorized.

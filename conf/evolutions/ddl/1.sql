@@ -2,27 +2,31 @@
 
 # --- !Ups
 
-CREATE SCHEMA "security";
+--CREATE SCHEMA "security";
 
-CREATE DOMAIN "security"."login" AS TEXT;
-CREATE TYPE "security"."user_status" AS ENUM ('active', 'suspended', 'inactive');
-CREATE TYPE "security"."suspension_reason" AS ENUM ('too_many_login_attempt');
+CREATE SEQUENCE "user_id_seq";
 
-CREATE TABLE "security"."user" (
-	user_id			SERIAL NOT NULL PRIMARY KEY,
-	login			"security"."login" NOT NULL UNIQUE,
-	password		text NOT NULL,
-	status			"security"."user_status" NOT NULL,
-	suspension_reason	"security"."suspension_reason",
-	ctime			TIMESTAMP NOT NULL DEFAULT(NOW()),
-	mtime			TIMESTAMP NOT NULL DEFAULT(NOW()),
-	CONSTRAINT mtime_gte_ctime_chk CHECK (mtime >= ctime),
+CREATE TABLE "user" (
+	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('user_id_seq')),
+	login				text NOT NULL UNIQUE,
+	password			text NULL,
+	status				text NOT NULL,
+	suspension_reason	text,
+	_ctime				TIMESTAMP NOT NULL DEFAULT(NOW()),
+	_mtime				TIMESTAMP NOT NULL DEFAULT(NOW()),
+	_ver				INT NOT NULL DEFAULT(0),
+	CONSTRAINT mtime_gte_ctime_chk CHECK (_mtime >= _ctime),
 	CONSTRAINT suspension_reason_set_chk CHECK (status != 'suspended' AND suspension_reason IS NULL)
 );
 
-GRANT USAGE ON SCHEMA "security" TO PUBLIC;
-GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA "security" TO PUBLIC;
-
+--GRANT USAGE ON SCHEMA "security" TO PUBLIC;
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLE "user" TO PUBLIC;
+GRANT ALL PRIVILEGES ON SEQUENCE "user_id_seq" TO PUBLIC; 
+ 
 
 # --- !Downs
-DROP SCHEMA IF EXISTS "security" CASCADE; 
+DROP TABLE IF EXISTS "user";
+DROP DOMAIN IF EXISTS "login";
+DROP TYPE IF EXISTS "user_status";
+DROP TYPE IF EXISTS "suspension_reason";
+DROP SEQUENCE IF EXISTS "user_id_seq";

@@ -58,7 +58,7 @@ object Application extends ControllerBase {
       "login" -> text,
       "password" -> text
     ) verifying ("Invalid email or password", result => result match {
-      case (login, password) => User.authenticate(login, password).isDefined
+      case (login, password) => Users.authenticate(login, password).isDefined
     })
   )
   /**
