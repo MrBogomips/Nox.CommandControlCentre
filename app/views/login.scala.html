@@ -1,12 +1,24 @@
 @(form: play.api.data.Form[(String,String)], action: String)(implicit flash: Flash)
 
-@master.public("Login") {
+@footer_scripts = {
+<script type='text/javascript' src='@routes.Assets.at("javascripts/CryptoJS_3.1.2/rollups/sha1.js")'></script>
+<script type='text/javascript' src='@routes.Assets.at("javascripts/CryptoJS_3.1.2/components/enc-base64-min.js")'></script>
+<script type='text/javascript'>
+	function doLogin(form) {
+		var pwd = $("form#login > input:password");
+		var clear = pwd.val();
+		pwd.val(CryptoJS.SHA1(clear).toString(CryptoJS.enc.Base64)); 
+	}
+</script>
+}
+
+@aria.master.public("Login", footer_more = footer_scripts) {
 
 <div class="hero-unit">
 	<h1>NoxST :: CCC</h1>
 	<p class="lead">Command and Control Centre</p>
 
-	<form name="login" class="form-inline" action="@action" method="POST">
+	<form id="login" name="login" class="form-inline" action="@action" method="POST" onsubmit="doLogin(this)">
 		
         
         

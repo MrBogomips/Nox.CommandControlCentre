@@ -4,10 +4,11 @@
 
 --CREATE SCHEMA "security";
 
-CREATE SEQUENCE "user_id_seq";
 
-CREATE TABLE "user" (
-	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('user_id_seq')),
+CREATE SEQUENCE "users_id_seq";
+
+CREATE  TABLE "users" (
+	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('users_id_seq')),
 	login				text NOT NULL UNIQUE,
 	password			text NULL,
 	status				text NOT NULL,
@@ -20,13 +21,10 @@ CREATE TABLE "user" (
 );
 
 --GRANT USAGE ON SCHEMA "security" TO PUBLIC;
-GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLE "user" TO PUBLIC;
-GRANT ALL PRIVILEGES ON SEQUENCE "user_id_seq" TO PUBLIC; 
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLE "users" TO PUBLIC;
+GRANT ALL PRIVILEGES ON SEQUENCE "users_id_seq" TO PUBLIC; 
  
 
 # --- !Downs
-DROP TABLE IF EXISTS "user";
-DROP DOMAIN IF EXISTS "login";
-DROP TYPE IF EXISTS "user_status";
-DROP TYPE IF EXISTS "suspension_reason";
-DROP SEQUENCE IF EXISTS "user_id_seq";
+DROP TABLE IF EXISTS "users";
+DROP SEQUENCE IF EXISTS "users_id_seq";

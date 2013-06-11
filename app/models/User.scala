@@ -10,6 +10,7 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+
 /**
  * User status control the access to the system
  */
@@ -28,9 +29,10 @@ object UserSuspensionReason extends Enumeration {
 }
 import UserSuspensionReason._
 
-case class User private[models](id: Option[Int], login: String, status: UserStatus, suspensionReason: Option[UserSuspensionReason]) {
-  def this (login: String, status: UserStatus, suspensionReason: Option[UserSuspensionReason]) =
-      this (None, login, status, suspensionReason)
+
+case class User private[models](id: Option[Int], login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) {
+  def this (login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) =
+      this (None, login, password, status, suspensionReason)
   
   /**
    * Material implication
@@ -39,21 +41,28 @@ case class User private[models](id: Option[Int], login: String, status: UserStat
     def implies(b : => Boolean) = !a || b
   }
   
+  require(login.length >= 6, "login must be at least 6 characters")
   require(status == UserStatus.SUSPENDED implies suspensionReason != None)
   
   /**
    * Verify that the password is correct
+   * 
+   * @param secretPassword is a base64 encoded string of the sha1 of the clear password
    */
-  def verifyPassword(passwordHash: String): Boolean = true //passwordHash == password
+  def verifyPassword(secretPassword: String): Boolean = 
+    password.map( p => p.checkSecretPassword(secretPassword) ).getOrElse(false)
 
   /**
    * Verify that the user can login in the system provided the password
+   * 
+   * @param secretPassword is a base64 encoded string of the sha1 of the clear password
    */
-  def canLogin(passwordHash: String) = verifyPassword(passwordHash: String)
+  def canLogin(secretPassword: String) = 
+    status == UserStatus.ACTIVE && verifyPassword(secretPassword: String)
   
-  def setStatus(status: UserStatus): User = User(id, login, status, suspensionReason)
+  def setStatus(status: UserStatus): User = User(id, login, password, status, suspensionReason)
   
-  def setSuspensionReason(reason: UserSuspensionReason): User = User(id, login, UserStatus.SUSPENDED, Some(reason))
+  def setSuspensionReason(reason: UserSuspensionReason): User = User(id, login, password, UserStatus.SUSPENDED, Some(reason))
   
   def save() = {
     
@@ -63,23 +72,25 @@ case class User private[models](id: Option[Int], login: String, status: UserStat
 /**
  * Represents an unauthenticated user
  */
-object Anonymous extends User(None, "Anonymous", UserStatus.ACTIVE, None)
+object Anonymous extends User(None, "Anonymous", None, UserStatus.ACTIVE, None)
 
 
-object Users extends Table[User]("user") {
+object Users extends Table[User]("users") {
   val db = Database.forDataSource(DB.getDataSource())
   implicit val statusMapper = MappedTypeMapper.base[UserStatus, String] (_.toString, UserStatus.withName(_)) 
   implicit val suspensionMapper = MappedTypeMapper.base[UserSuspensionReason, String] (_.toString, UserSuspensionReason.withName(_))
+  implicit val passwordMapper = MappedTypeMapper.base[Password, String] (_.secretPassword, SecretPassword(_))
   
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def login = column[String]("login")
+  def password = column[Password]("password")
   def status = column[UserStatus]("status")
   def suspensionReason = column[UserSuspensionReason]("suspension_reason")
   
-  def * = id.? ~ login ~ status ~ suspensionReason.? <> (User, User.unapply _)
-  def forInsert = login ~ status ~ suspensionReason.? <> (
-      { t => User(None, t._1, t._2, t._3)}, 
-      { (u: User) => Some((u.login, u.status, u.suspensionReason))})
+  def * = id.? ~ login ~ password.? ~ status ~ suspensionReason.? <> (User, User.unapply _)
+  def forInsert = login ~ password.? ~ status ~ suspensionReason.? <> (
+      { t => User(None, t._1, t._2, t._3, t._4)}, 
+      { (u: User) => Some((u.login, u.password, u.status, u.suspensionReason))})
   
   // -- Queries
 
@@ -88,10 +99,6 @@ object Users extends Table[User]("user") {
    */
   def findByLogin(login: String): Option[User] = {
     db withSession {
-      /*
-      implicit val getResult = SELECT_*
-      sql"SELECT user_id, login, password FROM security.user WHERE login = $login".as[User].firstOption
-      */
       val q = Query(Users).filter(_.login === login)
       Logger.debug(q.selectStatement)
       q.firstOption

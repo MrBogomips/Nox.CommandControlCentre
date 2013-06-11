@@ -85,6 +85,7 @@ object Application extends ControllerBase {
         //Logger.debug(s"uri = [${request.uri}]")
         //Logger.debug(s"auth_cb = [$auth_cb]")
         //Logger.debug(s"request.getQueryString(auth_cb) = [${request.getQueryString(auth_cb)}]")
+        Logger.debug("Do authentication")
         request.getQueryString(auth_cb).map { uri =>
           Logger.debug(s"Redirecting to callback page [$uri]")
           Redirect(uri) 
