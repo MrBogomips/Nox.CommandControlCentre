@@ -12,6 +12,8 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import models.Backend
+
 /**
  * User status control the access to the system
  */
@@ -30,7 +32,8 @@ object UserSuspensionReason extends Enumeration {
 }
 import UserSuspensionReason._
 
-case class User private[models] (id: Option[Int], login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason], recordInfo: Option[RecordInfo]) {
+case class User private[models] (id: Option[Int], login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason], recordInfo: Option[RecordInfo])
+  extends MaybePersisted {
   def this(login: String, password: Option[Password] = None) =
     this(None, login, password, UserStatus.INACTIVE, None, None)
   def this(login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) =
@@ -44,8 +47,8 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
   }
 
   require(login.length >= 6, "login must be at least 6 characters")
-  require(status == UserStatus.SUSPENDED implies suspensionReason != None, "suspended users requires a reason")
-  require(suspensionReason != None implies status == UserStatus.SUSPENDED, "suspeension requires that the user is suspended")
+  require(status == UserStatus.SUSPENDED implies suspensionReason.isDefined, "suspended users requires a reason")
+  require(suspensionReason.isDefined implies status == UserStatus.SUSPENDED, "suspeension requires that the user is suspended")
 
   /**
    * Verify that the password is correct
@@ -94,7 +97,7 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
    * @return true if the update was executed successfully
    */
   def save() = Users.update(this)
-  
+
   /**
    * Save current user checking the version of the record, that means that no other updates
    * have been occurred since the fetch of the record
@@ -102,12 +105,12 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
    * @return true if the update was executed successfully
    */
   def saveWithVersion() = Users.updateWithVersion(this)
-  
-  /** 
+
+  /**
    *  Retrieve a refreshed version of the user from the DB
    */
   def refetch() = {
-    require(id != None, "this user is not persisted on the DB")
+    requirePersistance
     Users.findById(id.get)
   }
 }
@@ -117,8 +120,7 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
  */
 object Anonymous extends User(None, "Anonymous", None, UserStatus.ACTIVE, None, None)
 
-object Users extends Table[User]("users") {
-  val db = Database.forDataSource(DB.getDataSource())
+object Users extends Table[User]("users") with Backend {
   implicit val statusMapper = MappedTypeMapper.base[UserStatus, String](_.toString, UserStatus.withName(_))
   implicit val suspensionMapper = MappedTypeMapper.base[UserSuspensionReason, String](_.toString, UserSuspensionReason.withName(_))
   implicit val passwordMapper = MappedTypeMapper.base[Password, String](_.secretPassword, SecretPassword(_))
@@ -211,7 +213,7 @@ object Users extends Table[User]("users") {
    * @return true if the update was executed successfully
    */
   def update(user: User): Boolean = db withSession {
-    require(user.id != None, "user is not persisted yet")
+    user.requirePersistance
 
     val updateQuery = sqlu"""
     UPDATE "users"
@@ -231,7 +233,7 @@ object Users extends Table[User]("users") {
    * @return true if the update was executed successfully
    */
   def updateWithVersion(user: User): Boolean = db withSession {
-    require(user.id != None, "user is not persisted yet")
+    user.requirePersistance
 
     val updateQuery = sqlu"""
     UPDATE "users"
