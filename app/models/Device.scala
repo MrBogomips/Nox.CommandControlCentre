@@ -1,5 +1,5 @@
 package models
-
+/*
 import play.api.Logger
 import play.api.db._
 import play.api.Play.current
@@ -11,8 +11,7 @@ import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 import models.Backend
 
-case class Device private[models] (id: Option[Int], name: String, recordInfo: Option[RecordInfo]) extends MaybePersisted {
-  def this(name: String) = this(None, name, None)
+case class Device private[models] (id: Int, name: String, recordInfo: RecordInfo) extends Persisted[Device] {
   
   require(name.length >5, "device name....")
 }
@@ -20,13 +19,18 @@ case class Device private[models] (id: Option[Int], name: String, recordInfo: Op
 object Devices extends Table[Device]("devices") with Backend {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
+  def displayName = column[String]("display_name", O.Nullable)
+  def description = column[String]("display_name", O.Nullable)
+  def enabled = column[Boolean]("enabled")
+  def deviceTypeId = column[Int]("device_type_id")
+  def deviceGroupId = column[Int]("device_group_id")
   def _ctime = column[Timestamp]("_ctime")
   def _mtime = column[Timestamp]("_mtime")
   def _ver = column[Int]("_ver")
   
-  def * = id.? ~ name ~ _ctime ~ _mtime ~ _ver <> (
-      {t => Device(t._1, t._2, Some(RecordInfo(t._3, t._4, t._5)))}, 
-      {d:Device => Some(d.id, d.name, d.recordInfo.get.creationTime, d.recordInfo.get.modificationTime, d.recordInfo.get.version)}
+  def * = id ~ name ~ _ctime ~ _mtime ~ _ver <> (
+      {t => Device(t._1, t._2, RecordInfo(t._3, t._4, t._5))}, 
+      {d:Device => Some(d.id, d.name, d.recordInfo.creationTime, d.recordInfo.modificationTime, d.recordInfo.version)}
   )
 
   /**
@@ -45,3 +49,4 @@ object Devices extends Table[Device]("devices") with Backend {
     
   //}
 }
+*/

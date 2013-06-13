@@ -12,11 +12,11 @@ import playguard.AuthenticatedController
 /**
  * Provide security features
  */
-trait Secured extends ControllerBase with AuthenticatedController[User] {
+trait Secured extends ControllerBase with AuthenticatedController[UserPersisted] {
   /**
    * Retrieve the connected user email.
    */
-  def user(request: RequestHeader): Option[User] = request.session.get("login").flatMap(Users.findByLogin(_))
+  def user(request: RequestHeader): Option[UserPersisted] = request.session.get("login").flatMap(Users.findByLogin(_))
 
   /**
    * Redirect to login if the user in not authorized.
@@ -30,5 +30,5 @@ trait Secured extends ControllerBase with AuthenticatedController[User] {
   /**
    * Just for the sake of explanation: default beahviour already return a 403 code
    */
-  override def onUnauthorizedUser(user: User, request: RequestHeader) = Results.Forbidden
+  override def onUnauthorizedUser(user: UserPersisted, request: RequestHeader) = Results.Forbidden
 }

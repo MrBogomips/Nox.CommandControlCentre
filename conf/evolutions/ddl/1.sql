@@ -9,7 +9,8 @@ CREATE SEQUENCE "users_id_seq";
 
 CREATE  TABLE "users" (
 	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('users_id_seq')),
-	login				text NOT NULL UNIQUE,
+	login				text NOT NULL UNIQUE, 
+	display_name		text NOT NULL,
 	password			text NULL,
 	status				text NOT NULL,
 	suspension_reason	text,
@@ -20,8 +21,8 @@ CREATE  TABLE "users" (
 	CONSTRAINT suspension_reason_set_chk CHECK (status != 'suspended' AND suspension_reason IS NULL)
 );
 
---GRANT USAGE ON SCHEMA "security" TO PUBLIC;
-GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLE "users" TO PUBLIC;
+--GRANT USAGE ON SCHEMA "security" TO PUBLIC;--
+GRANT SELECT, INSERT,  UPDATE, DELETE, TRUNCATE ON TABLE "users" TO PUBLIC;
 GRANT ALL PRIVILEGES ON SEQUENCE "users_id_seq" TO PUBLIC; 
  
 

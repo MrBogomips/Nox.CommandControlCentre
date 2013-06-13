@@ -12,8 +12,6 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
-import models.Backend
-
 /**
  * User status control the access to the system
  */
@@ -32,23 +30,12 @@ object UserSuspensionReason extends Enumeration {
 }
 import UserSuspensionReason._
 
-case class User private[models] (id: Option[Int], login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason], recordInfo: Option[RecordInfo])
-  extends MaybePersisted {
-  def this(login: String, password: Option[Password] = None) =
-    this(None, login, password, UserStatus.INACTIVE, None, None)
-  def this(login: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason]) =
-    this(None, login, password, status, suspensionReason, None)
-
-  /**
-   * Material implication
-   */
-  private implicit def extendedBoolean(a: Boolean) = new {
-    def implies(b: => Boolean) = !a || b
-  }
-
-  require(login.length >= 6, "login must be at least 6 characters")
-  require(status == UserStatus.SUSPENDED implies suspensionReason.isDefined, "suspended users requires a reason")
-  require(suspensionReason.isDefined implies status == UserStatus.SUSPENDED, "suspeension requires that the user is suspended")
+trait UserTrait {
+  val login: String
+  val displayName: String
+  val password: Option[Password]
+  val status: UserStatus
+  val suspensionReason: Option[UserSuspensionReason]
 
   /**
    * Verify that the password is correct
@@ -73,22 +60,76 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
    */
   def canLogin(secretPassword: String) =
     status == UserStatus.ACTIVE && verifyPassword(secretPassword: String)
+
   /**
    * Returns a new user object with the status updated
    */
-  def setStatus(status: UserStatus): User =
-    User(id, login, password, status, suspensionReason, recordInfo)
-
+  def setDisplayName(displayName: String): UserTrait
+  /**
+   * Returns a new user object with the status updated
+   */
+  def setStatus(status: UserStatus): UserTrait
   /**
    * Returns a new user object with the suspension reason updated
    */
-  def setSuspensionReason(reason: UserSuspensionReason): User =
-    User(id, login, password, UserStatus.SUSPENDED, Some(reason), recordInfo)
+  def setSuspensionReason(reason: UserSuspensionReason): UserTrait
   /**
    * Returns a new user with the password changed
    */
-  def setPassword(clearPassword: String): User =
-    User(id, login, Some(ClearPassword(clearPassword)), status, suspensionReason, recordInfo)
+  def setPassword(clearPassword: String): UserTrait
+}
+
+/**
+ * Represents an User
+ *
+ * @param initLogin the desired login. Logins are case-insensitive and internally are managed as lowercase strings
+ * @param displayName the preferred string used in presentation
+ */
+class User(initLogin: String, val displayName: String, val password: Option[Password] = None, val status: UserStatus = UserStatus.INACTIVE, val suspensionReason: Option[UserSuspensionReason] = None)
+  extends UserTrait {
+
+  def this(login: String, password: Option[Password] = None, status: UserStatus = UserStatus.INACTIVE, suspensionReason: Option[UserSuspensionReason] = None) =
+    this(login, login, password, status, suspensionReason)
+
+  val login = initLogin.toLowerCase
+  
+   /**
+   * Material implication
+   */
+  private implicit def extendedBoolean(a: Boolean) = new {
+    def implies(b: => Boolean) = !a || b
+  }
+
+  require(login.length >= 6, "login must be at least 6 characters")
+  require(status == UserStatus.SUSPENDED implies suspensionReason.isDefined, "suspended users requires a reason")
+  require(suspensionReason.isDefined implies status == UserStatus.SUSPENDED, "suspeension requires that the user is suspended")
+
+  override def toString = s"User($login)"
+
+  override def setDisplayName(displayName: String): User =
+    new User(login, displayName, password, status, suspensionReason)
+  override def setStatus(status: UserStatus): User =
+    new User(login, displayName, password, status, suspensionReason)
+  override def setSuspensionReason(reason: UserSuspensionReason): User =
+    new User(login, displayName, password, UserStatus.SUSPENDED, Some(reason))
+  override def setPassword(clearPassword: String): User =
+    new User(login, displayName, Some(ClearPassword(clearPassword)), status, suspensionReason)
+}
+
+case class UserPersisted private[models] (id: Int, login: String, displayName: String, password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason], creationTime: Timestamp, modificationTime: Timestamp, version: Int)
+  extends UserTrait
+  with Persisted[UserPersisted] {
+
+  override def toString = s"UserPersisted($id, $login)"
+
+  override def setDisplayName(displayName: String): UserPersisted =
+    UserPersisted(id, login, displayName, password, status, suspensionReason, creationTime, modificationTime, version)
+  override def setStatus(status: UserStatus): UserPersisted =
+    UserPersisted(id, login, displayName, password, status, suspensionReason, creationTime, modificationTime, version)
+  override def setSuspensionReason(reason: UserSuspensionReason): UserPersisted =
+    UserPersisted(id, login, displayName, password, UserStatus.SUSPENDED, Some(reason), creationTime, modificationTime, version)
+  override def setPassword(clearPassword: String): UserPersisted =
+    UserPersisted(id, login, displayName, Some(ClearPassword(clearPassword)), status, suspensionReason, creationTime, modificationTime, version)
 
   /**
    * Save current user without checking the version of the record, that means that other updates
@@ -96,7 +137,7 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
    *
    * @return true if the update was executed successfully
    */
-  def save() = Users.update(this)
+  def update() = Users.update(this)
 
   /**
    * Save current user checking the version of the record, that means that no other updates
@@ -104,29 +145,29 @@ case class User private[models] (id: Option[Int], login: String, password: Optio
    *
    * @return true if the update was executed successfully
    */
-  def saveWithVersion() = Users.updateWithVersion(this)
+  def updateWithVersion() = Users.updateWithVersion(this)
 
   /**
    *  Retrieve a refreshed version of the user from the DB
    */
-  def refetch() = {
-    requirePersistance
-    Users.findById(id.get)
-  }
+  def refetch() = Users.findById(id)
+
+  def delete() = Users.deleteById(id)
 }
 
 /**
  * Represents an unauthenticated user
  */
-object Anonymous extends User(None, "Anonymous", None, UserStatus.ACTIVE, None, None)
+object Anonymous extends User("Anonymous", None, UserStatus.ACTIVE, None)
 
-object Users extends Table[User]("users") with Backend {
+object Users extends Table[UserPersisted]("users") with Backend {
   implicit val statusMapper = MappedTypeMapper.base[UserStatus, String](_.toString, UserStatus.withName(_))
   implicit val suspensionMapper = MappedTypeMapper.base[UserSuspensionReason, String](_.toString, UserSuspensionReason.withName(_))
   implicit val passwordMapper = MappedTypeMapper.base[Password, String](_.secretPassword, SecretPassword(_))
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def login = column[String]("login")
+  def displayName = column[String]("display_name")
   def password = column[Password]("password")
   def status = column[UserStatus]("status")
   def suspensionReason = column[UserSuspensionReason]("suspension_reason")
@@ -134,20 +175,14 @@ object Users extends Table[User]("users") with Backend {
   def _mtime = column[Timestamp]("_mtime")
   def _ver = column[Int]("_ver")
 
-  def * = id.? ~ login ~ password.? ~ status ~ suspensionReason.? ~ _ctime ~ _mtime ~ _ver <> (
-    { t => User(t._1, t._2, t._3, t._4, t._5, Some(RecordInfo(t._6, t._7, t._8))) },
-    { (u: User) => Some((u.id, u.login, u.password, u.status, u.suspensionReason, u.recordInfo.get.creationTime, u.recordInfo.get.modificationTime, u.recordInfo.get.version)) } //User, User.unapply _
-    )
-  def forInsert = login ~ password.? ~ status ~ suspensionReason.? <> (
-    { t => User(None, t._1, t._2, t._3, t._4, None) },
-    { (u: User) => Some((u.login, u.password, u.status, u.suspensionReason)) })
+  def * = id ~ login ~ displayName ~ password.? ~ status ~ suspensionReason.? ~ _ctime ~ _mtime ~ _ver <> (UserPersisted, UserPersisted.unapply _)
 
   // -- Queries
 
   /**
    * Retrieve a User by id.
    */
-  def findById(id: Int): Option[User] = db withSession {
+  def findById(id: Int): Option[UserPersisted] = db withSession {
     val q = Query(Users).filter(_.id === id)
     Logger.debug(q.selectStatement)
     q.firstOption
@@ -156,7 +191,7 @@ object Users extends Table[User]("users") with Backend {
   /**
    * Retrieve a User by login.
    */
-  def findByLogin(login: String): Option[User] = db withSession {
+  def findByLogin(login: String): Option[UserPersisted] = db withSession {
     val q = Query(Users).filter(_.login === login)
     Logger.debug(q.selectStatement)
     q.firstOption
@@ -165,12 +200,12 @@ object Users extends Table[User]("users") with Backend {
   /**
    * Retrieve all users.
    */
-  def findAll: Seq[User] = db withSession { Query(Users).list }
+  def findAll: Seq[UserPersisted] = db withSession { Query(Users).list }
 
   /**
    * Authenticate a User.
    */
-  def authenticate(login: String, password: String): Option[User] =
+  def authenticate(login: String, password: String): Option[UserPersisted] =
     findByLogin(login).filter(_.canLogin(password))
 
   /**
@@ -188,43 +223,52 @@ object Users extends Table[User]("users") with Backend {
    *
    * @return The user id
    */
-  def create(user: User): Int = db withSession {
-    val q = Users.forInsert returning Users.id
-    Logger.debug(q.insertStatement)
-    q insert user
+  def insert(user: User): Int = db withSession {
+    val sql = sql"""
+    INSERT INTO users (
+    		login, 
+    		display_name,
+    		password, 
+    		status, 
+    		suspension_reason,
+    		_ctime,
+    		_mtime,
+    		_ver
+    ) 
+    VALUES (
+    		${user.login},
+    		${user.displayName},
+    		${user.password.map(_.secretPassword)},
+    		${user.status.toString},
+    		${user.suspensionReason.map(_.toString)},
+    		NOW(),
+    		NOW(),
+    		0
+    )
+    RETURNING id
+    """
+
+    executeSql(BackendOperation.INSERT, "user $user", sql.as[Int]) { _.first }
   }
-  /**
-   * Create a user
-   *
-   * @param login the login name
-   * @param password the password in clear
-   * @param status the initial status of the user (default: INACTIVE)
-   *
-   * @return The user id
-   */
-  def create(login: String, password: String, status: UserStatus = UserStatus.INACTIVE): Int = {
-    val u = new User(login, Some(ClearPassword(password)), status, None)
-    create(u)
-  }
+
   /**
    * Update a user data without checking the version of the record, that means that other updates
    * occurred between the fetch of the record and this update are silently ignored
    *
    * @return true if the update was executed successfully
    */
-  def update(user: User): Boolean = db withSession {
-    user.requirePersistance
-
-    val updateQuery = sqlu"""
-    UPDATE "users"
-       SET "password" = ${user.password.map(_.secretPassword)},
-    	   "status" = ${user.status.toString},
-           "suspension_reason" = ${user.suspensionReason.map(_.toString)},
-           "_mtime" = NOW(),
-           "_ver" = "_ver" + 1
-	 WHERE "id" = ${user.id}"""
-    Logger.debug(updateQuery.getStatement)
-    updateQuery.first == 1
+  def update(user: UserPersisted): Boolean = db withSession {
+    val sql = sqlu"""
+    UPDATE users
+       SET display_name = ${user.displayName},
+    	   password = ${user.password.map(_.secretPassword)},
+    	   status = ${user.status.toString},
+           suspension_reason = ${user.suspensionReason.map(_.toString)},
+           _mtime = NOW(),
+           _ver = _ver + 1 
+	 WHERE id = ${user.id}
+	 """
+    executeUpdate("user $user", sql) == 1
   }
   /**
    * Update a user checking the version of the record, that means that no other updates
@@ -232,19 +276,39 @@ object Users extends Table[User]("users") with Backend {
    *
    * @return true if the update was executed successfully
    */
-  def updateWithVersion(user: User): Boolean = db withSession {
-    user.requirePersistance
-
-    val updateQuery = sqlu"""
-    UPDATE "users"
-       SET "password" = ${user.password.map(_.secretPassword)},
-    	   "status" = ${user.status.toString},
-           "suspension_reason" = ${user.suspensionReason.map(_.toString)},
-           "_mtime" = NOW(),
-           "_ver" = "_ver" + 1
-	 WHERE "id" = ${user.id}
-	   AND "_ver" = ${user.recordInfo.get.version}"""
-    Logger.debug(updateQuery.getStatement)
-    updateQuery.first == 1
+  def updateWithVersion(user: UserPersisted): Boolean = db withSession {
+    val sql = sqlu"""
+    UPDATE users
+       SET display_name = ${user.displayName},
+    	   password = ${user.password.map(_.secretPassword)},
+    	   status = ${user.status.toString},
+           suspension_reason = ${user.suspensionReason.map(_.toString)},
+           _mtime = NOW(),
+           _ver = _ver + 1
+	 WHERE id = ${user.id}
+	   AND _ver = ${user.version}"""
+    executeUpdate("user $user with version check", sql) == 1
   }
+  /**
+   * Delete permanently the user identified by ``id`` from the DB
+   *
+   * @return true if the delete was executed successfully
+   */
+  def deleteById(id: Int) = db withSession {
+    val sql = sqlu"DELETE FROM users WHERE id = $id"
+    executeDelete("user identified by $id", sql) == 1
+  }
+  /**
+   * Delete permanently the user
+   *
+   * @return true if the delete was executed successfully
+   */
+  def delete(user: UserPersisted) = deleteById(user.id)
+  /**
+   * Delete permanently the user
+   *
+   * @return true if the delete was executed successfully
+   */
+  def delete(user: User): Boolean = findByLogin(user.login).map(u => deleteById(u.id)).getOrElse(false)
+
 }
