@@ -26,28 +26,16 @@ import UserStatus._
 object UserSuspensionReason extends Enumeration {
   type UserSuspensionReason = Value
   val TOO_MANY_LOGIN_ATTEMPT = Value("too_many_login_attempt")
-
 }
 import UserSuspensionReason._
 
 trait UserTrait {
-  import scala.language.{ implicitConversions, reflectiveCalls }
-
+  
   val login: String
   val displayName: String
   val password: Option[Password]
   val status: UserStatus
   val suspensionReason: Option[UserSuspensionReason]
-
-  /**
-   * Material implication
-   */
-  private implicit def extendedBoolean(a: Boolean) = new {
-    def implies(b: => Boolean) = !a || b
-  }
-  require(login.length >= 6, "login must be at least 6 characters")
-  require(status == UserStatus.SUSPENDED implies suspensionReason.isDefined, "suspended users requires a reason")
-  require(suspensionReason.isDefined implies status == UserStatus.SUSPENDED, "suspeension requires that the user is suspended")
 
   /**
    * Verify that the password is correct
@@ -82,13 +70,27 @@ trait UserTrait {
  */
 case class User(private val initLogin: String, displayName: String, password: Option[Password] = None, status: UserStatus = UserStatus.INACTIVE, suspensionReason: Option[UserSuspensionReason] = None)
   extends UserTrait {
-
+  
+  import scala.language.{ implicitConversions, reflectiveCalls }
+  
   def this(login: String, password: Option[Password] = None, status: UserStatus = UserStatus.INACTIVE, suspensionReason: Option[UserSuspensionReason] = None) =
     this(login, login, password, status, suspensionReason)
 
-  lazy val login = initLogin.toLowerCase
+  def this(login: String, password: Password) = this(login, login, Some(password), UserStatus.ACTIVE, None)
 
-  require(login != Anonymous.login, s"""login "${Anonymous.login}" is reserved""")
+  val login = initLogin.toLowerCase
+
+  /**
+   * Material implication
+   */
+  private implicit def extendedBoolean(a: Boolean) = new {
+    def implies(b: => Boolean) = !a || b
+  }
+  require(login.length >= 6, "login must be at least 6 characters")
+  require(status == UserStatus.SUSPENDED implies suspensionReason.isDefined, "suspended users requires a reason")
+  require(suspensionReason.isDefined implies status == UserStatus.SUSPENDED, "suspeension requires that the user is suspended")
+
+  require(login != "Anonymous", s"""login "${Anonymous.login}" is reserved""")
 
   override def toString = s"User($login,$displayName,$password,$status,$suspensionReason)"
 
@@ -99,8 +101,10 @@ case class User(private val initLogin: String, displayName: String, password: Op
 /**
  * Represents an unauthenticated user
  */
+//object Anonymous extends UserTrait 
 object Anonymous extends User("Anonymous", None, UserStatus.ACTIVE, None)
 
+//User(login = "Anonymous", None, UserStatus.ACTIVE, None)
 /**
  * Represents an User persisted on the backend
  */
@@ -137,9 +141,8 @@ case class UserPersisted private[models] (id: Int, login: String, displayName: S
   def delete() = Users.deleteById(id)
 }
 
-object Users 
-   extends PersistedTable[UserPersisted, User]("users")
-{
+object Users
+  extends PersistedTable[UserPersisted, User]("users") {
   implicit val statusMapper = MappedTypeMapper.base[UserStatus, String](_.toString, UserStatus.withName(_))
   implicit val suspensionMapper = MappedTypeMapper.base[UserSuspensionReason, String](_.toString, UserSuspensionReason.withName(_))
   implicit val passwordMapper = MappedTypeMapper.base[Password, String](_.secretPassword, SecretPassword(_))

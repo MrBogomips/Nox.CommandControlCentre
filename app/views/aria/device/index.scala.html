@@ -1,0 +1,82 @@
+@(devices: Seq[DevicePersisted])
+
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+            steal('/assets/webapp/webapp_init.js')
+            .then('/assets/webapp/device/device.js')
+            .then(function() {
+            		$("#create_device").click(
+            			function() {            	
+            			var $el = $("<div></div>")
+            			$('body').append($el);
+            			$el.webapp_device();
+            			}
+            		);
+            		
+				$(".btn.modify").click(function(el, ev) {
+					var options = {};
+					options["id"] = el.srcElement.getAttribute("data-device-id");
+					var $el = $("<div></div>");
+        			$('body').append($el);
+        			$el.webapp_device(options);
+				});
+			
+				$(".btn.delete").click(function(el, ev) {
+					var id = el.srcElement.getAttribute("data-device-id");
+					$.ajax({
+						url: '/device/'+id,
+						type: 'DELETE'
+						})
+					.done(function(data, txtStatus, jqXHR) {
+						location.reload(true);
+					})
+					.fail(function(data, txtStatus, jqXHR) {
+						//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+						//self.find(".alert_placeholder").html($alert);
+						
+						alert(data.responseText);
+					});
+				});
+            });
+</script>
+}
+
+@aria.master.authenticated("Devices", footer_more = footer_scripts) {
+	<div>
+	<h1>Devices</h1>
+
+	<table class="table table-condensed table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Device ID</th>
+				<th>Name</th>
+				<th>Display Name</th>
+				<th>Description</th>
+				<th>Enabled</th>
+				<th width="1%"></th>
+			</tr>
+		</thead>
+		<tbody>
+		@devices.map { d =>
+			<tr>
+				<td>@d.id</td>
+				<td>@d.name</td>
+				<td>@d.displayName</td>
+				<td>@d.description</td>
+				<td>@d.enabled</td>
+				<td>
+				<nobr>
+					<button class="btn btn-mini modify" data-device-id="@d.id">Modify</button>
+					<button class="btn btn-mini btn-danger delete" data-device-id="@d.id">Delete</button>
+				</nobr>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<button class="btn btn-primary" id="create_device">Create new device</button>
+	</div>
+}

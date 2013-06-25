@@ -13,6 +13,7 @@ GET     /                           controllers.Application.login
 GET     /login                      controllers.Application.login
 POST    /authenticate               controllers.Application.authenticate
 GET		/logout						controllers.Application.logout
+GET		/whoami						controllers.Application.whoAmI
 
 # Dashboard
 GET		/dashboard					controllers.Dashboard.index
@@ -28,5 +29,14 @@ GET		/app/configuration			controllers.Application.clientConfiguration
 GET		/channel/index				controllers.Channel.index
 
 # Device
+GET		/device/index				controllers.Device.index
+GET		/device/types				controllers.Device.types
+GET		/device/groups				controllers.Device.groups
 POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
 GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
+GET		/device/:id					controllers.Device.get(id: Int)
+PUT		/device/:id					controllers.Device.update(id: Int)
+DELETE	/device/:id					controllers.Device.delete(id: Int)
+
+POST	/device						controllers.Device.create
+

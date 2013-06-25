@@ -28,8 +28,7 @@ steal('aria/page')
 	
 	Aria.Page.getInstance(config);
 	})
-.then('/assets/aria/steal/less/less',
-	  '/assets/aria/aria/controller/controller',
+.then('/assets/aria/aria/controller/controller',
 	  '/assets/aria/jquery/view/ejs/ejs',
 	  '/assets/js/bootstrap.js',
 	  '/assets/js/bootstrap-modalmanager.js',
@@ -37,9 +36,10 @@ steal('aria/page')
 	  '/assets/css/bootstrap.css',
 	  '/assets/css/bootstrap-responsive.css',
 	  '/assets/css/bootstrap-modal.css',
-	  '/assets/js/underscore.js'
+	  '/assets/js/underscore.js',
+	  '/assets/stylesheets/global.css'
 	  )
-.then('/assets/webapp/style/global.less', function() {
+.then(function() {
 	$.ajax({
 		   type: 'GET',
 		    url: '/app/configuration',

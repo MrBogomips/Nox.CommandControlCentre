@@ -9,7 +9,7 @@ CREATE SEQUENCE "device_groups_id_seq";
 CREATE TABLE "device_types" (
 	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('device_types_id_seq')),
 	name				text NOT NULL UNIQUE,
-	display_name		text NULL,
+	display_name		text NOT NULL,
 	description			text NULL,
 	enabled				BOOLEAN NOT NULL,
 	_ctime				TIMESTAMP NOT NULL DEFAULT(NOW()),
@@ -21,7 +21,7 @@ CREATE TABLE "device_types" (
 CREATE TABLE "device_groups" (
 	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('device_groups_id_seq')),
 	name				text NOT NULL UNIQUE,
-	display_name		text NULL,
+	display_name		text NOT NULL,
 	description			text NULL,
 	enabled				BOOLEAN NOT NULL,
 	_ctime				TIMESTAMP NOT NULL DEFAULT(NOW()),
@@ -33,7 +33,7 @@ CREATE TABLE "device_groups" (
 CREATE  TABLE "devices" (
 	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('devices_id_seq')),
 	name				text NOT NULL UNIQUE,
-	display_name		text NULL,
+	display_name		text NOT NULL,
 	description			text NULL,
 	enabled				BOOLEAN NOT NULL,
 	device_type_id		INT NOT NULL,
