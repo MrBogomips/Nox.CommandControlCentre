@@ -34,9 +34,9 @@ GET		/device/types				controllers.Device.types
 GET		/device/groups				controllers.Device.groups
 POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
 GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
+# Device CRUD
 GET		/device/:id					controllers.Device.get(id: Int)
 PUT		/device/:id					controllers.Device.update(id: Int)
 DELETE	/device/:id					controllers.Device.delete(id: Int)
-
 POST	/device						controllers.Device.create
 

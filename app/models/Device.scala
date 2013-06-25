@@ -68,7 +68,7 @@ object Devices
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
   def displayName = column[String]("display_name")
-  def description = column[String]("display_name", O.Nullable)
+  def description = column[String]("description", O.Nullable)
   def enabled = column[Boolean]("enabled")
   def deviceTypeId = column[Int]("device_type_id")
   def deviceGroupId = column[Int]("device_group_id")
@@ -166,9 +166,10 @@ object Devices
     }
   }
   def update(obj: models.DevicePersisted): Boolean = withPersistableObject(obj, default = false) {
-    db withSession {
+    db withSession {		
+      Logger.debug(s"description = ${obj.description}")
       val sql = sqlu"""
-    UPDATE devices
+   UPDATE devices
        SET name = ${obj.name},
            display_name = ${obj.displayName},
     	   description = ${obj.description},
@@ -179,7 +180,7 @@ object Devices
            _ver = _ver + 1 
 	 WHERE id = ${obj.id}
 	 """
-      executeUpdate("device $obj", sql) == 1
+      executeUpdate(s"device $obj", sql) == 1
     }
   }
   def updateWithVersion(obj: models.DevicePersisted): Boolean = withPersistableObject(obj, default = false) {
@@ -197,7 +198,7 @@ object Devices
 	 WHERE id = ${obj.id}
 	   AND _ver = ${obj.version}
 	 """
-      executeUpdate("device $obj with version check", sql) == 1
+      executeUpdate(s"device $obj with version check", sql) == 1
     }
   }
 }

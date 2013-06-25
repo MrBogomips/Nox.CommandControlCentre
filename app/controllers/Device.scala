@@ -10,7 +10,7 @@ import models._
 
 import org.joda.time.format.ISODateTimeFormat
 
-
+ 
 object Device extends Secured {
 
   import models.DeviceCommandRequest
