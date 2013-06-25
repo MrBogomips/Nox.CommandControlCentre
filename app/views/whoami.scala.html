@@ -1,0 +1,29 @@
+@(user: UserPersisted)
+
+@aria.master.public("Who are you") {
+<div style="width: 400px; margin-left: 20px">
+	<h1>You are: «@user.displayName»</h1>
+
+	
+	<table class="table table-condensed table-bordered table-striped">
+		<tbody>
+			<tr>
+				<td class="tlabel"><b>User Id</b></td>
+				<td>@user.id</td>
+			</tr>
+			<tr>
+				<td class="tlabel"><b>Login</b></td>
+				<td>@user.login</td>
+			</tr>
+			<tr>
+				<td class="tlabel"><b>Display name</b></td>
+				<td>@user.displayName</td>
+			</tr>
+			<tr>
+				<td class="tlabel"><b>Suspension reason</b></td>
+				<td>@user.suspensionReason.getOrElse("<None>") </td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+}
