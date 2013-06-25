@@ -38,7 +38,9 @@ object DeviceTypes extends SimpleNameEntityTable[DeviceTypePersisted, DeviceType
  * Device Type Persisted
  */
 case class DeviceTypePersisted private[models] (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, creationTime: Timestamp, modificationTime: Timestamp, version: Int)
-  extends SimpleNameEntityPersisted[DeviceTypePersisted, DeviceType] {
+  extends SimpleNameEntityPersisted[DeviceTypePersisted, DeviceType] 
+  with DeviceTypeTrait
+{
 
   val entityTableMapper = DeviceTypes
   

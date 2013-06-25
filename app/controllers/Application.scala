@@ -12,24 +12,25 @@ import globals.Demo
 import models._
 import views._
 
-object Application extends ControllerBase {
+object Application extends Secured {
   
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   } 
   
   // -- Javascript routing
-  def javascriptRoutes = Action { implicit request =>
+  def javascriptRoutes = WithAuthentication { implicit request =>
     import routes.javascript._
     Ok(
         Routes.javascriptRouter("jsRoutes")(
+          Device.create,
           Device.receiveCommand
       )
     ).as("text/javascript") 
   }
   
   // -- Client Confguration
-  def clientConfiguration = Action { implicit request =>
+  def clientConfiguration = WithAuthentication { implicit request =>
     val config = globals.Configuration
     val app = globals.Application
     val json = Json.obj(
@@ -101,4 +102,11 @@ object Application extends ControllerBase {
       "success" -> "You've been logged out"
     )
   } 
+  
+  /**
+   * Show information about the user
+   */
+  def whoAmI = WithAuthentication { (user, request) => 
+    Ok(views.html.whoami(user))
+  }
 }

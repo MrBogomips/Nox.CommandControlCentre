@@ -1,0 +1,80 @@
+
+body, html {height: 100%}
+.page-container {height: 90%}
+
+.webapp_table {
+  background: white;
+  box-shadow: 3px 3px 5px #888888;
+  table { font-size:12px; }
+
+  .button {
+    .anchorInfo { position:relative; }
+    .more.btn { width:80px; }
+  }
+
+ .table-bordered tr th, .webapp_table .table-bordered tr td { line-height:26px; vertical-align:middle; }
+
+ #tableChannelSettings { width:96%; margin-left:2%; }
+ #tableChannelSettings .unsubscribe { width:112px; padding:3px 0px; margin:0px 5px; color:#FFFFFF; }
+ .btn i { margin-right:3px; }
+
+ #tableDevicesList { width:100%; }
+
+ tr.noresults { display:none; } 
+ tr:nth-last-child(1).noresults { display:table-row; }
+ 
+ .label {
+ 	*display: inline;/* for IE7*/
+    *zoom:1;/* for IE7*/
+ 	display:inline-block;
+ 	min-width:30px;
+ 	margin-left:auto;
+ 	margin-right:auto
+ }
+
+}
+
+
+.devices_table {
+	min-width: 650px;
+}
+.map.fullscreen {
+	margin-top: -20px;
+	width: 100%; height: 100%;
+}
+.devices_table {
+	width: 500px; 
+	position:absolute; 
+	zindex: 100; 
+	float: right; 
+	right: 10px; 
+	top: 50px;
+	backgrund-color: white;
+}
+
+.device_settings, .device_info {
+	.btn.command {
+		width: 80px;
+	}
+	.tlabel {width: 100px;}
+	.basic-info {
+		.data {
+			float: left;
+			width: 50%;
+		}
+		.mini-map {
+			float: right;
+			width: 49%;
+			height: 115px;
+			border: solid 1px #ddd;
+			background-color: #eee;
+		}	
+	}
+	.available-commands {
+		width: 100%
+	}
+}
+
+.device_info {
+	.extended-info th.attribute {width: 100px;}
+}

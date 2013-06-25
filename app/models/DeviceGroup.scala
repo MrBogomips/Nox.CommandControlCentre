@@ -38,8 +38,9 @@ object DeviceGroups extends SimpleNameEntityTable[DeviceGroupPersisted, DeviceGr
  * Device Type Persisted
  */
 case class DeviceGroupPersisted private[models] (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, creationTime: Timestamp, modificationTime: Timestamp, version: Int)
-  extends SimpleNameEntityPersisted[DeviceGroupPersisted, DeviceGroup] {
-
+  extends SimpleNameEntityPersisted[DeviceGroupPersisted, DeviceGroup] 
+  with DeviceGroupTrait
+{
   val entityTableMapper = DeviceGroups
   
   def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled) =
