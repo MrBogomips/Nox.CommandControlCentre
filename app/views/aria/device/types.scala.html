@@ -1,0 +1,9 @@
+@(types: Seq[DeviceTypePersisted])
+
+
+
+
+@types.map { t =>
+	id: @t.id <br>
+	name: @t.name <br>
+}

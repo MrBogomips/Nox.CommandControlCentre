@@ -39,9 +39,9 @@ steal(
 					});
 				};
 				
-				$.getJSON('/device/types', function(data) {
+				$.getJSON('/device_types', function(data) {
 					$.extend(self.options, data);
-					$.getJSON('/device/groups', function(data) {
+					$.getJSON('/device_groups', function(data) {
 						$.extend(self.options, data);
 						if (parseInt(self.options["id"]) > 0) {
 							$.getJSON('/device/'+self.options["id"], function(data) {

@@ -30,8 +30,8 @@ GET		/channel/index				controllers.Channel.index
 
 # Device
 GET		/device/index				controllers.Device.index
-GET		/device/types				controllers.Device.types
-GET		/device/groups				controllers.Device.groups
+
+
 POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
 GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
 # Device CRUD
@@ -39,4 +39,13 @@ GET		/device/:id					controllers.Device.get(id: Int)
 PUT		/device/:id					controllers.Device.update(id: Int)
 DELETE	/device/:id					controllers.Device.delete(id: Int)
 POST	/device						controllers.Device.create
+
+# Device types
+GET		/device_types				controllers.Device.types
+GET		/device_types/index			controllers.Device.typesIndex
+
+# Device groups
+GET		/device_groups				controllers.Device.groups
+GET		/device_groups/index		controllers.Device.groupsIndex
+
 

@@ -1,0 +1,52 @@
+@(groups: Seq[DeviceGroupPersisted])
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+            steal('/assets/webapp/webapp_init.js')
+            .then('/assets/webapp/device/device_groups.js')
+            .then(function() {
+            		$("#device_types").device_groups();
+            });
+</script>
+}
+
+@aria.master.authenticated("Device groups", header_more = header_more, footer_more = footer_scripts) {
+
+<div class="ana-devices groups">
+	<h1>Device groups</h1>
+
+	<table class="table table-condensed table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Groups ID</th>
+				<th>Name</th>
+				<th>Display Name</th>
+				<th>Description</th>
+				<th>Enabled</th>
+				<th width="1%"></th>
+			</tr>
+		</thead>
+		<tbody>
+		@groups.map { g =>
+			<tr>
+				<td>@g.id</td>
+				<td>@g.name</td>
+				<td>@g.displayName</td>
+				<td>@g.description</td>
+				<td>@g.enabled</td>
+				<td>
+				<nobr>
+					<button class="btn btn-mini modify" data-device-id="@g.id">Modify</button>
+					<button class="btn btn-mini btn-danger delete" data-device-id="@g.id">Delete</button>
+				</nobr>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<button class="btn btn-primary" id="create_device">Create new device</button>
+	</div>
+
+}
