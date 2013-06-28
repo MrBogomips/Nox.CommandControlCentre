@@ -23,8 +23,19 @@ object Application extends Secured {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
+        Assets.at,  
+          
+        Device.index,
+        Device.get,
         Device.create,
-        Device.receiveCommand)).as("text/javascript")
+        Device.update,
+        Device.delete,
+        Device.receiveCommand,
+      
+        DeviceType.index,
+        DeviceGroup.index
+      )
+     ).as("text/javascript")
   }
 
   def javascriptRoutesTestbench = WithAuthentication { implicit request =>

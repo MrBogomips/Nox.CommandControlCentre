@@ -3,7 +3,7 @@
 # ~~~~
 
 # Map static resources from the /public folder to the /assets URL path
-GET 	/assets/js/routes			controllers.Application.javascriptRoutes
+GET 	/assets/js/routes.js		controllers.Application.javascriptRoutes
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Home page
@@ -45,4 +45,4 @@ POST	/device						controllers.Device.create
 GET		/device_type/index			controllers.DeviceType.index(all: Boolean ?= false)
 
 # Device groups
-GET		/device_group/index		controllers.DeviceGroup.index(all: Boolean ?= false)
+GET		/device_group/index		controllers.DeviceGroup.index(all: Boolean ?= false) 

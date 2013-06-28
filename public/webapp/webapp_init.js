@@ -37,7 +37,8 @@ steal('aria/page')
 	  '/assets/css/bootstrap-responsive.css',
 	  '/assets/css/bootstrap-modal.css',
 	  '/assets/js/underscore.js',
-	  '/assets/stylesheets/global.css'
+	  '/assets/stylesheets/global.css',
+	  '/assets/js/routes.js'
 	  )
 .then(function() {
 	$.ajax({

@@ -6,14 +6,21 @@
     		<script type="text/javascript">
     			function breakable() {
     				//alert("Loaded");
-    				jsRoutes.controllers.DeviceType.index().ajax({
-    					dataType: "json",
+    				jsRoutes.controllers.Device.index(true).ajax({
+    					headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    },
     					success: function(data) {
     						$("#content-json").html(JSON.stringify(data));
     					}
     				});
     
-    				jsRoutes.controllers.DeviceType.index().ajax({
+    				jsRoutes.controllers.Device.index(true).ajax({
+    					headers: { 
+					        Accept : "text/html; charset=utf-8",
+					        "Content-Type": "text/html; charset=utf-8"
+					    },
     					success: function(data) {
     						$("#content-html").html(data);
     					}

@@ -28,28 +28,9 @@ object Device extends Secured {
         "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
     }
   }
-
   
   import models.DeviceCommandRequest
   import models.DeviceCommandResponse._
-
-  /**
-   * DevicePersisted JSON serializer
-   */
-  implicit val deviceJsonWriter = new Writes[DevicePersisted] {
-    def writes(d: DevicePersisted): JsValue = {
-      Json.obj(
-        "id" -> d.id,
-        "name" -> d.name,
-        "display_name" -> d.displayName,
-        "description" -> d.description,
-        "enabled" -> d.enabled,
-        "type_id" -> d.deviceType.id,
-        "group_id" -> d.deviceGroup.id,
-        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
-        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
-    }
-  }
 
   def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) =>
     request.body.validate[DeviceCommandRequest].map { c =>

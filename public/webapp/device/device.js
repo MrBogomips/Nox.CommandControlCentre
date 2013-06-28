@@ -28,31 +28,66 @@ steal(
 				this.element.addClass('webapp_device');
 				
 				var renderForm = function() {
-					self.element.html('/assets/webapp/device/views/default.ejs', self.options, function(el) {
-						var el = self.element.find(".modal");//.find('.modal.commands');
-						$el = $(el);
-						$el.modal('show');
-						$el.on('hidden', function(){
-							self.element.html('');
-							self.destroy();
-						});
-					});
-				};
-				
-				$.getJSON('/device_types', function(data) {
-					$.extend(self.options, data);
-					$.getJSON('/device_groups', function(data) {
-						$.extend(self.options, data);
-						if (parseInt(self.options["id"]) > 0) {
-							$.getJSON('/device/'+self.options["id"], function(data) {
-								$.extend(self.options, data);
-								renderForm();
+						(function() {
+							self.element.html(jsRoutes.controllers.Assets.at("webapp/device/views/default.ejs").url, self.options, function(el) {
+								var el = self.element.find(".modal");//.find('.modal.commands');
+								$el = $(el);
+								$el.modal('show');
+								$el.on('hidden', function(){
+									self.element.html('');
+									self.destroy();
+								});
 							});
-						} else {
-							renderForm();
-						}
-					});
-				});
+						})();
+					},
+					fetchDeviceInfo = function () {
+						(function() {
+							if (parseInt(self.options["id"]) > 0) {
+								jsRoutes.controllers.Device.get(self.options["id"]).ajax({
+									headers: { 
+								        Accept : "application/json; charset=utf-8",
+								        "Content-Type": "application/json; charset=utf-8"
+								    },
+									success: function(data) {
+										$.extend(self.options, data);
+										renderForm();
+									}
+								});	
+							} else {
+								renderForm();
+							}
+						})();
+					},
+					fecthDeviceGroups = function () {
+						(function () {
+							jsRoutes.controllers.DeviceGroup.index().ajax({
+								headers: { 
+							        Accept : "application/json; charset=utf-8",
+							        "Content-Type": "application/json; charset=utf-8"
+							    },
+								success: function(data) {
+									$.extend(self.options, {"groups": data});
+									fetchDeviceInfo();
+								}
+							});
+						})();
+					},
+					fetchDeviceTypes = function () {
+						(function () {
+							jsRoutes.controllers.DeviceType.index().ajax({
+								headers: { 
+							        Accept : "application/json; charset=utf-8",
+							        "Content-Type": "application/json; charset=utf-8"
+							    },
+								success: function(data) {
+									$.extend(self.options, {"types": data});
+									fecthDeviceGroups();
+								}
+							});
+						})();
+					}; 
+				
+				fetchDeviceTypes();
 				
 			} ,
 			destroy : function(){
@@ -60,39 +95,31 @@ steal(
 			    this._super();
 			},
 			
+			_reportError : function(data, txtStatus, jqXHR) {
+				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+				this.find(".alert_placeholder").html($alert);
+			},
+			
 			".btn.device-create click": function(el, ev) {
 				var self = this;
-				var data = this.element.find('form').serialize();
-				//alert(data);
-				$.post('/device', data)
-					.done(function(data, txtStatus, jqXHR) {
-						/*alert(data);
-						alert(txtStatus);
-						alert(jqXHR);
-						*/
+
+				jsRoutes.controllers.Device.create().ajax({
+					data: self.element.find('form').serialize(),
+					success: function(data, txtStatus, jqXHR) {
 						location.reload(true);
-					})
-					.fail(function(data, txtStatus, jqXHR) {
-						var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-						self.find(".alert_placeholder").html($alert);
-						//$alert.appendTo()
-						
-					});
+					},
+					error: self.proxy(self._reportError)
+				});
 			},
 			".btn.device-update click": function(el, ev) {
 				var self = this;
-				var data = this.element.find('form').serialize();
-				$.ajax({
-					url: '/device/'+this.options.id, 
-					data: data,
-					type: 'PUT'
-					})
-				.done(function(data, txtStatus, jqXHR) {
-					location.reload(true);
-				})
-				.fail(function(data, txtStatus, jqXHR) {
-					var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-					self.find(".alert_placeholder").html($alert);
+
+				jsRoutes.controllers.Device.update(self.options.id).ajax({
+					data: self.element.find('form').serialize(),
+					success: function(data, txtStatus, jqXHR) {
+						location.reload(true);
+					},
+					error: self.proxy(self._reportError)
 				});
 			}
 		});

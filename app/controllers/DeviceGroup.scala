@@ -27,7 +27,6 @@ object DeviceGroup extends Secured {
     }
   }
   
-  
   def index(all: Boolean = false) = WithAuthentication { (user, request) =>
     val groups = all match {
       case false => DeviceGroups.findAllEnabled
