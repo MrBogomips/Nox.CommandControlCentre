@@ -11,7 +11,25 @@ import models._
 import org.joda.time.format.ISODateTimeFormat
 
 object Device extends Secured {
+  /**
+   * DevicePersisted JSON serializer
+   */
+  implicit val deviceJsonWriter = new Writes[DevicePersisted] {
+    def writes(d: DevicePersisted): JsValue = {
+      Json.obj(
+        "id" -> d.id,
+        "name" -> d.name,
+        "display_name" -> d.displayName,
+        "description" -> d.description,
+        "enabled" -> d.enabled,
+        "type_id" -> d.deviceType.id,
+        "group_id" -> d.deviceGroup.id,
+        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
+        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
+    }
+  }
 
+  
   import models.DeviceCommandRequest
   import models.DeviceCommandResponse._
 
@@ -48,9 +66,18 @@ object Device extends Secured {
     Ok(views.html.aria.device.configure(deviceId));
   }
 
-  def index = WithAuthentication {
-    val devices = Devices.findAll
-    Ok(views.html.aria.device.index(devices));
+  def index(all: Boolean = false) = WithAuthentication { implicit request =>
+    val devices = all match {
+      case false => Devices.findAll
+      case true => Devices.findAll
+    }
+    if (acceptsJson(request)) {
+      Ok(Json.toJson(devices))
+    } else if (acceptsHtml(request)) {
+      Ok(views.html.aria.device.index(devices))
+    } else {
+      BadRequest
+    }
   }
 
   def get(id: Int) = WithAuthentication {

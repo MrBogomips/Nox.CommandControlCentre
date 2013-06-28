@@ -28,10 +28,10 @@ object DeviceGroup extends Secured {
   }
   
   
-  def index(onlyEnabled: Boolean = true) = WithAuthentication { (user, request) =>
-    val groups = onlyEnabled match {
-      case true => DeviceGroups.findAllEnabled
-      case false => DeviceGroups.findAll
+  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
+    val groups = all match {
+      case false => DeviceGroups.findAllEnabled
+      case true => DeviceGroups.findAll
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(groups))

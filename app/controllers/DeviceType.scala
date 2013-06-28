@@ -27,10 +27,10 @@ object DeviceType extends Secured {
     }
   }
   
-  def index(onlyEnabled: Boolean = true) = WithAuthentication { (user, request) =>
-    val types = onlyEnabled match {
-      case true => DeviceTypes.findAllEnabled
-      case false => DeviceTypes.findAll
+  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
+    val types = all match {
+      case false => DeviceTypes.findAllEnabled
+      case true => DeviceTypes.findAll
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(types))

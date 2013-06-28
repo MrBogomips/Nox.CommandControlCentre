@@ -13,7 +13,8 @@ GET     /                           controllers.Application.login
 GET     /login                      controllers.Application.login
 POST    /authenticate               controllers.Application.authenticate
 GET		/logout						controllers.Application.logout
-GET		/whoami						controllers.Application.whoAmI
+GET		/tech/whoami				controllers.Application.whoAmI
+GET		/tech/routes_testbench		controllers.Application.javascriptRoutesTestbench
 
 # Dashboard
 GET		/dashboard					controllers.Dashboard.index
@@ -29,7 +30,7 @@ GET		/app/configuration			controllers.Application.clientConfiguration
 GET		/channel/index				controllers.Channel.index
 
 # Device
-GET		/device/index				controllers.Device.index
+GET		/device/index				controllers.Device.index(all: Boolean ?= false)
 
 
 POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
@@ -41,11 +42,7 @@ DELETE	/device/:id					controllers.Device.delete(id: Int)
 POST	/device						controllers.Device.create
 
 # Device types
-#GET		/device_types				controllers.DeviceType.index(only_enabled: Boolean ?= true)
-#GET		/device_types/index			controllers.DeviceType.index(only_enabled: Boolean ?= true)
+GET		/device_type/index			controllers.DeviceType.index(all: Boolean ?= false)
 
 # Device groups
-#GET		/device_groups				controllers.DeviceGroup.index(only_enabled: Boolean ?= true)
-#GET		/device_groups/index		controllers.DeviceGroup.index(only_enabled: Boolean ?= true)
-
-
+GET		/device_group/index		controllers.DeviceGroup.index(all: Boolean ?= false)
