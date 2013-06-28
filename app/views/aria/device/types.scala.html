@@ -1,5 +1,6 @@
 @(types: Seq[DeviceTypePersisted])
 
+
 @header_more = {}
 
 @footer_scripts = {
@@ -7,7 +8,7 @@
             steal('/assets/webapp/webapp_init.js')
             .then('/assets/webapp/devicetypes/devicetypes.js')
             .then(function() {
-            		$("#create_device_type").click(
+			$("#create_device").click(
             			function() {            	
             			var $el = $("<div></div>")
             			$('body').append($el);
@@ -17,8 +18,7 @@
             		
 				$(".btn.modify").click(function(el, ev) {
 					var options = {};
-					//options["id"] = el.srcElement.getAttribute("data-device-id");
-					options["id"] = this.attributes[0].value;
+					options["id"] = el.srcElement.getAttribute("data-device-id");
 					var $el = $("<div></div>");
         			$('body').append($el);
         			$el.webapp_devicetypes(options);
@@ -27,7 +27,7 @@
 				$(".btn.delete").click(function(el, ev) {
 					var id = el.srcElement.getAttribute("data-device-id");
 					$.ajax({
-						url: '/device_types/'+id,
+						url: '/device_type/'+id,
 						type: 'DELETE'
 						})
 					.done(function(data, txtStatus, jqXHR) {
@@ -44,10 +44,9 @@
 </script>
 }
 
-@aria.master.authenticated("Device types", header_more = header_more, footer_more = footer_scripts) {
-
-<div class="ana-devices groups">
-	<h1>Device types</h1>
+@aria.master.authenticated("Devices types", footer_more = footer_scripts) {
+	<div class="ana-devices">
+	<h1>Devices types</h1>
 
 	<table class="table table-condensed table-bordered table-striped">
 		<thead>
@@ -78,7 +77,6 @@
 		}
 		</tbody>
 	</table>
-	<button class="btn btn-primary" id="create_device_type">Create new device</button>
+	<button class="btn btn-primary" id="create_device">Create new device</button>
 	</div>
-
 }
