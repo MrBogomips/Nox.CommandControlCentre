@@ -28,7 +28,7 @@ object Device extends Secured {
         "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
     }
   }
-  
+
   import models.DeviceCommandRequest
   import models.DeviceCommandResponse._
 
@@ -49,7 +49,7 @@ object Device extends Secured {
 
   def index(all: Boolean = false) = WithAuthentication { implicit request =>
     val devices = all match {
-      case false => Devices.findAll
+      case false => Devices.findAllEnabled
       case true => Devices.findAll
     }
     if (acceptsJson(request)) {
@@ -61,9 +61,17 @@ object Device extends Secured {
     }
   }
 
-  def get(id: Int) = WithAuthentication {
+  def get(id: Int) = WithAuthentication { implicit request =>
     Devices.findById(id).map { d =>
       Ok(Json.toJson(d))
+      if (acceptsJson(request)) {
+        Ok(Json.toJson(d))
+      } else if (acceptsHtml(request)) {
+        Ok(views.html.aria.device.item(d.id))
+      } else {
+        BadRequest
+      }
+
     }.getOrElse(NotFound);
   }
 

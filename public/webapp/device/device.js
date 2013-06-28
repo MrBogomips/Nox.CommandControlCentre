@@ -30,7 +30,7 @@ steal(
 				var renderForm = function() {
 						(function() {
 							self.element.html(jsRoutes.controllers.Assets.at("webapp/device/views/default.ejs").url, self.options, function(el) {
-								var el = self.element.find(".modal");//.find('.modal.commands');
+								var el = self.element.find(".modal");
 								$el = $(el);
 								$el.modal('show');
 								$el.on('hidden', function(){
@@ -88,7 +88,6 @@ steal(
 					}; 
 				
 				fetchDeviceTypes();
-				
 			} ,
 			destroy : function(){
 				var self = this;
@@ -106,7 +105,7 @@ steal(
 				jsRoutes.controllers.Device.create().ajax({
 					data: self.element.find('form').serialize(),
 					success: function(data, txtStatus, jqXHR) {
-						location.reload(true);
+						location = jsRoutes.controllers.Device.index().url;
 					},
 					error: self.proxy(self._reportError)
 				});
@@ -117,7 +116,7 @@ steal(
 				jsRoutes.controllers.Device.update(self.options.id).ajax({
 					data: self.element.find('form').serialize(),
 					success: function(data, txtStatus, jqXHR) {
-						location.reload(true);
+						location = jsRoutes.controllers.Device.index().url;
 					},
 					error: self.proxy(self._reportError)
 				});
