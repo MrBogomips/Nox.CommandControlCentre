@@ -15,6 +15,24 @@ object Device extends Secured {
   import models.DeviceCommandRequest
   import models.DeviceCommandResponse._
 
+  /**
+   * DevicePersisted JSON serializer
+   */
+  implicit val deviceJsonWriter = new Writes[DevicePersisted] {
+    def writes(d: DevicePersisted): JsValue = {
+      Json.obj(
+        "id" -> d.id,
+        "name" -> d.name,
+        "display_name" -> d.displayName,
+        "description" -> d.description,
+        "enabled" -> d.enabled,
+        "type_id" -> d.deviceType.id,
+        "group_id" -> d.deviceGroup.id,
+        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
+        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
+    }
+  }
+
   def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) =>
     request.body.validate[DeviceCommandRequest].map { c =>
       Logger.debug("HTTP REQUEST: " + request.body.toString)
@@ -37,16 +55,7 @@ object Device extends Secured {
 
   def get(id: Int) = WithAuthentication {
     Devices.findById(id).map { d =>
-      Ok(Json.obj(
-        "id" -> d.id,
-        "name" -> d.name,
-        "display_name" -> d.displayName,
-        "description" -> d.description,
-        "enabled" -> d.enabled,
-        "type_id" -> d.deviceType.id,
-        "group_id" -> d.deviceGroup.id,
-        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
-        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime())))
+      Ok(Json.toJson(d))
     }.getOrElse(NotFound);
   }
 
@@ -108,37 +117,5 @@ object Device extends Secured {
       case true => Ok(s"Device $id deleted successfully")
       case _ => NotFound
     }
-  }
-
-  def types = WithAuthentication {
-    val types = DeviceTypes.findAllEnabled
-    val json = Json.obj("types" -> types.map(d => Json.obj(
-      "id" -> d.id,
-      "name" -> d.name,
-      "display_name" -> d.displayName,
-      "description" -> d.description,
-      "enabled" -> d.enabled)))
-    Ok(json)
-  }
-
-  def typesIndex = WithAuthentication {
-    val types = DeviceTypes.findAll  
-    Ok(views.html.aria.device.types(types))
-  }
-
-  def groups = WithAuthentication {
-    val groups = DeviceGroups.findAllEnabled
-    val json = Json.obj("groups" -> groups.map(d => Json.obj(
-      "id" -> d.id,
-      "name" -> d.name,
-      "display_name" -> d.displayName,
-      "description" -> d.description,
-      "enabled" -> d.enabled)))
-    Ok(json)
-  }
-
-  def groupsIndex = WithAuthentication {
-	val groups = DeviceGroups.findAll  
-    Ok(views.html.aria.device.groups(groups))
   }
 }
