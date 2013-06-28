@@ -13,61 +13,59 @@ import models._
 import views._
 
 object Application extends Secured {
-  
+
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
-  } 
-  
+  }
+
   // -- Javascript routing
   def javascriptRoutes = WithAuthentication { implicit request =>
     import routes.javascript._
     Ok(
-        Routes.javascriptRouter("jsRoutes")(
-          Device.create,
-          Device.receiveCommand
-      )
-    ).as("text/javascript") 
+      Routes.javascriptRouter("jsRoutes")(
+        Device.create,
+        Device.receiveCommand)).as("text/javascript")
   }
-  
+
+  def javascriptRoutesTestbench = WithAuthentication { implicit request =>
+    Ok(views.html.testbench_routes())
+  }
+
   // -- Client Confguration
   def clientConfiguration = WithAuthentication { implicit request =>
     val config = globals.Configuration
     val app = globals.Application
     val json = Json.obj(
-        "applicationId" -> app.applicationId,
-        "applicationKey" -> app.applicationKey,
-        "userId" -> Demo.userId,
-        "sessionId" -> Demo.sessionId,
-        "mqttClientTopic" -> Demo.mqttClientTopic,
-        "mqttApplicationTopic" -> Demo.mqttApplicationTopic,
-        "mqttUserTopic" -> Demo.mqttUserTopic,
-        "mqttSessionTopic" -> Demo.mqttSessionTopic,
-        "eventsWebSocket" -> app.eventsWebSocket,
-        "eventsOutOfSequencePolicy" -> config.getString("nox.ccc.events_out_of_seq_policy")
-    )
-      
-      
+      "applicationId" -> app.applicationId,
+      "applicationKey" -> app.applicationKey,
+      "userId" -> Demo.userId,
+      "sessionId" -> Demo.sessionId,
+      "mqttClientTopic" -> Demo.mqttClientTopic,
+      "mqttApplicationTopic" -> Demo.mqttApplicationTopic,
+      "mqttUserTopic" -> Demo.mqttUserTopic,
+      "mqttSessionTopic" -> Demo.mqttSessionTopic,
+      "eventsWebSocket" -> app.eventsWebSocket,
+      "eventsOutOfSequencePolicy" -> config.getString("nox.ccc.events_out_of_seq_policy"))
+
     request.queryString.get("callback").flatMap(_.headOption) match {
       case Some(callback) => Ok(Jsonp(callback, json)).as(JAVASCRIPT)
       case None => Ok(json).as(JSON)
     }
   }
-  
+
   // -- Authentication taks
-   val loginForm = Form(
+  val loginForm = Form(
     tuple(
       "login" -> text,
-      "password" -> text
-    ) verifying ("Invalid email or password", result => result match {
-      case (login, password) => Users.authenticate(login, password).isDefined
-    })
-  )
+      "password" -> text) verifying ("Invalid email or password", result => result match {
+        case (login, password) => Users.authenticate(login, password).isDefined
+      }))
   /**
    * Build the action URL of the login form preserving the querystring passed
    */
   private def loginActionUrl(implicit request: Request[AnyContent]): String = {
-     s"${routes.Application.authenticate.toString}?${request.rawQueryString}"
-   }
+    s"${routes.Application.authenticate.toString}?${request.rawQueryString}"
+  }
   /**
    * Login page.
    */
@@ -85,13 +83,12 @@ object Application extends Secured {
       loginForm => {
         request.getQueryString(auth_cb).map { uri =>
           Logger.debug(s"Redirecting to callback page [$uri]")
-          Redirect(uri) 
-        }.getOrElse{
+          Redirect(uri)
+        }.getOrElse {
           Logger.debug(s"Redirecting to default authenticated page [$default_auth_uri]")
-          Redirect(default_auth_uri) 
+          Redirect(default_auth_uri)
         }.withSession("login" -> loginForm._1)
-      }
-    )
+      })
   }
 
   /**
@@ -99,14 +96,13 @@ object Application extends Secured {
    */
   def logout = Action {
     Redirect(routes.Application.login).withNewSession.flashing(
-      "success" -> "You've been logged out"
-    )
-  } 
-  
+      "success" -> "You've been logged out")
+  }
+
   /**
    * Show information about the user
    */
-  def whoAmI = WithAuthentication { (user, request) => 
+  def whoAmI = WithAuthentication { (user, request) =>
     Ok(views.html.whoami(user))
   }
 }
