@@ -30,11 +30,10 @@ GET		/app/configuration			controllers.Application.clientConfiguration
 GET		/channel/index				controllers.Channel.index
 
 # Device
-GET		/device/index				controllers.Device.index(all: Boolean ?= false)
-
-
+GET		/device/index				controllers.Device.index(all: Boolean ?= true)
 POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
 GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
+
 # Device CRUD
 GET		/device/:id					controllers.Device.get(id: Int)
 PUT		/device/:id					controllers.Device.update(id: Int)

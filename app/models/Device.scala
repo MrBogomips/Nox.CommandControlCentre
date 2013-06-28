@@ -106,6 +106,15 @@ object Devices
 
     qy.list.map(r => DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, r._1.creationTime, r._1.modificationTime, r._1.version))
   }
+  def findAllEnabled: Seq[models.DevicePersisted] = db withSession {
+    val qy = for {
+      dr <- Devices if (dr.enabled === true)
+      dt <- DeviceTypes if (dr.deviceTypeId === dt.id)
+      dg <- DeviceGroups if (dr.deviceGroupId === dg.id)
+    } yield (dr, dt, dg)
+
+    qy.list.map(r => DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, r._1.creationTime, r._1.modificationTime, r._1.version))
+  }
   def findById(id: Int): Option[models.DevicePersisted] = db withSession {
     val qy = for {
       dr <- Devices if (dr.id === id)

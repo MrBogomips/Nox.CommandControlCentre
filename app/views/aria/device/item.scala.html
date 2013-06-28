@@ -1,0 +1,19 @@
+@(id: Int)
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+            steal('/assets/webapp/webapp_init.js')
+            .then('/assets/webapp/device/device.js')
+            .then(function() {
+            	$('#item').webapp_device({id: @id});
+            });
+</script>
+}
+
+@aria.master.authenticated("Devices", footer_more = footer_scripts) {
+
+	<div id="item"></item>	
+
+}
