@@ -31,6 +31,7 @@ GET		/channel/index				controllers.Channel.index
 
 # Device
 GET		/device/index				controllers.Device.index(all: Boolean ?= true)
+GET		/device/mine/index				controllers.Device.myDevice(all: Boolean ?= true)
 POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
 GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
 
