@@ -1,0 +1,41 @@
+
+<html>
+  	    <head>
+    		<script type="text/javascript" src="/assets/js/jquery-2.0.2.min.js"></script>
+  			<script type="text/javascript" src="@{routes.Application.javascriptRoutes.toString}"></script>
+    		<script type="text/javascript">
+    			function breakable() {
+    				//alert("Loaded");
+    				jsRoutes.controllers.Device.index(true).ajax({
+    					headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    },
+    					success: function(data) {
+    						$("#content-json").html(JSON.stringify(data));
+    					}
+    				});
+    
+    				jsRoutes.controllers.Device.index(true).ajax({
+    					headers: { 
+					        Accept : "text/html; charset=utf-8",
+					        "Content-Type": "text/html; charset=utf-8"
+					    },
+    					success: function(data) {
+    						$("#content-html").html(data);
+    					}
+    				});
+    			}
+    		</script>
+    	</head>
+        <body onload="breakable()">
+    		<h2>Routes test bench</h2>
+    		<p>Put a breakpoint around the breakable function and play with the routes
+    
+    		<h3>JSON response</h3>
+    		<div id="content-json"></div>
+    
+    		<h3>HTML reposnse</h3>
+    		<div id="content-html"></div>
+        </body>
+     </html>
