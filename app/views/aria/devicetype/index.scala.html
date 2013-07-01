@@ -8,7 +8,7 @@
             steal('/assets/webapp/webapp_init.js')
             .then('/assets/webapp/devicetypes/devicetypes.js')
             .then(function() {
-			$("#create_device").click(
+            		$("#create_device").click(
             			function() {            	
             			var $el = $("<div></div>")
             			$('body').append($el);
@@ -18,14 +18,14 @@
             		
 				$(".btn.modify").click(function(el, ev) {
 					var options = {};
-					options["id"] = el.srcElement.getAttribute("data-device-id");
+					options["id"] = $(this).attr("data-device-id");
 					var $el = $("<div></div>");
         			$('body').append($el);
         			$el.webapp_devicetypes(options);
 				});
 			
 				$(".btn.delete").click(function(el, ev) {
-					var id = el.srcElement.getAttribute("data-device-id");
+					var id = $(this).attr("data-device-id");
 					$.ajax({
 						url: '/device_type/'+id,
 						type: 'DELETE'
@@ -77,6 +77,6 @@
 		}
 		</tbody>
 	</table>
-	<button class="btn btn-primary" id="create_device">Create new device</button>
+	<button class="btn btn-primary" id="create_device">Create new device type</button>
 	</div>
 }

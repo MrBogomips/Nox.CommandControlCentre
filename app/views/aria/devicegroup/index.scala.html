@@ -1,4 +1,4 @@
-@(devices: Seq[DevicePersisted])
+@(groups: Seq[DeviceGroupPersisted])
 
 
 @header_more = {}
@@ -6,13 +6,13 @@
 @footer_scripts = {
 <script type='text/javascript'>
             steal('/assets/webapp/webapp_init.js')
-            .then('/assets/webapp/device/device.js')
+            .then('/assets/webapp/devicegroups/devicegroups.js')
             .then(function() {
             		$("#create_device").click(
             			function() {            	
             			var $el = $("<div></div>")
             			$('body').append($el);
-            			$el.webapp_device();
+            			$el.webapp_devicegroups();
             			}
             		);
             		
@@ -21,13 +21,13 @@
 					options["id"] = $(this).attr("data-device-id");
 					var $el = $("<div></div>");
         			$('body').append($el);
-        			$el.webapp_device(options);
+        			$el.webapp_devicegroups(options);
 				});
 			
 				$(".btn.delete").click(function(el, ev) {
 					var id = $(this).attr("data-device-id");
 					$.ajax({
-						url: '/device/'+id,
+						url: '/device_group/'+id,
 						type: 'DELETE'
 						})
 					.done(function(data, txtStatus, jqXHR) {
@@ -44,14 +44,14 @@
 </script>
 }
 
-@aria.master.authenticated("Devices", footer_more = footer_scripts) {
+@aria.master.authenticated("Devices groups", footer_more = footer_scripts) {
 	<div class="ana-devices">
-	<h1>Devices</h1>
+	<h1>Devices groups</h1>
 
 	<table class="table table-condensed table-bordered table-striped">
 		<thead>
 			<tr>
-				<th>Device ID</th>
+				<th>Group ID</th>
 				<th>Name</th>
 				<th>Display Name</th>
 				<th>Description</th>
@@ -60,23 +60,23 @@
 			</tr>
 		</thead>
 		<tbody>
-		@devices.map { d =>
+		@groups.map { g =>
 			<tr>
-				<td>@d.id</td>
-				<td>@d.name</td>
-				<td>@d.displayName</td>
-				<td>@d.description</td>
-				<td>@d.enabled</td>
+				<td>@g.id</td>
+				<td>@g.name</td>
+				<td>@g.displayName</td>
+				<td>@g.description</td>
+				<td>@g.enabled</td>
 				<td>
 				<nobr>
-					<button class="btn btn-mini modify" data-device-id="@d.id">Modify</button>
-					<button class="btn btn-mini btn-danger delete" data-device-id="@d.id">Delete</button>
+					<button class="btn btn-mini modify" data-device-id="@g.id">Modify</button>
+					<button class="btn btn-mini btn-danger delete" data-device-id="@g.id">Delete</button>
 				</nobr>
 				</td>
 			</tr>
 		}
 		</tbody>
 	</table>
-	<button class="btn btn-primary" id="create_device">Create new device</button>
+	<button class="btn btn-primary" id="create_device">Create new device group</button>
 	</div>
 }
