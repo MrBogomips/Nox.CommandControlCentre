@@ -28,7 +28,6 @@ steal(
 				this.element.addClass('webapp_device');
 				
 				var renderForm = function() {
-						(function() {
 							self.element.html(jsRoutes.controllers.Assets.at("webapp/device/views/default.ejs").url, self.options, function(el) {
 								var el = self.element.find(".modal");
 								$el = $(el);
@@ -38,57 +37,45 @@ steal(
 									self.destroy();
 								});
 							});
-						})();
-					},
-					fetchDeviceInfo = function () {
-						(function() {
-							if (parseInt(self.options["id"]) > 0) {
-								jsRoutes.controllers.Device.get(self.options["id"]).ajax({
-									headers: { 
-								        Accept : "application/json; charset=utf-8",
-								        "Content-Type": "application/json; charset=utf-8"
-								    },
-									success: function(data) {
-										$.extend(self.options, data);
-										//renderForm();
-									}
-								});	
-							} else {
-								//renderForm();
-							}
-						})();
-					},
-					fecthDeviceGroups = function () {
-						(function () {
-							jsRoutes.controllers.DeviceGroup.index().ajax({
-								headers: { 
-							        Accept : "application/json; charset=utf-8",
-							        "Content-Type": "application/json; charset=utf-8"
-							    },
-								success: function(data) {
-									$.extend(self.options, {"groups": data});
-									//fetchDeviceInfo();
-								}
-							});
-						})();
-					},
-					fetchDeviceTypes = function () {
-						(function () {
-							jsRoutes.controllers.DeviceType.index().ajax({
-								headers: { 
-							        Accept : "application/json; charset=utf-8",
-							        "Content-Type": "application/json; charset=utf-8"
-							    },
-								success: function(data) {
-									$.extend(self.options, {"types": data});
-									//fecthDeviceGroups();
-								}
-							});
-						})();
-					}; 
+						};
 				
-				//fetchDeviceTypes();
-				$.when(fetchDeviceGroups, fetchDeviTypes, fetchDeviceInfo).then(renderForm);
+				if (parseInt(self.options["id"]) > 0) {
+					$.when(jsRoutes.controllers.DeviceType.index().ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }}),
+					    jsRoutes.controllers.DeviceGroup.index().ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }}),
+					    jsRoutes.controllers.Device.get(self.options["id"]).ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }})).done(function(dt, dg, di) {
+					    	$.extend(self.options, {"types": dt[0]});
+					    	$.extend(self.options, {"groups": dg[0]});
+					    	$.extend(self.options, di[0]);
+					    	renderForm();
+					    });
+				} else {
+					$.when(jsRoutes.controllers.DeviceType.index().ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }}),
+					    jsRoutes.controllers.DeviceGroup.index().ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }})).done(function(dt, dg) {
+					    	$.extend(self.options, {"types": dt[0]});
+					    	$.extend(self.options, {"groups": dg[0]});
+					    	renderForm();
+					    });
+				}
 			} ,
 			destroy : function(){
 				var self = this;
