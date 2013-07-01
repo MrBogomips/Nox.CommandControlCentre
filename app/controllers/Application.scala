@@ -33,7 +33,17 @@ object Application extends Secured {
         Device.receiveCommand,
       
         DeviceType.index,
-        DeviceGroup.index
+        DeviceType.get,
+        DeviceType.create,
+        DeviceType.update,
+        DeviceType.delete,
+        
+        
+        DeviceGroup.index,
+        DeviceGroup.get,
+        DeviceGroup.create,
+        DeviceGroup.update,
+        DeviceGroup.delete
       )
      ).as("text/javascript")
   }

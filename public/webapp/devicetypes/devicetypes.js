@@ -92,7 +92,9 @@ steal(
 					success: function(data, txtStatus, jqXHR) {
 						location = jsRoutes.controllers.DeviceType.index().url;
 					},
-					error: self.proxy(self._reportError)
+					error: function() {
+						self.proxy(self._reportError);
+					}
 				});
 			}
 		});

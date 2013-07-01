@@ -5,14 +5,14 @@
 @footer_scripts = {
 <script type='text/javascript'>
             steal('/assets/webapp/webapp_init.js')
-            .then('/assets/webapp/device/device.js')
+            .then('/assets/webapp/devicegroups/devicegroups.js')
             .then(function() {
-            	$('#item').webapp_device({id: @id});
+            	$('#item').webapp_devicegroups({id: @id});
             });
 </script>
 }
 
-@aria.master.authenticated("Devices", footer_more = footer_scripts) {
+@aria.master.authenticated("Device groups", footer_more = footer_scripts) {
 
 	<div id="item"></item>	
 
