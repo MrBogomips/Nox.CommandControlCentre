@@ -32,14 +32,14 @@ object Device extends Secured {
   import models.DeviceCommandRequest
   import models.DeviceCommandResponse._
 
-  def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) =>
-    request.body.validate[DeviceCommandRequest].map { c =>
+  def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) ⇒
+    request.body.validate[DeviceCommandRequest].map { c ⇒
       Logger.debug("HTTP REQUEST: " + request.body.toString)
       val response = Json.toJson(c.sendToDevice())
       Logger.debug("HTTP RESPONSE: " + response.toString)
       Ok(response)
     }.recoverTotal {
-      e => BadRequest("Invalid Command:" + JsError.toFlatJson(e))
+      e ⇒ BadRequest("Invalid Command:" + JsError.toFlatJson(e))
     }
   }
 
@@ -47,10 +47,10 @@ object Device extends Secured {
     Ok(views.html.aria.device.configure(deviceId));
   }
 
-  def index(all: Boolean = false) = WithAuthentication { implicit request =>
+  def index(all: Boolean = false) = WithAuthentication { implicit request ⇒
     val devices = all match {
-      case false => Devices.findAllEnabled
-      case true => Devices.findAll
+      case false ⇒ Devices.findAllEnabled
+      case true ⇒ Devices.findAll
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(devices))
@@ -61,22 +61,8 @@ object Device extends Secured {
     }
   }
 
-  def myDevice(all: Boolean = false) = WithAuthentication { implicit request =>
-    val devices = all match {
-      case false => Devices.findAllEnabled
-      case true => Devices.findAll
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(devices))
-    } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.device.index(devices))
-    } else {
-      BadRequest
-    }
-  }
-  
-  def get(id: Int) = WithAuthentication { implicit request =>
-    Devices.findById(id).map { d =>
+  def get(id: Int) = WithAuthentication { implicit request ⇒
+    Devices.findById(id).map { d ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
@@ -84,7 +70,6 @@ object Device extends Secured {
       } else {
         BadRequest
       }
-
     }.getOrElse(NotFound);
   }
 
@@ -97,11 +82,11 @@ object Device extends Secured {
       "group_id" -> number(min = 0),
       "enabled" -> optional(text)))
 
-  def create = WithAuthentication { implicit request =>
+  def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson),
+      errors ⇒ BadRequest(errors.errorsAsJson),
       {
-        case (name, display_name, description, type_id, group_id, enabled) =>
+        case (name, display_name, description, type_id, group_id, enabled) ⇒
           if (Devices.findByName(name).isDefined) {
             BadRequest("""{"name": "A device with the same name already exists"}""")
           } else {
@@ -109,42 +94,46 @@ object Device extends Secured {
             val dev_type = DeviceTypes.findById(type_id).get
             var d = new Device(name, dev_type, dev_group)
             //if (display_name.isDefined) d = d.copy(displayName = display_name.get)
-            display_name.map(desc => d = d.copy(displayName = desc))
+            display_name.map(desc ⇒ d = d.copy(displayName = desc))
             d = d.copy(
-              enabled = enabled match { case Some("on") => true case _ => false },
+              enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false },
               description = description)
-            val deviceId = Devices.insert(d)
-            Ok(s"id=$deviceId")
+            val id = Devices.insert(d)
+            Ok(s"id=id")
           }
       })
   }
 
-  def update(id: Int) = WithAuthentication { implicit request =>
+  def update(id: Int) = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson),
+      errors ⇒ BadRequest(errors.errorsAsJson),
       {
-        case (name, display_name, description, type_id, group_id, enabled) =>
-          Devices.findById(id).map { x =>
+        case (name, display_name, description, type_id, group_id, enabled) ⇒
+          Devices.findById(id).map { x ⇒
             var d = x
             val dev_group = DeviceGroups.findById(group_id).get
             val dev_type = DeviceTypes.findById(type_id).get
-            display_name.map(desc => d = d.copy(displayName = desc))
+            display_name.map(desc ⇒ d = d.copy(displayName = desc))
             d = d.copy(
               name = name,
               description = description,
               deviceType = dev_type,
               deviceGroup = dev_group,
-              enabled = enabled match { case Some("on") => true case _ => false })
-            val deviceId = Devices.update(d)
+              enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false })
             Ok(s"Device $id updated successfully")
+            if (Devices.update(d)) {
+              Ok(s"Device $id updated successfully")
+            } else {
+              NotFound("Device $id wasn't updated")
+            }
           }.getOrElse(NotFound)
       })
   }
 
   def delete(id: Int) = WithAuthentication {
     Devices.deleteById(id) match {
-      case true => Ok(s"Device $id deleted successfully")
-      case _ => NotFound
+      case true ⇒ Ok(s"Device $id deleted successfully")
+      case _ ⇒ NotFound
     }
   }
 }

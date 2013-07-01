@@ -18,14 +18,14 @@
             		
 				$(".btn.modify").click(function(el, ev) {
 					var options = {};
-					options["id"] = el.srcElement.getAttribute("data-device-id");
+					options["id"] = $(this).attr("data-device-id");
 					var $el = $("<div></div>");
         			$('body').append($el);
         			$el.webapp_device(options);
 				});
 			
 				$(".btn.delete").click(function(el, ev) {
-					var id = el.srcElement.getAttribute("data-device-id");
+					var id = $(this).attr("data-device-id");
 					$.ajax({
 						url: '/device/'+id,
 						type: 'DELETE'

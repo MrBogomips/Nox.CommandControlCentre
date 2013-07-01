@@ -31,7 +31,6 @@ GET		/channel/index				controllers.Channel.index
 
 # Device
 GET		/device/index				controllers.Device.index(all: Boolean ?= true)
-GET		/device/mine/index				controllers.Device.myDevice(all: Boolean ?= true)
 POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
 GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
 
@@ -43,6 +42,12 @@ POST	/device						controllers.Device.create
 
 # Device types
 GET		/device_type/index			controllers.DeviceType.index(all: Boolean ?= false)
+PUT		/device_type/:id			controllers.DeviceType.update(id: Int)
+DELETE	/device_type/:id			controllers.DeviceType.delete(id: Int)
+POST	/device_type				controllers.DeviceType.create
 
 # Device groups
-GET		/device_group/index		controllers.DeviceGroup.index(all: Boolean ?= false) 
+GET		/device_group/index			controllers.DeviceGroup.index(all: Boolean ?= false)
+PUT		/device_group/:id			controllers.DeviceGroup.update(id: Int)
+DELETE	/device_group/:id			controllers.DeviceGroup.delete(id: Int)
+POST	/device_group				controllers.DeviceGroup.create 
