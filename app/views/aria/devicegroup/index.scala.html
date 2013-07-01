@@ -1,57 +1,26 @@
 @(groups: Seq[DeviceGroupPersisted])
 
-
 @header_more = {}
 
 @footer_scripts = {
 <script type='text/javascript'>
             steal('/assets/webapp/webapp_init.js')
-            .then('/assets/webapp/devicegroups/devicegroups.js')
+            .then('/assets/webapp/device/device_groups.js')
             .then(function() {
-            		$("#create_device").click(
-            			function() {            	
-            			var $el = $("<div></div>")
-            			$('body').append($el);
-            			$el.webapp_devicegroups();
-            			}
-            		);
-            		
-				$(".btn.modify").click(function(el, ev) {
-					var options = {};
-					options["id"] = $(this).attr("data-device-id");
-					var $el = $("<div></div>");
-        			$('body').append($el);
-        			$el.webapp_devicegroups(options);
-				});
-			
-				$(".btn.delete").click(function(el, ev) {
-					var id = $(this).attr("data-device-id");
-					$.ajax({
-						url: '/device_group/'+id,
-						type: 'DELETE'
-						})
-					.done(function(data, txtStatus, jqXHR) {
-						location.reload(true);
-					})
-					.fail(function(data, txtStatus, jqXHR) {
-						//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-						//self.find(".alert_placeholder").html($alert);
-						
-						alert(data.responseText);
-					});
-				});
+            		$("#device_types").device_groups();
             });
 </script>
 }
 
-@aria.master.authenticated("Devices groups", footer_more = footer_scripts) {
-	<div class="ana-devices">
-	<h1>Devices groups</h1>
+@aria.master.authenticated("Device groups", header_more = header_more, footer_more = footer_scripts) {
+
+<div class="ana-devices groups">
+	<h1>Device groups</h1>
 
 	<table class="table table-condensed table-bordered table-striped">
 		<thead>
 			<tr>
-				<th>Group ID</th>
+				<th>Groups ID</th>
 				<th>Name</th>
 				<th>Display Name</th>
 				<th>Description</th>
@@ -77,6 +46,7 @@
 		}
 		</tbody>
 	</table>
-	<button class="btn btn-primary" id="create_device">Create new device group</button>
+	<button class="btn btn-primary" id="create_device">Create new device</button>
 	</div>
+
 }

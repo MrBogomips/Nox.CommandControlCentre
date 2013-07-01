@@ -50,11 +50,11 @@ steal(
 								    },
 									success: function(data) {
 										$.extend(self.options, data);
-										renderForm();
+										//renderForm();
 									}
 								});	
 							} else {
-								renderForm();
+								//renderForm();
 							}
 						})();
 					},
@@ -67,7 +67,7 @@ steal(
 							    },
 								success: function(data) {
 									$.extend(self.options, {"groups": data});
-									fetchDeviceInfo();
+									//fetchDeviceInfo();
 								}
 							});
 						})();
@@ -81,13 +81,14 @@ steal(
 							    },
 								success: function(data) {
 									$.extend(self.options, {"types": data});
-									fecthDeviceGroups();
+									//fecthDeviceGroups();
 								}
 							});
 						})();
 					}; 
 				
-				fetchDeviceTypes();
+				//fetchDeviceTypes();
+				$.when(fetchDeviceGroups, fetchDeviTypes, fetchDeviceInfo).then(renderForm);
 			} ,
 			destroy : function(){
 				var self = this;
