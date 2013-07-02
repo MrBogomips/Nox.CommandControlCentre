@@ -40,7 +40,6 @@ object Application extends Secured {
         DeviceType.update,
         DeviceType.delete,
         
-        
         DeviceGroup.index,
         DeviceGroup.get,
         DeviceGroup.create,
