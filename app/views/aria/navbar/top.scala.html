@@ -47,13 +47,8 @@
 						</ul>
 					</li>
 					@{/***** VEHICLES *****/}
-					<li class="dropdown">
-						<a href="#" id="dropDevices" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-hdd"></i> Devices<b class="caret"></b></a>
-						<ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
-							<li><a tabindex="-1" href="#" id="btnDevices">Devices</a></li>
-							<li><a tabindex="-1" href="#" id="btnDeviceTypes">Device types</a></li>
-							<li><a tabindex="-1" href="#" id="btnDeviceGroups">Device groups</a></li>
-						</ul>
+					<li class="">
+						<a href="#" id="btnMenuVehicle" role="button" class="" data-toggle=""><i class="icon-road"></i> Vehicles</a>
 					</li>
 				</ul>
 
@@ -158,6 +153,12 @@
 				$("#btnDeviceGroups").click(function(el, ev) {
 					window.location.pathname = jsRoutes.controllers.DeviceGroup.index().url;
 				});
+				
+				$("#btnMenuVehicle").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.Vehicle.index().url;
+				});
+				
+				
 				
 			});
 		});
