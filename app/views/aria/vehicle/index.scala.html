@@ -1,2 +1,84 @@
-@(devices: Seq[VehiclePersisted])
+@(vehicles: Seq[VehiclePersisted])
 
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+            steal('/assets/webapp/webapp_init.js')
+            .then('/assets/webapp/vehicles/vehicles.js')
+            .then(function() {
+			$("#create_vehicle").click(
+				function() {
+				var $el = $("<div></div>")
+				$('body').append($el);
+				$el.webapp_vehicles();
+				}
+			);
+
+				$(".btn.modify").click(function(el, ev) {
+					var options = {};
+					options["id"] = $(this).attr("data-vehicle-id");
+					var $el = $("<div></div>");
+				$('body').append($el);
+				$el.webapp_vehicles(options);
+				});
+
+				$(".btn.delete").click(function(el, ev) {
+					var id = $(this).attr("data-vehicle-id");
+					$.ajax({
+						url: '/vehicle/'+id,
+						type: 'DELETE'
+						})
+					.done(function(data, txtStatus, jqXHR) {
+						location.reload(true);
+					})
+					.fail(function(data, txtStatus, jqXHR) {
+						//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+						//self.find(".alert_placeholder").html($alert);
+
+						alert(data.responseText);
+					});
+				});
+            });
+</script>
+}
+
+@aria.master.authenticated("Vehicles", footer_more = footer_scripts) {
+	<div class="ana-devices">
+	<h1>Vehicles</h1>
+
+	<table class="table table-condensed table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Vehicle ID</th>
+				<th>Name</th>
+				<th>Display Name</th>
+				<th>Description</th>
+				<th>Model</th>
+				<th>Enabled</th>
+				<th width="1%"></th>
+			</tr>
+		</thead>
+		<tbody>
+		@vehicles.map { v =>
+			<tr>
+				<td>@v.id</td>
+				<td>@v.name</td>
+				<td>@v.displayName</td>
+				<td>@v.description</td>
+				<td>@v.model</td>
+				<td>@v.enabled</td>
+				<td>
+				<nobr>
+					<button class="btn btn-mini modify" data-vehicle-id="@v.id">Modify</button>
+					<button class="btn btn-mini btn-danger delete" data-vehicle-id="@v.id">Delete</button>
+				</nobr>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<button class="btn btn-primary" id="create_vehicle">Create new vehicle</button>
+	</div>
+}
