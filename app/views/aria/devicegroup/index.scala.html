@@ -5,7 +5,7 @@
 @footer_scripts = {
 <script type='text/javascript'>
             steal('/assets/webapp/webapp_init.js')
-            .then('/assets/webapp/device/device_groups.js')
+            .then('/assets/webapp/devicegroups/device_groups.js')
             .then(function() {
             		$("#device_types").device_groups();
             });
@@ -46,7 +46,7 @@
 		}
 		</tbody>
 	</table>
-	<button class="btn btn-primary" id="create_device">Create new device</button>
+	<button class="btn btn-primary" id="create_device">Create new device group</button>
 	</div>
 
 }

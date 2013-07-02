@@ -23,7 +23,9 @@ object Application extends Secured {
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        Assets.at,  
+        Assets.at, 
+        
+        routes.javascript.Application.logout,
           
         Device.index,
         Device.get,
