@@ -13,30 +13,31 @@ import Q.interpolation
 trait DeviceTrait extends NamedEntityTrait {
   val deviceType: DeviceTypeTrait
   val deviceGroup: DeviceGroupTrait
+  val vehicle: Option[VehicleTrait]
 }
 
-case class Device(private val initName: String, displayName: String, description: Option[String], enabled: Boolean, deviceType: DeviceTypeTrait, deviceGroup: DeviceGroupTrait)
+case class Device(private val initName: String, displayName: String, description: Option[String], enabled: Boolean, deviceType: DeviceTypeTrait, deviceGroup: DeviceGroupTrait, vehicle: Option[VehicleTrait])
   extends DeviceTrait {
   lazy val name = normalizeName(initName)
 
-  def this(name: String, deviceType: DeviceTypeTrait, deviceGroup: DeviceGroupTrait) =
-    this(name, name, None, true, deviceType, deviceGroup)
+  def this(name: String, deviceType: DeviceTypeTrait, deviceGroup: DeviceGroupTrait, vehicle: Option[VehicleTrait] = None) =
+    this(name, name, None, true, deviceType, deviceGroup, vehicle)
 
   override def toString = s"Device($name,$displayName,$description,$deviceType,$deviceGroup)"
 
-  def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled, deviceType: DeviceTypeTrait = this.deviceType, deviceGroup: DeviceGroupTrait = this.deviceGroup) =
-    Device(name, displayName, description, enabled, deviceType, deviceGroup)
+  def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled, deviceType: DeviceTypeTrait = this.deviceType, deviceGroup: DeviceGroupTrait = this.deviceGroup, vehicle: Option[VehicleTrait] = this.vehicle) =
+    Device(name, displayName, description, enabled, deviceType, deviceGroup, vehicle)
 }
 
 //case class DevicePersisted private[models] (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, deviceType: DeviceTypeTrait, deviceGroup: DeviceGroupTrait, creationTime: Timestamp, modificationTime: Timestamp, version: Int)
-case class DevicePersisted private[models] (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, deviceType: DeviceTypePersisted, deviceGroup: DeviceGroupPersisted, creationTime: Timestamp, modificationTime: Timestamp, version: Int)
+case class DevicePersisted private[models] (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, deviceType: DeviceTypePersisted, deviceGroup: DeviceGroupPersisted, vehicle: Option[VehiclePersisted], creationTime: Timestamp, modificationTime: Timestamp, version: Int)
   extends DeviceTrait
   with Persisted[DevicePersisted, Device] {
 
   //def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled, deviceType: DeviceTypeTrait = this.deviceType, deviceGroup: DeviceGroupTrait = this.deviceGroup) =
-  def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled, deviceType: DeviceTypePersisted = this.deviceType, deviceGroup: DeviceGroupPersisted = this.deviceGroup) =
+  def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled, deviceType: DeviceTypePersisted = this.deviceType, deviceGroup: DeviceGroupPersisted = this.deviceGroup, vehicle: Option[VehiclePersisted] = this.vehicle) =
     prepareCopy {
-      DevicePersisted(id, name, displayName, description, enabled, deviceType, deviceGroup, creationTime, modificationTime, version)
+      DevicePersisted(id, name, displayName, description, enabled, deviceType, deviceGroup, vehicle, creationTime, modificationTime, version)
     }
 
   def delete(): Boolean = ???
@@ -46,13 +47,13 @@ case class DevicePersisted private[models] (id: Int, name: String, displayName: 
 }
 
 //case class DevicePersisted private[models] (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, deviceType: DeviceTypeTrait, deviceGroup: DeviceGroupTrait, creationTime: Timestamp, modificationTime: Timestamp, version: Int)
-case class DevicePersistedRecord private[models] (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, deviceTypeId: Int, deviceGroupId: Int, creationTime: Timestamp, modificationTime: Timestamp, version: Int) //extends DeviceTrait
+case class DevicePersistedRecord private[models] (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int) //extends DeviceTrait
 //with Persisted[DevicePersisted, Device] 
 {
 
-  def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled, deviceTypeId: Int = this.deviceTypeId, deviceGroupId: Int = this.deviceGroupId) =
+  def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled, deviceTypeId: Int = this.deviceTypeId, deviceGroupId: Int = this.deviceGroupId, vehicleId: Option[Int] = this.vehicleId) =
     //prepareCopy {
-    DevicePersistedRecord(id, name, displayName, description, enabled, deviceTypeId, deviceGroupId, creationTime, modificationTime, version)
+    DevicePersistedRecord(id, name, displayName, description, enabled, deviceTypeId, deviceGroupId, vehicleId, creationTime, modificationTime, version)
   //}
 
   def delete(): Boolean = ???
@@ -72,39 +73,52 @@ object Devices
   def enabled = column[Boolean]("enabled")
   def deviceTypeId = column[Int]("device_type_id")
   def deviceGroupId = column[Int]("device_group_id")
+  def vehicleId = column[Int]("vehicle_id", O.Nullable)
   def _ctime = column[Timestamp]("_ctime")
   def _mtime = column[Timestamp]("_mtime")
   def _ver = column[Int]("_ver")
 
-  def deviceTypeFk = foreignKey("defice_type_fk", deviceTypeId, DeviceTypes)(_.id)
-  def deviceGroupFk = foreignKey("defice_group_fk", deviceGroupId, DeviceGroups)(_.id)
-  /*
- * 	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('devices_id_seq')),
-	name				text NOT NULL UNIQUE,
-	display_name		text NULL,
-	description			text NULL,
-	enabled				BOOLEAN NOT NULL,
-	device_type_id		INT NOT NULL,
-	device_group_id		INT NOT NULL,
-	_ctime				TIMESTAMP NOT NULL DEFAULT(NOW()),
-	_mtime				TIMESTAMP NOT NULL DEFAULT(NOW()),
-	_ver				INT NOT NULL DEFAULT(0),
- */
-  def * = id ~ name ~ displayName ~ description.? ~ enabled ~ deviceTypeId ~ deviceGroupId ~ _ctime ~ _mtime ~ _ver <> (DevicePersistedRecord, DevicePersistedRecord.unapply _)
+  def deviceTypeFk = foreignKey("device_type_fk", deviceTypeId, DeviceTypes)(_.id)
+  def deviceGroupFk = foreignKey("device_group_fk", deviceGroupId, DeviceGroups)(_.id)
+  def vehicleFk = foreignKey("vehicle_fk", vehicleId, Vehicles)(_.id)
+  
+  def * = id ~ name ~ displayName ~ description.? ~ enabled ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ _ctime ~ _mtime ~ _ver <> (DevicePersistedRecord, DevicePersistedRecord.unapply _)
 
   def delete(obj: models.DevicePersisted): Boolean = deleteById(obj.id)
   def deleteById(id: Int): Boolean = db withSession {
       val sql = sqlu"DELETE FROM devices WHERE id = ${id}"
       executeDelete("device $id", sql) == 1
     }
+  
+  //private def recordExtractor(r: (DevicePersistedRecord, DeviceTypePersisted, DeviceGroupPersisted, Option[VehiclePersisted])): DevicePersisted =
+  //  DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, r._4, r._1.creationTime, r._1.modificationTime, r._1.version)
+  private def recordExtractor(r: (DevicePersistedRecord, DeviceTypePersisted, DeviceGroupPersisted)): DevicePersisted =
+    DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, None, r._1.creationTime, r._1.modificationTime, r._1.version)
+  
+    /*
+    val qy2 = for {
+      dr <- Devices
+      dt <- DeviceTypes 
+      dg <- DeviceGroups
+      v  <- Vehicles
+      z2 <- dr innerJoin dt on (_.deviceTypeId is _.id)
+      z3 <- dr innerJoin dg on (_.devigeGroupId is _.id)
+      z1 <- dr leftJoin v on (_.vehicleId is _.id)
+    } //yield (dr, dt, dg, v._2)
+    yield (dr, dt, dg, v)
+    */
   def findAll: Seq[models.DevicePersisted] = db withSession {
     val qy = for {
       dr <- Devices
       dt <- DeviceTypes if (dr.deviceTypeId === dt.id)
       dg <- DeviceGroups if (dr.deviceGroupId === dg.id)
-    } yield (dr, dt, dg)
+      //v <- dr leftJoin Vehicles on (_.vehicleId === _.id)  
+    } //yield (dr, dt, dg, v._2)
+    yield (dr, dt, dg)
+    
 
-    qy.list.map(r => DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, r._1.creationTime, r._1.modificationTime, r._1.version))
+    
+    qy.list.map(recordExtractor)
   }
   def findAllEnabled: Seq[models.DevicePersisted] = db withSession {
     val qy = for {
@@ -113,7 +127,7 @@ object Devices
       dg <- DeviceGroups if (dr.deviceGroupId === dg.id)
     } yield (dr, dt, dg)
 
-    qy.list.map(r => DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, r._1.creationTime, r._1.modificationTime, r._1.version))
+    qy.list.map(recordExtractor)
   }
   def findById(id: Int): Option[models.DevicePersisted] = db withSession {
     val qy = for {
@@ -122,7 +136,7 @@ object Devices
       dg <- DeviceGroups if (dr.deviceGroupId === dg.id)
     } yield (dr, dt, dg)
 
-    qy.firstOption.map(r => DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, r._1.creationTime, r._1.modificationTime, r._1.version))
+    qy.firstOption.map(recordExtractor)
   }
   
   def findByName(name: String): Option[models.DevicePersisted] = db withSession {
@@ -132,7 +146,7 @@ object Devices
       dg <- DeviceGroups if (dr.deviceGroupId === dg.id)
     } yield (dr, dt, dg)
 
-    qy.firstOption.map(r => DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, r._1.creationTime, r._1.modificationTime, r._1.version))
+    qy.firstOption.map(recordExtractor)
   }
 
   def insert(obj: models.Device): Int = {
@@ -171,7 +185,7 @@ object Devices
     RETURNING id
     """
 
-      executeSql(BackendOperation.INSERT, "device $device", sql.as[Int]) { _.first }
+      executeSql(BackendOperation.INSERT, s"device $obj", sql.as[Int]) { _.first }
     }
   }
   def update(obj: models.DevicePersisted): Boolean = withPersistableObject(obj, default = false) {

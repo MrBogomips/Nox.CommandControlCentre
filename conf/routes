@@ -53,3 +53,10 @@ GET		/device_group/:id			controllers.DeviceGroup.get(id: Int)
 PUT		/device_group/:id			controllers.DeviceGroup.update(id: Int)
 DELETE	/device_group/:id			controllers.DeviceGroup.delete(id: Int)
 POST	/device_group				controllers.DeviceGroup.create 
+
+# Vehicle
+GET		/vehicle/index				controllers.Vehicle.index(all: Boolean ?= false)
+GET		/vehicle/:id				controllers.Vehicle.get(id: Int)
+PUT		/vehicle/:id				controllers.Vehicle.update(id: Int)
+DELETE	/vehicle/:id				controllers.Vehicle.delete(id: Int)
+POST	/vehicle					controllers.Vehicle.create

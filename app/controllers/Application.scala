@@ -42,7 +42,13 @@ object Application extends Secured {
         DeviceGroup.get,
         DeviceGroup.create,
         DeviceGroup.update,
-        DeviceGroup.delete
+        DeviceGroup.delete,
+        
+        Vehicle.index,
+        Vehicle.get,
+        Vehicle.create,
+        Vehicle.update,
+        Vehicle.delete
       )
      ).as("text/javascript")
   }
