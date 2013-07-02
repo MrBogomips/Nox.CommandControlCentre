@@ -20,8 +20,8 @@ GET		/tech/routes_testbench		controllers.Application.javascriptRoutesTestbench
 GET		/dashboard					controllers.Dashboard.index
 
 # Maps
+GET		/map_old					controllers.MapOld.index
 GET		/map						controllers.Map.index
-GET		/map2						controllers.Map2.index
 
 # Client configuration
 GET		/app/configuration			controllers.Application.clientConfiguration

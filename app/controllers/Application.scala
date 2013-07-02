@@ -26,6 +26,8 @@ object Application extends Secured {
         Assets.at, 
         
         routes.javascript.Application.logout,
+        
+        Map.index,
           
         Device.index,
         Device.get,
