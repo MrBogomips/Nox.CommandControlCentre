@@ -17,6 +17,10 @@ CREATE TABLE "vehicles" (
 	CONSTRAINT mtime_gte_ctime_chk CHECK (_mtime >= _ctime)
 );
 
+GRANT ALL PRIVILEGES ON SEQUENCE "vehicles_id_seq" TO PUBLIC;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLE "vehicles" TO PUBLIC;
+
 ALTER TABLE "devices"
 	ADD "vehicle_id" INT;
 	
@@ -24,10 +28,6 @@ ALTER TABLE "devices"
 	ADD CONSTRAINT "vehicle_id_fk"
 	FOREIGN KEY ("vehicle_id")
 	REFERENCES "vehicles";
-
-GRANT ALL PRIVILEGES ON SEQUENCE "vehicles_id_seq" TO PUBLIC;
-
-GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLE "vehicles" TO PUBLIC;
 
 # --- !Downs
 ALTER TABLE "devices" DROP CONSTRAINT "vehicle_id_fk";
