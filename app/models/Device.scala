@@ -95,18 +95,18 @@ object Devices
   private def recordExtractor(r: (DevicePersistedRecord, DeviceTypePersisted, DeviceGroupPersisted)): DevicePersisted =
     DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, None, r._1.creationTime, r._1.modificationTime, r._1.version)
   
-    /*
-    val qy2 = for {
-      dr <- Devices
-      dt <- DeviceTypes 
-      dg <- DeviceGroups
-      v  <- Vehicles
-      z2 <- dr innerJoin dt on (_.deviceTypeId is _.id)
-      z3 <- dr innerJoin dg on (_.devigeGroupId is _.id)
-      z1 <- dr leftJoin v on (_.vehicleId is _.id)
-    } //yield (dr, dt, dg, v._2)
-    yield (dr, dt, dg, v)
-    */
+  private lazy val SELECT_STAR = 
+    sql"""
+    SELECT *
+    FROM #$tableName AS D.
+    INNER JOIN #${DeviceTypes.tableName} AS DT
+    	ON D.device_type_id = DT.id
+    INNER JOIN #${DeviceGroups.tableName} AS DG
+    	ON D.device_group_id = DG.id
+    LEFT JOIN #${Vehicles.tableName} AS V
+    	ON ON D.vehicle_id = V.id
+    """
+    
   def findAll: Seq[models.DevicePersisted] = db withSession {
     val qy = for {
       dr <- Devices

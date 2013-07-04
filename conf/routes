@@ -10,7 +10,7 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /                           controllers.Application.login
 
 # Login / Logout
-GET     /login                      controllers.Application.login
+#GET     /login                      controllers.Application.login
 POST    /authenticate               controllers.Application.authenticate
 GET		/logout						controllers.Application.logout
 GET		/tech/whoami				controllers.Application.whoAmI
