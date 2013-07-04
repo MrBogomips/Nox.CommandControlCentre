@@ -40,7 +40,8 @@ steal('aria/page')
 	  '/assets/stylesheets/global.css',
 	  '/assets/js/routes.js'
 	  )
-.then(function() {
+.then('/assets/webapp/baseform/baseform.js',
+	function() {
 	$.ajax({
 		   type: 'GET',
 		    url: '/app/configuration',
