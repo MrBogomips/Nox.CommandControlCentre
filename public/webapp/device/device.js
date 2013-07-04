@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.table
 		 */
-		Aria.Controller('Webapp.device',
+		Webapp.BaseForm('Webapp.device',
 		/** @Static */
 		{
 			defaults : {
@@ -77,14 +77,10 @@ steal(
 					    });
 				}
 			} ,
+
 			destroy : function(){
 				var self = this;
 			    this._super();
-			},
-			
-			_reportError : function(data, txtStatus, jqXHR) {
-				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-				this.find(".alert_placeholder").html($alert);
 			},
 			
 			".btn.device-create click": function(el, ev) {
@@ -98,6 +94,7 @@ steal(
 					error: self.proxy(self._reportError)
 				});
 			},
+
 			".btn.device-update click": function(el, ev) {
 				var self = this;
 

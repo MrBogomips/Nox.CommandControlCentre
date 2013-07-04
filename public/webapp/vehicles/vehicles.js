@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.vehicles
 		 */
-		Aria.Controller('Webapp.vehicles',
+		Webapp.BaseForm('Webapp.vehicles',
 		/** @Static */
 		{
 			defaults : {
@@ -67,15 +67,10 @@ steal(
 				var self = this;
 			    this._super();
 			},
-
-			_reportError : function(data, txtStatus, jqXHR) {
-				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-				this.find(".alert_placeholder").html($alert);
-			},
 			
 			".btn.vehicle-create click": function(el, ev) {
 				var self = this;
-
+				self._cancelErrors();
 				jsRoutes.controllers.Vehicle.create().ajax({
 					data: self.element.find('form').serialize(),
 					success: function(data, txtStatus, jqXHR) {
@@ -87,7 +82,7 @@ steal(
 
 			".btn.vehicle-update click": function(el, ev) {
 				var self = this;
-
+				self._cancelErrors();
 				jsRoutes.controllers.Vehicle.update(self.options.id).ajax({
 					data: self.element.find('form').serialize(),
 					success: function(data, txtStatus, jqXHR) {
