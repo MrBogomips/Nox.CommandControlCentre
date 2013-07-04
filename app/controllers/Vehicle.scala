@@ -64,7 +64,7 @@ object Vehicle extends Secured {
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson),
+      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
         case (name, display_name, description, model, enabled) ⇒
           if (Vehicles.findByName(name).isDefined) {
@@ -83,7 +83,7 @@ object Vehicle extends Secured {
 
   def update(id: Int) = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson),
+      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
         case (name, display_name, description, model, enabled) ⇒
           Vehicles.findById(id).map { x ⇒

@@ -84,7 +84,7 @@ object Device extends Secured {
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson),
+      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
         case (name, display_name, description, type_id, group_id, enabled) ⇒
           if (Devices.findByName(name).isDefined) {
@@ -106,7 +106,7 @@ object Device extends Secured {
 
   def update(id: Int) = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson),
+      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
         case (name, display_name, description, type_id, group_id, enabled) ⇒
           Devices.findById(id).map { x ⇒

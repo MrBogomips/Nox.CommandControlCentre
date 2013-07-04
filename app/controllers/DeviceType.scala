@@ -61,11 +61,11 @@ object DeviceType extends Secured {
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson),
+      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
         case (name, display_name, description, enabled) ⇒
           if (DeviceTypes.findByName(name).isDefined) {
-            BadRequest("""{"name": "A device type with the same name already exists"}""")
+            BadRequest("""{"name": "A device type with the same name already exists"}""").as("application/json")
           } else {
             var d = new DeviceType(name, description)
             display_name.map(desc ⇒ d = d.copy(displayName = desc))
@@ -80,7 +80,7 @@ object DeviceType extends Secured {
 
   def update(id: Int) = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson),
+      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
         case (name, display_name, description, enabled) ⇒
           DeviceTypes.findById(id).map { x ⇒
