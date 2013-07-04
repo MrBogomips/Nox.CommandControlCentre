@@ -68,7 +68,7 @@ object Vehicle extends Secured {
       {
         case (name, display_name, description, model, enabled) ⇒
           if (Vehicles.findByName(name).isDefined) {
-            BadRequest("""{"name": "A vehicle with the same name already exists"}""")
+            BadRequest("""{"name": ["A vehicle with the same name already exists"]}""").as("application/json")
           } else {
             var v = new Vehicle(name, model)
             display_name.map(desc ⇒ v = v.copy(displayName = desc))
