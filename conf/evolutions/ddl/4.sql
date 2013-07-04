@@ -27,7 +27,7 @@ CREATE TABLE "vehicles_drivers" (
 	_ver				INT NOT NULL DEFAULT(0),
 	CONSTRAINT mtime_gte_ctime_chk CHECK (_mtime >= _ctime),
 	CONSTRAINT vehicles_drivers_vehicle_fk FOREIGN KEY(vehicle_id) REFERENCES "vehicles",
-	CONSTRAINT vehicles_drivers_driver_fk FOREIGN KEY(driver_id) REFERENCES "drivers",
+	CONSTRAINT vehicles_drivers_driver_fk FOREIGN KEY(driver_id) REFERENCES "drivers"
 );
 
 GRANT ALL PRIVILEGES ON SEQUENCE "drivers_id_seq" TO PUBLIC;
@@ -37,5 +37,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLE "drivers" TO PUBLIC;
 GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON TABLE "vehicles_drivers" TO PUBLIC;
 
 # --- !Downs
-DROP TABLE IF EXISTS "drivers";
-DROP SEQUENCE IF EXISTS "drivers_id_seq";
+
+DROP TABLE vehicles_drivers;
+DROP TABLE drivers;
+DROP SEQUENCE vehicles_drivers_id_seq;
+DROP SEQUENCE drivers_id_seq;
