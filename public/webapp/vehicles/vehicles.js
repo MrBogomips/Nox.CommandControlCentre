@@ -19,6 +19,7 @@ steal(
 				vehicle_model: '',
 				enabled: true,
 				modification_time: '',
+				serverController: jsRoutes.controllers.Vehicle
 			}
 		},
 		/** @Prototype */
@@ -44,7 +45,7 @@ steal(
 					fetchVehicleInfo = function () {
 						(function() {
 							if (parseInt(self.options["id"]) > 0) {
-								jsRoutes.controllers.Vehicle.get(self.options["id"]).ajax({
+								self.options.serverController.get(self.options["id"]).ajax({
 									headers: { 
 								        Accept : "application/json; charset=utf-8",
 								        "Content-Type": "application/json; charset=utf-8"
@@ -68,30 +69,15 @@ steal(
 			    this._super();
 			},
 			
-			".btn.vehicle-create click": function(el, ev) {
+			'.btn.vehicle-create click' : function(el, ev) {
 				var self = this;
-				self._cancelErrors();
-				jsRoutes.controllers.Vehicle.create().ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = jsRoutes.controllers.Vehicle.index().url;
-					},
-					error: self.proxy(self._reportError)
-				});
+				self._create(self.options.serverController);
 			},
 
-			".btn.vehicle-update click": function(el, ev) {
+			'.btn.vehicle-update click' : function(el, ev) {
 				var self = this;
-				self._cancelErrors();
-				jsRoutes.controllers.Vehicle.update(self.options.id).ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = jsRoutes.controllers.Vehicle.index().url;
-					},
-					error: function() {
-						self.proxy(self._reportError);
-					}
-				});
+				self._update(self.options.serverController);
+				
 			}
 		});
 

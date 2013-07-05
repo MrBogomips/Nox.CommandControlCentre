@@ -58,18 +58,36 @@ steal(
 				$('.control-group').removeClass('error').find('.help-inline').remove();
 			},
 
-			prova : function(self) {
+			'.btn.btn-cancel click' : function(el, ev) {
+				var self = this;
+				$('.modal').modal('hide');
+			},
+
+			_create : function(serverController) {
+				var self = this;
 				self._cancelErrors();
-				jsRoutes.controllers.Vehicle.update(self.options.id).ajax({
+				serverController.create().ajax({
 					data: self.element.find('form').serialize(),
 					success: function(data, txtStatus, jqXHR) {
-						location = jsRoutes.controllers.Vehicle.index().url;
+						location = serverController.index().url;
 					},
-					error: function(data, txtStatus, jqXHR) {
-						self.proxy(self._reportError(data, txtStatus, jqXHR));
+					error: self.proxy(self._reportError)
+				});
+			},
+
+			_update : function(serverController) {
+				var self = this;
+				self._cancelErrors();
+				serverController.update(self.options.id).ajax({
+					data: self.element.find('form').serialize(),
+					success: function(data, txtStatus, jqXHR) {
+						location = serverController.index().url;
+					},
+					error: function() {
+						self.proxy(self._reportError);
 					}
 				});
-			}	
+			}
 			
 		});
 
