@@ -88,7 +88,7 @@ object Device extends Secured {
       {
         case (name, display_name, description, type_id, group_id, enabled) ⇒
           if (Devices.findByName(name).isDefined) {
-            BadRequest("""{"name": "A device with the same name already exists"}""")
+            BadRequest("""{"name": ["A device with the same name already exists"]}""").as("application/json")
           } else {
             val dev_group = DeviceGroups.findById(group_id).get
             val dev_type = DeviceTypes.findById(type_id).get

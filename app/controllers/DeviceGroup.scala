@@ -66,7 +66,7 @@ object DeviceGroup extends Secured {
       {
         case (name, display_name, description, enabled) ⇒
           if (DeviceGroups.findByName(name).isDefined) {
-            BadRequest("""{"name": "A device group with the same name already exists"}""")
+            BadRequest("""{"name": ["A device group with the same name already exists"]}""").as("application/json")
           } else {
             var d = new DeviceGroup(name, description)
             display_name.map(desc ⇒ d = d.copy(displayName = desc))

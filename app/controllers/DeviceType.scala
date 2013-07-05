@@ -65,7 +65,7 @@ object DeviceType extends Secured {
       {
         case (name, display_name, description, enabled) ⇒
           if (DeviceTypes.findByName(name).isDefined) {
-            BadRequest("""{"name": "A device type with the same name already exists"}""").as("application/json")
+            BadRequest("""{"name": ["A device type with the same name already exists"]}""").as("application/json")
           } else {
             var d = new DeviceType(name, description)
             display_name.map(desc ⇒ d = d.copy(displayName = desc))

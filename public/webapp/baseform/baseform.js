@@ -17,7 +17,7 @@ steal(
 				var self = this;
 				this._super();
 				this.element.addClass('webapp_baseform');
-			} ,
+			},
 
 			destroy : function(){
 				var self = this;
@@ -56,21 +56,7 @@ steal(
 
 			_cancelErrors : function() {
 				$('.control-group').removeClass('error').find('.help-inline').remove();
-			},
-
-			prova : function(self) {
-				self._cancelErrors();
-				jsRoutes.controllers.Vehicle.update(self.options.id).ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = jsRoutes.controllers.Vehicle.index().url;
-					},
-					error: function(data, txtStatus, jqXHR) {
-						self.proxy(self._reportError(data, txtStatus, jqXHR));
-					}
-				});
-			}	
-			
+			}
 		});
 
 });
