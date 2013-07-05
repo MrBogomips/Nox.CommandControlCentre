@@ -5,6 +5,7 @@
 				<a class="brand" href="#">NoxST::CCC</a>
 
 				<ul class="nav" role="navigation">
+					<!-- 
 					<li class="dropdown">
 						<a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-large icon-home"></i> Org. #1<b class="caret"></b></a>
 						<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
@@ -15,6 +16,7 @@
 							<li><a tabindex="-1" href="#"><i class="icon-cog"></i> Manage organizations</a></li>
 						</ul>
 					</li>
+					-->
 
 					@{/***** MAPS *****/}
 					<li class="dropdown">
@@ -31,10 +33,10 @@
 					<li class="dropdown">
 						<a href="#" id="dropShare" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share"></i> Share<b class="caret"></b></a>
 						<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
-							<li><a tabindex="-1" href="#">Current view</a></li>
-							<li><a tabindex="-1" href="#">PDF of current view</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress">Current view</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress">PDF of current view</a></li>
 							<li class="divider"></li>
-							<li><a tabindex="-1" href="#"><i class="icon-cog"></i> Configure sharing services</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress"><i class="icon-cog"></i> Configure sharing services</a></li>
 						</ul>
 					</li>
 					@{/***** DEVICES *****/}
@@ -80,9 +82,9 @@
 						<a href="#" id="drop_sys_menu" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-large icon-cog"></i> Manage<b class="caret"></b></a>
 
 						<ul class="dropdown-menu" role="menu" aria-labelledby="drop_sys_menu">
-							<li><a tabindex="-1" href="#" id="top-menu-organizations"><i class="icon-large icon-th"></i> Organizations</a></li>
-							<li><a tabindex="-1" href="#" id ="top-menu-security"><i class="icon-large icon-lock"></i> Security</a></li>
-							<li><a tabindex="-1" href="#" id ="top-menu-system"><i class="icon-large icon-wrench"></i> System</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress" id="top-menu-organizations"><i class="icon-large icon-th"></i> Organizations</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress" id ="top-menu-security"><i class="icon-large icon-lock"></i> Security</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress" id ="top-menu-system"><i class="icon-large icon-wrench"></i> System</a></li>
 						</ul>
 					</li>
 
@@ -111,10 +113,10 @@
 										<div class="row-fluid">
 											<div class="span12">
 												
-													<a href="#"><i class="icon-user"></i> Account settings</a>
-													<a href="#"><i class="icon-th-list"></i> Preferences</a>
-													<a href="#"><i class="icon-cog"></i> Special task #1</a>
-													<a href="#"><i class="icon-cog"></i> Special task #2</a>
+													<a href="#" class="workinprogress"><i class="icon-user"></i> Account settings</a>
+													<a href="#" class="workinprogress"><i class="icon-th-list"></i> Preferences</a>
+													<a href="#" class="workinprogress"><i class="icon-cog"></i> Special task #1</a>
+													<a href="#" class="workinprogress"><i class="icon-cog"></i> Special task #2</a>
 												
 											</div>
 										</div>
@@ -136,11 +138,18 @@
 		</div>
 	</div>
 </div>
+<style type='text/css'>
+	.workinprogress { color:#DDDDDD !important; }
+</style>
 <script type='text/javascript'>
 	steal('jquery/jquery.js')
 	.then(
 		function() {
 			jQuery(function($){
+				
+				$(".workinprogress").click(function(el, ev) {
+					alert("Work in progress...");	
+				});
 				
 				$("#btnLogout").click(function(el, ev) {
 					window.location.pathname = jsRoutes.controllers.Application.logout().url;
