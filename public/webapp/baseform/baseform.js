@@ -17,7 +17,7 @@ steal(
 				var self = this;
 				this._super();
 				this.element.addClass('webapp_baseform');
-			} ,
+			},
 
 			destroy : function(){
 				var self = this;

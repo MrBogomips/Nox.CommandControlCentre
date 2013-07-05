@@ -12,27 +12,6 @@ import Q.interpolation
  * Represents a model class that could require persistance
  */
 trait Persistable {
-  private var _isPersisted: Boolean = true
-  /**
-   * Indicate if the object has been modified since the last fetch
-   */
-  def isPersisted = _isPersisted
-
-  private[models] def persisted = _isPersisted = true
-
-  def prepareCopy[A <: Persistable](f: => A): A = {
-    val ret = f
-    ret._isPersisted = false
-    ret
-  }
-}
-
-/**
- * Represents a model class that is always persisted
- *
- * A ``Persisted`` model class is designed to be exclusively fetched from the backend
- */
-trait Persisted[+T, +T2] extends Persistable {
   /**
    * The record creation time
    *
@@ -51,7 +30,29 @@ trait Persisted[+T, +T2] extends Persistable {
    * @throws NoSuchElementException if the object wasn't persisted
    */
   val version: Int
+  
+  private var _isPersisted: Boolean = true
+  /**
+   * Indicate if the object has been modified since the last fetch
+   */
+  def isPersisted = _isPersisted
 
+  private[models] def persisted = _isPersisted = true
+
+  def prepareCopy[A <: Persistable](f: => A): A = {
+    val ret = f
+    ret._isPersisted = false
+    ret
+  }
+  
+}
+
+/**
+ * Represents a model class that is always persisted
+ *
+ * A ``Persisted`` model class is designed to be exclusively fetched from the backend
+ */
+trait Persisted[+T, +T2] extends Persistable {
   /**
    *  Retrieve a refreshed version of the persisted object
    */
