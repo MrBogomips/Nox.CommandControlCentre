@@ -28,7 +28,7 @@ object Driver extends Secured {
     }
   }
 
-  def index(all: Boolean = false) = WithAuthentication { implicit request ⇒
+  def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     val drivers = all match {
       case false ⇒ Drivers.findAllEnabled
       case true ⇒ Drivers.findAll
@@ -36,18 +36,18 @@ object Driver extends Secured {
     if (acceptsJson(request)) {
       Ok(Json.toJson(drivers))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.driver.index(drivers))
+      Ok(views.html.aria.driver.index(drivers, user))
     } else {
       BadRequest
     }
   }
 
-  def get(id: Int) = WithAuthentication { implicit request ⇒
+  def get(id: Int) = WithAuthentication { (user, request) ⇒
     Drivers.findById(id).map { d ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.device.item(d.id))
+        Ok(views.html.aria.device.item(d.id, user))
       } else {
         BadRequest
       }

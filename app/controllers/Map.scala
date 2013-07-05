@@ -37,7 +37,7 @@ object Map extends Secured {
 		Logger.debug("Plicy doesn't hold")
 	}
 	
-    Ok(views.html.aria.map.index())
+    Ok(views.html.aria.map.index(user))
   }
   
   

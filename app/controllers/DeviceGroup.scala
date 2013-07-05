@@ -35,18 +35,18 @@ object DeviceGroup extends Secured {
     if (acceptsJson(request)) {
       Ok(Json.toJson(groups))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.devicegroup.index(groups))
+      Ok(views.html.aria.devicegroup.index(groups, user))
     } else {
       BadRequest
     }
   }
   
-   def get(id: Int) = WithAuthentication { implicit request ⇒
+   def get(id: Int) = WithAuthentication { (user, request) ⇒
     DeviceGroups.findById(id).map { d ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.devicegroup.item(d.id))
+        Ok(views.html.aria.devicegroup.item(d.id, user))
       } else {
         BadRequest
       }

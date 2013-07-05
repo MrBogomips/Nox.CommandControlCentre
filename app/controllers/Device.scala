@@ -43,11 +43,12 @@ object Device extends Secured {
     }
   }
 
-  def configureDevice(deviceId: String) = WithAuthentication {
+  def configureDevice(deviceId: String) = WithAuthentication { (user, request) =>
     Ok(views.html.aria.device.configure(deviceId));
   }
 
-  def index(all: Boolean = false) = WithAuthentication { implicit request ⇒
+  def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
+    implicit val req = request
     val devices = all match {
       case false ⇒ Devices.findAllEnabled
       case true ⇒ Devices.findAll
@@ -55,18 +56,19 @@ object Device extends Secured {
     if (acceptsJson(request)) {
       Ok(Json.toJson(devices))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.device.index(devices))
+      Ok(views.html.aria.device.index(devices, user))
     } else {
       BadRequest
     }
   }
 
-  def get(id: Int) = WithAuthentication { implicit request ⇒
+  def get(id: Int) = WithAuthentication { (user, request) ⇒
+    implicit val req = request
     Devices.findById(id).map { d ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.device.item(d.id))
+        Ok(views.html.aria.device.item(d.id, user))
       } else {
         BadRequest
       }

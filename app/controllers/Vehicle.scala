@@ -29,7 +29,7 @@ object Vehicle extends Secured {
     }
   }
 
-  def index(all: Boolean = false) = WithAuthentication { implicit request ⇒
+  def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     val vehicles = all match {
       case false ⇒ Vehicles.findAllEnabled
       case true ⇒ Vehicles.findAll
@@ -37,18 +37,18 @@ object Vehicle extends Secured {
     if (acceptsJson(request)) {
       Ok(Json.toJson(vehicles))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.vehicle.index(vehicles))
+      Ok(views.html.aria.vehicle.index(vehicles, user))
     } else {
       BadRequest
     }
   }
 
-  def get(id: Int) = WithAuthentication { implicit request ⇒
+  def get(id: Int) = WithAuthentication { (user, request) ⇒
     Vehicles.findById(id).map { v ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(v))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.vehicle.item(v.id))
+        Ok(views.html.aria.vehicle.item(v.id, user))
       } else {
         BadRequest
       }

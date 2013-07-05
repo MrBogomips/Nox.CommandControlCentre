@@ -35,17 +35,17 @@ object DeviceType extends Secured {
     if (acceptsJson(request)) {
       Ok(Json.toJson(types))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.devicetype.index(types))
+      Ok(views.html.aria.devicetype.index(types, user))
     } else {
       BadRequest
     }
   }
-  def get(id: Int) = WithAuthentication { implicit request ⇒
+  def get(id: Int) = WithAuthentication { (user, request) ⇒
     DeviceTypes.findById(id).map { d ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.devicetype.item(d.id))
+        Ok(views.html.aria.devicetype.item(d.id, user))
       } else {
         BadRequest
       }

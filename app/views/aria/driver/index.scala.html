@@ -1,4 +1,4 @@
-@(drivers: Seq[DriverPersisted])
+@(drivers: Seq[DriverPersisted], user: UserTrait)
 
 @header_more = {}
 
@@ -39,7 +39,7 @@
 </script>
 }
 
-@aria.master.authenticated("Drivers", footer_more = footer_scripts) {
+@aria.master.authenticated("Drivers", user, footer_more = footer_scripts) {
 	<div class="ana-devices">
 	<h1>Drivers</h1>
 

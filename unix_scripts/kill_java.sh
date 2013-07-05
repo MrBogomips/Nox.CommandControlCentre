@@ -1,0 +1,1 @@
+kill -SIGTERM `ps -ef | fgrep java | fgrep -v fgrep | awk '{print $2}'`

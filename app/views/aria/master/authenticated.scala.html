@@ -1,12 +1,12 @@
-@(title: String, header_more: Html = Html(""), footer_more: Html = Html(""))(content: Html)
+@(title: String, user: UserTrait, header_more: Html = Html(""), footer_more: Html = Html(""))(content: Html)
 
 <!DOCTYPE html>
 <!-- @@author: Giovanni Costagliola <giovanni.costagliola@@gmail.com> -->
 <html lang="en">
-@header(title, header_more)
+@header(title, user, header_more)
 <body>
 <div class="navbar">
-	@aria.navbar.top()
+	@aria.navbar.top(user)
 </div>
 
 <div class="page-container">
@@ -14,7 +14,7 @@
 </div>
 
 <div class="page-footer">
-@footer(footer_more)
+@footer(user, footer_more)
 </div>
 </body>
 </html>	
