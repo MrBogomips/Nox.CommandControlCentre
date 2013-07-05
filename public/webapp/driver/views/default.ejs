@@ -1,0 +1,64 @@
+<div class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <% if (name != '') {%>
+    <h3>Modify driver «<%=surname%> <%=name%>» (<%=id%>)</h3>
+    <% } else {%>
+    <h3>New driver</h3>
+    <% } %>
+  </div>
+  <div class="modal-body">
+
+	<div class="alert_placeholder"></div>
+
+    <form class="form-horizontal">
+	  <div class="control-group">
+	    <label class="control-label" for="name">Name</label>
+	    <div class="controls">
+	      <input type="text" name="name" placeholder="name" value="<%=name%>">
+	    </div>
+	  </div>
+	  
+	  <div class="control-group">
+	    <label class="control-label" for="name">Surname</label>
+	    <div class="controls">
+	      <input type="text" name="surname" placeholder="surname" value="<%=surname%>">
+	    </div>
+	  </div>
+	  
+	  <div class="control-group">
+	    <label class="control-label" for="display_name">Display name</label>
+	    <div class="controls">
+	      <input type="text" name="display_name" placeholder="display name" value="<%=display_name%>">
+	    </div>
+	  </div>
+	  
+	  <div class="control-group">
+		  <label class="control-label" for="enabled">Enabled</label>
+		    <div class="controls">
+		      <input type="checkbox" placeholder="enabled" name="enabled" <% if (enabled){%>checked='checked'<%}%> >
+		    </div>
+	   </div>
+	   
+	 <% if (creation_time != '') {%>
+	   <div class="control-group">
+		  <label class="control-label" for="enabled">Creation time</label>
+		    <div class="controls"><span class="uneditable-input"><%=creation_time%></span></div>
+	   </div>
+	   <div class="control-group">
+		  <label class="control-label" for="enabled">Last modification time</label>
+		    <div class="controls"><span class="uneditable-input"><%=modification_time%></span></div>
+	   </div>
+	 <%}%>
+	</form>
+
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn">Cancel</a>
+    <% if (id > 0) {%> 
+    <a href="#" class="btn btn-primary driver-update">Update</a>
+    <% } else { %>
+    <a href="#" class="btn btn-primary driver-create">Create</a>
+    <% } %>
+  </div>
+</div>

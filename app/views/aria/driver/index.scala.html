@@ -1,0 +1,78 @@
+@(drivers: Seq[DriverPersisted])
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+            steal('/assets/webapp/webapp_init.js')
+            .then('/assets/webapp/driver/driver.js')
+            .then(function() {
+			$("#create_driver").click(function() {
+				var $el = $("<div></div>")
+				$('body').append($el);
+				$el.webapp_driver();
+			});
+
+				$(".btn.modify").click(function(el, ev) {
+					var options = {};
+					options["id"] = $(this).attr("data-driver-id");
+					var $el = $("<div></div>");
+				$('body').append($el);
+				$el.webapp_driver(options);
+				});
+
+				$(".btn.delete").click(function(el, ev) {
+					var id = $(this).attr("data-driver-id");
+					jsRoutes.controllers.Driver.delete(id)
+						.ajax()
+						.done(function(data, txtStatus, jqXHR) {
+							location.reload(true);
+						})
+						.fail(function(data, txtStatus, jqXHR) {
+							//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+							//self.find(".alert_placeholder").html($alert);
+	
+							alert(data.responseText);
+						});
+				});
+            });
+</script>
+}
+
+@aria.master.authenticated("Drivers", footer_more = footer_scripts) {
+	<div class="ana-devices">
+	<h1>Drivers</h1>
+
+	<table class="table table-condensed table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Driver ID</th>
+				<th>Name</th>
+				<th>Surame</th>
+				<th>Display Name</th>
+				<th>Enabled</th>
+				<th width="1%"></th>
+			</tr>
+		</thead>
+		<tbody>
+		@drivers.map { v =>
+			<tr>
+				<td>@v.id</td>
+				<td>@v.name</td>
+				<td>@v.surname</td>
+				<td>@v.displayName</td>
+				<td>@v.enabled</td>
+				<td>
+				<nobr>
+					<button class="btn btn-mini modify" data-driver-id="@v.id">Modify</button>
+					<button class="btn btn-mini btn-danger delete" data-driver-id="@v.id">Delete</button>
+				</nobr>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<button class="btn btn-primary" id="create_driver">Create new driver</button>
+	</div>
+}
+

@@ -30,7 +30,7 @@
 					@{/***** SHARE *****/}
 					<li class="dropdown">
 						<a href="#" id="dropShare" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share"></i> Share<b class="caret"></b></a>
-						<ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
 							<li><a tabindex="-1" href="#">Current view</a></li>
 							<li><a tabindex="-1" href="#">PDF of current view</a></li>
 							<li class="divider"></li>
@@ -40,15 +40,19 @@
 					@{/***** DEVICES *****/}
 					<li class="dropdown">
 						<a href="#" id="dropDevices" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-hdd"></i> Devices<b class="caret"></b></a>
-						<ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop4">
 							<li><a tabindex="-1" href="#" id="btnDevices">Devices</a></li>
 							<li><a tabindex="-1" href="#" id="btnDeviceTypes">Device types</a></li>
 							<li><a tabindex="-1" href="#" id="btnDeviceGroups">Device groups</a></li>
 						</ul>
 					</li>
 					@{/***** VEHICLES *****/}
-					<li class="">
-						<a href="#" id="btnMenuVehicle" role="button" class="" data-toggle=""><i class="icon-road"></i> Vehicles</a>
+					<li class="dropdown">
+						<a href="#" id="dropVehicle" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-road"></i> Vehicles<b class="caret"></b></a>
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop5">
+							<li><a tabindex="-1" href="#" id="btnMenuVehicle">Vehicles</a></li>
+							<li><a tabindex="-1" href="#" id="btnMenuDrivers">Drivers</a></li>
+						</ul>
 					</li>
 				</ul>
 
@@ -158,7 +162,9 @@
 					window.location.pathname = jsRoutes.controllers.Vehicle.index().url;
 				});
 				
-				
+				$("#btnMenuDrivers").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.Driver.index().url;
+				});
 				
 			});
 		});

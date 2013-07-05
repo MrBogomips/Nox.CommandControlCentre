@@ -5,8 +5,8 @@ CREATE SEQUENCE "vehicles_drivers_id_seq";
 
 CREATE TABLE "drivers" (
 	id					INT NOT NULL PRIMARY KEY DEFAULT(nextval('drivers_id_seq')),
-	name				text NOT NULL UNIQUE,
-	surnamename			text NOT NULL UNIQUE,
+	name				text NOT NULL,
+	surname				text NOT NULL,
 	display_name		text NOT NULL,
 	enabled				BOOLEAN NOT NULL,
 	_ctime				TIMESTAMP NOT NULL DEFAULT(NOW()),
