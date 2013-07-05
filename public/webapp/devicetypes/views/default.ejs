@@ -40,7 +40,7 @@
 		    </div>
 	   </div>
 	   
-	 <% if (creation_time != '') {%>
+	 <% if (creation_time != "") {%>
 	   <div class="control-group">
 		  <label class="control-label" for="enabled">Creation time</label>
 		    <div class="controls"><span class="uneditable-input"><%=creation_time%></span></div>
@@ -54,11 +54,11 @@
 
   </div>
   <div class="modal-footer">
-    <a href="#" class="btn">Cancel</a>
+    <a href="javascript: void(0);" class="btn btn-cancel">Cancel</a>
     <% if (id > 0) {%> 
-    <a href="#" class="btn btn-primary device-update">Update</a>
+    <a href="javascript: void(0);" class="btn btn-primary device-update">Update</a>
     <% } else { %>
-    <a href="#" class="btn btn-primary device-create">Create</a>
+    <a href="javascript: void(0);" class="btn btn-primary device-create">Create</a>
     <% } %>
   </div>
 </div>

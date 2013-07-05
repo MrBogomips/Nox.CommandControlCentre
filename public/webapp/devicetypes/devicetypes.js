@@ -18,6 +18,7 @@ steal(
 				creation_time: '',
 				enabled: true,
 				modification_time: '',
+				serverController: jsRoutes.controllers.DeviceType
 			}
 		},
 		/** @Prototype */
@@ -67,30 +68,14 @@ steal(
 			    this._super();
 			},
 			
-			".btn.device-create click": function(el, ev) {
+			'.btn.device-create click' : function(el, ev) {
 				var self = this;
-
-				jsRoutes.controllers.DeviceType.create().ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = jsRoutes.controllers.DeviceType.index().url;
-					},
-					error: self.proxy(self._reportError)
-				});
+				self._create(self.options.serverController);
 			},
 
-			".btn.device-update click": function(el, ev) {
+			'.btn.device-update click' : function(el, ev) {
 				var self = this;
-
-				jsRoutes.controllers.DeviceType.update(self.options.id).ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = jsRoutes.controllers.DeviceType.index().url;
-					},
-					error: function() {
-						self.proxy(self._reportError);
-					}
-				});
+				self._update(self.options.serverController);
 			}
 		});
 
