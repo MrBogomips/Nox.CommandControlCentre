@@ -63,36 +63,36 @@ object Drivers
     }
   }
 
-  def update(obj: DriverPersisted): Either[Seq[ValidationError], Int] =  WithValidation(obj).right.map { dp =>
+  def update(obj: DriverPersisted): Either[Seq[ValidationError], Int] =  WithValidation(obj).right.map { vobj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE #$tableName
-	       SET name = ${obj.name},
-      		   surname = ${obj.surname},
-	           display_name = ${obj.displayName},
-	    	   enabled = ${obj.enabled},
+	       SET name = ${vobj.name},
+      		   surname = ${vobj.surname},
+	           display_name = ${vobj.displayName},
+	    	   enabled = ${vobj.enabled},
 	           _mtime = NOW(),
 	           _ver = _ver + 1 
-		 WHERE id = ${dp.id}
+		 WHERE id = ${vobj.id}
 		 """
-      executeUpdate(s"driver $obj", sql)
+      executeUpdate(s"driver $vobj", sql)
     }
   }
   
-  def updateWithVersion(obj: DriverPersisted): Either[Seq[ValidationError], Int] =  WithValidation(obj).right.map { dp =>
+  def updateWithVersion(obj: DriverPersisted): Either[Seq[ValidationError], Int] =  WithValidation(obj).right.map { vobj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE #$tableName
-	       SET name = ${obj.name},
-      		   surname = ${obj.surname},
-	           display_name = ${obj.displayName},
-	    	   enabled = ${obj.enabled},
+	       SET name = ${vobj.name},
+      		   surname = ${vobj.surname},
+	           display_name = ${vobj.displayName},
+	    	   enabled = ${vobj.enabled},
 	           _mtime = NOW(),
 	           _ver = _ver + 1 
-		 WHERE id = ${dp.id}
-		   AND _ver = ${dp.version}
+		 WHERE id = ${vobj.id}
+		   AND _ver = ${vobj.version}
 		 """
-      executeUpdate(s"driver $obj", sql)
+      executeUpdate(s"driver $vobj", sql)
     }
   }
   
