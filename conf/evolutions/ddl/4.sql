@@ -26,6 +26,7 @@ CREATE TABLE "vehicles_drivers" (
 	_mtime				TIMESTAMP NOT NULL DEFAULT(NOW()),
 	_ver				INT NOT NULL DEFAULT(0),
 	CONSTRAINT mtime_gte_ctime_chk CHECK (_mtime >= _ctime),
+	CONSTRAINT assignement_chk CHECK (end_assignement >= begin_assignement),
 	CONSTRAINT vehicles_drivers_vehicle_fk FOREIGN KEY(vehicle_id) REFERENCES "vehicles",
 	CONSTRAINT vehicles_drivers_driver_fk FOREIGN KEY(driver_id) REFERENCES "drivers"
 );

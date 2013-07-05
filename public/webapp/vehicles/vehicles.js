@@ -13,12 +13,11 @@ steal(
 				name : '',
 				display_name : '',
 				description: '',
-				type_id: '',
-				group_id: '',
 				creation_time: '',
 				vehicle_model: '',
 				enabled: true,
 				modification_time: '',
+				license_plate: ''
 			}
 		},
 		/** @Prototype */

@@ -23,6 +23,7 @@ object Vehicle extends Secured {
         "description" -> r.description,
         "enabled" -> r.enabled,
         "model" -> r.model,
+        "license_plate" -> r.licensePlate,
         "creation_time" -> ISODateTimeFormat.dateTime.print(r.creationTime.getTime()),
         "modification_time" -> ISODateTimeFormat.dateTime.print(r.modificationTime.getTime()))
     }
@@ -60,17 +61,18 @@ object Vehicle extends Secured {
       "display_name" -> optional(text),
       "description" -> optional(text),
       "model" -> nonEmptyText(minLength = 3),
+      "license_plate" -> nonEmptyText(minLength = 3),
       "enabled" -> optional(text)))
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson)as("application/json"),
       {
-        case (name, display_name, description, model, enabled) ⇒
+        case (name, display_name, description, model, license_plate, enabled) ⇒
           if (Vehicles.findByName(name).isDefined) {
             BadRequest("""{"name": ["A vehicle with the same name already exists"]}""").as("application/json")
           } else {
-            var v = new Vehicle(name, model)
+            var v = new Vehicle(name, model, license_plate)
             display_name.map(desc ⇒ v = v.copy(displayName = desc))
             v = v.copy(
               enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false },
@@ -85,7 +87,7 @@ object Vehicle extends Secured {
     createForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson)as("application/json"),
       {
-        case (name, display_name, description, model, enabled) ⇒
+        case (name, display_name, description, model, license_plate, enabled) ⇒
           Vehicles.findById(id).map { x ⇒
             var v = x
             display_name.map(desc ⇒ v = v.copy(displayName = desc))
@@ -93,6 +95,7 @@ object Vehicle extends Secured {
               name = name,
               description = description,
               model = model,
+              licensePlate = license_plate,
               enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false })
             Ok(s"Vehicle $id updated successfully")
             if (Vehicles.update(v)) {
