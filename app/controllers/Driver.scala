@@ -47,7 +47,7 @@ object Driver extends Secured {
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.device.item(d.id, user))
+        Ok(views.html.aria.driver.item(d.id, user))
       } else {
         BadRequest
       }
@@ -83,7 +83,7 @@ object Driver extends Secured {
               name = name,
               surname = surname,
               displayName = display_name.fold(d.displayName) { s => s },
-              enabled = enabled.fold(d.enabled) { _ == "on" })
+              enabled = enabled)
             Drivers.update(d2).fold(_ => BadRequest(""), _ => Ok(s"Driver $id updated successfully"))
           }
       })

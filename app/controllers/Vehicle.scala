@@ -8,6 +8,8 @@ import play.api.data._
 import play.api.data.Forms._
 import models._
 
+import utils.Converter._
+
 import org.joda.time.format.ISODateTimeFormat
 
 object Vehicle extends Secured {
@@ -96,7 +98,7 @@ object Vehicle extends Secured {
               description = description,
               model = model,
               licensePlate = license_plate,
-              enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false })
+              enabled = enabled)
             Ok(s"Vehicle $id updated successfully")
             if (Vehicles.update(v)) {
               Ok(s"Vehicle $id updated successfully")
