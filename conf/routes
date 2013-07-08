@@ -67,3 +67,6 @@ GET		/driver/:id					controllers.Driver.get(id: Int)
 PUT		/driver/:id					controllers.Driver.update(id: Int)
 DELETE	/driver/:id					controllers.Driver.delete(id: Int)
 POST	/driver						controllers.Driver.create
+
+# Vechicle Assignement
+GET		/vehicle_assignement/index	controllers.VehicleAssignement.index(all: Boolean ?= false)

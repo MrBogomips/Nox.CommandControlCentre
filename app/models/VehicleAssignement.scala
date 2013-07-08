@@ -21,8 +21,14 @@ trait VehicleAssignementTrait extends Validatable {
   val endAssignement: DateTime
   val enabled: Boolean
 
-  def validate = {
-    Nil
+  def validate: Seq[ValidationError] = {
+    import collection.mutable.{ HashMap, MultiMap, Set }
+    val errorsAccumulator = new HashMap[String, Set[String]] with MultiMap[String, String]
+    // Provide all the rule checked
+    if (endAssignement.isBefore(beginAssignement))
+      errorsAccumulator.addBinding("endAssignement","End assignement must follow the begin")
+    
+    errorsAccumulator.toList.map(v => ValidationError(v._1, collection.immutable.Set(v._2.toList: _*)))
   }
 }
 

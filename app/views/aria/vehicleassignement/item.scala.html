@@ -5,9 +5,9 @@
 @footer_scripts = {
 <script type='text/javascript'>
             steal('/assets/webapp/webapp_init.js')
-            .then('/assets/webapp/driver/driver.js')
+            .then('/assets/webapp/vehicle_assignement/vehicle_assignement.js')
             .then(function() {
-            	$('#item').webapp_driver({id: @id});
+            	$('#item').webapp_vehicle_assignement({id: @id});
             });
 </script>
 }

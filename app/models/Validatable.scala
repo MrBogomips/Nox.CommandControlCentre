@@ -1,6 +1,8 @@
 package models
 
-case class ValidationException(validationErrors: Seq[ValidationError]) extends RuntimeException
+case class ValidationException(validationErrors: Seq[ValidationError]) extends RuntimeException {
+  override def toString = "ValidationException: " + validationErrors.toString()
+}
 
 /*
  * Represents a validation error
@@ -14,16 +16,10 @@ trait Validatable {
   /*
    * Each concrete class must provide the validation logic
    */
-  def validate: Seq[ValidationError]
+  protected def validate: Seq[ValidationError]
 
   lazy val validationErrors = validate
   lazy val isValid = validationErrors.isEmpty
-  
-  import collection.mutable.{ HashMap, MultiMap, Set }
-  protected val errorsAccumulator = new HashMap[String, Set[String]] with MultiMap[String, String]
-  protected def getValidationErrors: Seq[ValidationError] = {
-    ???
-  }
 
   def requireValidation = if (!isValid) throw ValidationException(validationErrors)
 }
