@@ -31,14 +31,12 @@ GET		/channel/index				controllers.Channel.index
 
 # Device
 GET		/device/index				controllers.Device.index(all: Boolean ?= true)
-POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
-GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
-
-# Device CRUD
 GET		/device/:id					controllers.Device.get(id: Int)
 PUT		/device/:id					controllers.Device.update(id: Int)
 DELETE	/device/:id					controllers.Device.delete(id: Int)
 POST	/device						controllers.Device.create
+POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
+GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
 
 # Device types
 GET		/device_type/index			controllers.DeviceType.index(all: Boolean ?= false)
@@ -69,4 +67,24 @@ DELETE	/driver/:id					controllers.Driver.delete(id: Int)
 POST	/driver						controllers.Driver.create
 
 # Vechicle Assignement
-GET		/vehicle_assignement/index	controllers.VehicleAssignement.index(all: Boolean ?= false)
+GET		/vehicle_assignement/index	controllers.VehicleAssignement.index(all: Boolean ?= true)
+GET		/vehicle_assignement/:id	controllers.VehicleAssignement.get(id: Int)
+PUT		/vehicle_assignement/:id	controllers.VehicleAssignement.update(id: Int)
+DELETE	/vehicle_assignement/:id	controllers.VehicleAssignement.delete(id: Int)
+POST	/vehicle_assignement		controllers.VehicleAssignement.create
+
+
+
+
+
+
+
+######################################################################################################
+###
+###   APPLIANCE SERVICES (For internal usage)
+GET		/biz/device/index				controllers.biz.Device.index(all: Boolean ?= true)
+GET		/biz/device/:id					controllers.biz.Device.get(id: Int)
+GET		/biz/device/byName/:name		controllers.biz.Device.getByName(name: String)
+
+
+

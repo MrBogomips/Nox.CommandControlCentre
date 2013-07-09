@@ -130,7 +130,7 @@
 			var formated = DPGlobal.formatDate(this.date, this.format);
 			if (!this.isInput) {
 				if (this.component){
-					this.element.find('input').prop('value', formated);
+					this.element.find('input').prop('value', formated).change();  // JC FIX
 				}
 				this.element.data('date', formated);
 			} else {

@@ -15,14 +15,14 @@ object VehicleAssignement extends Secured {
   /**
     * DriverPersisted JSON serializer
     */
-  implicit val driverJsonWriter = new Writes[VehicleAssignementPersisted] {
+  implicit val vehicleAssignementJsonWriter = new Writes[VehicleAssignementPersisted] {
     def writes(va: VehicleAssignementPersisted): JsValue = {
       Json.obj(
         "id" -> va.id,
         "vehicleId" -> va.vehicleId,
         "driverId" -> va.driverId,
-        "beginAssignement" -> ISODateTimeFormat.dateTime.print(va.beginAssignement.getTime()),
-        "endAssignement" -> ISODateTimeFormat.dateTime.print(va.endAssignement.getTime()),
+        "beginAssignement" -> ISODateTimeFormat.date.print(va.beginAssignement.getTime()),
+        "endAssignement" -> ISODateTimeFormat.date.print(va.endAssignement.getTime()),
         "enabled" -> va.enabled,
         "creationTime" -> ISODateTimeFormat.dateTime.print(va.creationTime.getTime()),
         "modificationTime" -> ISODateTimeFormat.dateTime.print(va.modificationTime.getTime()))
@@ -57,48 +57,49 @@ object VehicleAssignement extends Secured {
 
   val createForm = Form(
     tuple(
-      "vehicle_id" -> number(min = 0),
-      "driver_id" -> number(min = 0),
-      "begin_assignement" -> jodaDate("yyyy-MM-dd"),
-      "end_assignemnet" -> jodaDate("yyyy-MM-dd"),
+      "vehicleId" -> number(min = 0),
+      "driverId" -> number(min = 0),
+      "beginAssignement" -> jodaDate("yyyy-MM-dd"),
+      "endAssignement" -> jodaDate("yyyy-MM-dd"),
       "enabled" -> optional(text)))
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (vehicle_id, driver_id, begin_assignement, end_assignement, enabled) ⇒
-          val va = models.VehicleAssignement(vehicle_id, driver_id, begin_assignement, end_assignement, enabled)
+        case (vehicleId, driverId, beginAssignement, endAssignement, enabled) ⇒
+          val va = models.VehicleAssignement(vehicleId, driverId, beginAssignement, endAssignement, enabled)
           VehicleAssignements.insert(va).fold(
               errs => BadRequest(Json.toJson(errs)), 
-              id => Ok(s"id=$id")
+              id => Ok(s"""{"id":$id}""").as("application/json")
           )
       })
   }
 
   def update(id: Int) = WithAuthentication { implicit request ⇒
+    Thread.sleep(1000)
     createForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (vehicle_id, driver_id, begin_assignement, end_assignement, enabled) ⇒
+        case (vehicleId, driverId, beginAssignement, endAssignement, enabled) ⇒
           models.VehicleAssignements.findById(id).fold(NotFound("Vehicle assignement $id wasn't found")) { va =>
             val va2 = va.copy(
-              vehicleId = vehicle_id,
-              driverId = driver_id,
-              beginAssignement = begin_assignement,
-              endAssignement = end_assignement,
+              vehicleId = vehicleId,
+              driverId = driverId,
+              beginAssignement = beginAssignement,
+              endAssignement = endAssignement,
               enabled = enabled)
             VehicleAssignements.update(va2).fold(
                 errs => BadRequest(Json.toJson(errs).toString), 
-                _ => Ok(s"Vehicle assignement $id updated successfully")
+                _ => Ok("")
             )
           }
       })
   }
 
   def delete(id: Int) = WithAuthentication {
-    if (Drivers.deleteById(id) > 0) 
-     Ok(s"Driver $id deleted successfully")
+    if (VehicleAssignements.deleteById(id) > 0) 
+     Ok
     else 
       NotFound
   }

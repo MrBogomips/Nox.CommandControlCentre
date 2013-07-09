@@ -2,23 +2,24 @@
 <div class="ana-devices">
 <h1>Vehicle assignements</h1>
 
-<table class="table table-condensed table-bordered table-striped">
+<table class="table table-condensed table-bordered table-striped vehicle-assignements">
 	<thead>
 		<tr>
-			<th>Assignement ID</th>
-			<th>Vehicle ID</th>
-			<th>Driver ID</th>
+			<th>ID</th>
+			<th>Vehicle</th>
+			<th>Driver</th>
 			<th>Begin Assignement</th>
 			<th>End Assignement</th>
 			<th>Enabled</th>
-			<th width="1%"></th>
+			<th><span class="span2"></span></th>
 		</tr>
 	</thead>
 	<tbody>
 	<%for(i in assignements) {%>
-		<tr <%=plugin('webapp_vehicle_assignements_row', assignements[i])%>></tr>	
+		<tr <%=plugin('webapp_vehicle_assignements_row', $.extend(assignements[i], {vehicles: vehicles, drivers: drivers}))%>></tr>	
 	<%}%>
 	</tbody>
 </table>
 <button class="btn btn-primary create">Create new vehicle assignment</button>
+<button class="btn btn-primary save-all">Save all</button>
 </div>
