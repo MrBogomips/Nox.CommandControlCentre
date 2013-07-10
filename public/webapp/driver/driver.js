@@ -24,16 +24,17 @@ steal(function($) {
 			this.element.addClass('webapp_driver');
 			
 			var renderForm = function() {
-				self.element.html(jsRoutes.controllers.Assets.at("webapp/driver/views/default.ejs").url,
-						self.options, function(el) {
-							var el = self.element.find(".modal");
-							$el = $(el);
-							$el.modal('show');
-							$el.on('hidden', function() {
-								self.element.html('');
-								self.destroy();
-							});
+				self.element.html(jsRoutes.controllers.Assets.at("webapp/driver/views/default.ejs").url, self.options, 
+					function(el) {
+						self.element.find(".switch").bootstrapSwitch();
+						var el = self.element.find(".modal");
+						$el = $(el);
+						$el.modal('show');
+						$el.on('hidden', function() {
+							self.element.html('');
+							self.destroy();
 						});
+					});
 			};
 
 			if (parseInt(self.options["id"]) > 0) {

@@ -36,7 +36,7 @@
 	  <div class="control-group">
 	    <label class="control-label" for="type_id">Type</label>
 	    <div class="controls">
-	      <select class="selectpicker" id="type_id" name="type_id">
+	      <select class="selectpicker span2" " id="type_id" name="type_id">
 	         <% for(i in types) {%>
 	          <option value="<%=types[i].id%>" <% if (types[i].id == type_id) {%> selected='selected' <%}%>><%=types[i].display_name%></option>
 	         <% } %>
@@ -58,7 +58,9 @@
 	  <div class="control-group">
 		  <label class="control-label" for="enabled">Enabled</label>
 		    <div class="controls">
+		    <div class="switch">
 		      <input type="checkbox" id="enabled" placeholder="enabled" name="enabled" <% if (enabled){%>checked='checked'<%}%> >
+		      </div>
 		    </div>
 	   </div>
 	   

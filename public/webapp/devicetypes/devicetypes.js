@@ -31,6 +31,7 @@ steal(
 				var renderForm = function() {
 						(function() {
 							self.element.html(jsRoutes.controllers.Assets.at("webapp/devicetypes/views/default.ejs").url, self.options, function(el) {
+								self.element.find(".switch").bootstrapSwitch();
 								var el = self.element.find(".modal");
 								$el = $(el);
 								$el.modal('show');

@@ -30,7 +30,7 @@ steal('aria/page')
 	})
 .then('/assets/aria/aria/controller/controller',
 	  '/assets/aria/jquery/view/ejs/ejs',
-	  '/assets/stylesheets/bootstrap/bootstrap.css',
+	  '/assets/stylesheets/bootstrap/bootstrap_nox.css',
 	  '/assets/stylesheets/bootstrap/bootstrap-responsive.css',
 	  '/assets/css/bootstrap-modal.css',
 	  '/assets/javascripts/underscore.js',
