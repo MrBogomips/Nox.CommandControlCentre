@@ -30,17 +30,24 @@ steal('aria/page')
 	})
 .then('/assets/aria/aria/controller/controller',
 	  '/assets/aria/jquery/view/ejs/ejs',
-	  '/assets/js/bootstrap.js',
-	  '/assets/js/bootstrap-modalmanager.js',
-	  '/assets/js/bootstrap-modal.js',
-	  '/assets/css/bootstrap.css',
-	  '/assets/css/bootstrap-responsive.css',
+	  '/assets/stylesheets/bootstrap/bootstrap.css',
+	  '/assets/stylesheets/bootstrap/bootstrap-responsive.css',
 	  '/assets/css/bootstrap-modal.css',
-	  '/assets/js/underscore.js',
+	  '/assets/javascripts/underscore.js',
 	  '/assets/stylesheets/global.css',
+	  '/assets/stylesheets/bootstrap-select.min.css',
 	  '/assets/js/routes.js'
 	  )
-.then('/assets/webapp/baseform/baseform.js',
+.then('/assets/javascripts/bootstrap.js',
+	  '/assets/javascripts/bootstrap-modalmanager.js',
+	  '/assets/javascripts/bootstrap-modal.js',
+	  '/assets/javascripts/bootstrap-datepicker.js',
+	  '/assets/javascripts/bootstrap-switch.js',
+	  '/assets/javascripts/bootstrap-switch.js',
+	  '/assets/javascripts/bootstrap-select.js',
+	  '/assets/javascripts/jquery-blockui.js',
+	  '/assets/webapp/baseform/baseform.js')
+.then('/assets/javascripts/defaults.js',		
 	function() {
 	$.ajax({
 		   type: 'GET',

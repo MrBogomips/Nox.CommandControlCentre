@@ -1,0 +1,22 @@
+@(user: UserTrait)
+
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+	steal('/assets/webapp/webapp_init.js')
+	.then('/assets/webapp/vehicleassignements/vehicleassignements.js')
+	.then('/assets/webapp/vehicleassignements/row/row.js')
+	.then(function() {
+		var options = {};
+		$("#content").webapp_vehicle_assignements(options);
+	});
+</script>
+}
+
+@aria.master.authenticated("Vehicles Assignement", user, footer_more = footer_scripts) {
+	
+	<div id="content"></id>
+	
+}

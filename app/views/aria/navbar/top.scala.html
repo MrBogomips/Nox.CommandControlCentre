@@ -55,6 +55,7 @@
 						<ul class="dropdown-menu" role="menu" aria-labelledby="drop5">
 							<li><a tabindex="-1" href="#" id="btnMenuVehicle">Vehicles</a></li>
 							<li><a tabindex="-1" href="#" id="btnMenuDrivers">Drivers</a></li>
+							<li><a tabindex="-1" href="#" id="btnMenuVehicleAssignements">Vechicles assignment</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -174,6 +175,10 @@
 				
 				$("#btnMenuDrivers").click(function(el, ev) {
 					window.location.pathname = jsRoutes.controllers.Driver.index().url;
+				});
+				
+				$("#btnMenuVehicleAssignements").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.VehicleAssignement.index().url;
 				});
 				
 			});

@@ -58,7 +58,13 @@ object Application extends Secured {
         Driver.get,
         Driver.create,
         Driver.update,
-        Driver.delete
+        Driver.delete,
+        
+        VehicleAssignement.index,
+        VehicleAssignement.get,
+        VehicleAssignement.create,
+        VehicleAssignement.update,
+        VehicleAssignement.delete
       )
      ).as("text/javascript")
   }

@@ -1,0 +1,44 @@
+  	<td class="assignement-id">?</td>
+  	<td>
+	  	<select class="selectpicker span2" name="vehicleId">
+		  <% for(i in vehicles) {%>
+	      <option value="<%=vehicles[i].id%>"><%=vehicles[i].display_name%></option>
+	     <% } %>
+		</select>
+  	</td>
+  	<td>
+  	<select class="selectpicker span2" name="driverId">
+		  <% for(i in drivers) {%>
+	      <option value="<%=drivers[i].id%>"><%=drivers[i].display_name%></option>
+	     <% } %>
+		</select>
+  	</td>
+  	<td>
+	  	<div class="input-append date beginAssignement" data-date="" data-date-format="yyyy-mm-dd">
+	  		<input name="beginAssignement" class="span2" size="10" type="text" value="" readonly>
+	  		<span class="add-on"><i class="icon-th"></i></span>
+		</div>
+  	</td>
+  	<td>
+  		<div class="input-append date endAssignement" data-date="" data-date-format="yyyy-mm-dd">
+	  		<input name="endAssignement" class="span2" size="10" type="text" value=""  readonly>
+	  		<span class="add-on"><i class="icon-th"></i></span>
+		</div>
+  	</td>
+  	<td>
+	<div class="switch">
+	    <input name="enabled" type="checkbox" id="va-<%=Math.floor(Math.random()*9999999)%>" >
+	</div>
+  	</td>
+  	<td>
+  		<nobr>
+  		<div class="insert-section">
+  		<button class="btn save" data-loading-text="wait ...">Save</button>
+		<button class="btn cancel" data-loading-text="wait ...">Cancel</button>
+		</div>
+		<div class="update-section hide">
+  		<button class="btn update disabled" data-loading-text="wait ...">Update</button>
+		<button class="btn btn-danger delete" data-loading-text="wait ...">Delete</button>
+		</div>
+  		</nobr>
+  	</td>

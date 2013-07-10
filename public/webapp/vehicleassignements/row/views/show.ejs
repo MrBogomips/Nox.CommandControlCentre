@@ -1,0 +1,40 @@
+  	<td><%=id%><input type="hidden" name="id" value="<%=id%>"></td>
+  	<td>
+	  	<select class="selectpicker span2" name="vehicleId">
+		  <% for(i in vehicles) {%>
+	      <option value="<%=vehicles[i].id%>"  <% if (vehicles[i].id == vehicleId) {%> selected='selected' <%}%>><%=vehicles[i].display_name%></option>
+	     <% } %>
+		</select>
+  	</td>
+  	<td>
+  	<select class="selectpicker span2" name="driverId">
+		  <% for(i in drivers) {%>
+	      <option value="<%=drivers[i].id%>"  <% if (drivers[i].id == driverId) {%> selected='selected' <%}%>><%=drivers[i].display_name%></option>
+	     <% } %>
+		</select>
+  	</td>
+  	<td>
+	  	<div class="input-append date beginAssignement" data-date="<%=beginAssignement%>" data-date-format="yyyy-mm-dd">
+	  		<input name="beginAssignement" class="span2" size="10" type="text" value="<%=beginAssignement%>" readonly>
+	  		<span class="add-on"><i class="icon-th"></i></span>
+		</div>
+  	</td>
+  	<td>
+  		<div class="input-append date endAssignement" data-date="<%=endAssignement%>" data-date-format="yyyy-mm-dd">
+	  		<input name="endAssignement" class="span2" size="10" type="text" value="<%=endAssignement%>" readonly>
+	  		<span class="add-on"><i class="icon-th"></i></span>
+		</div>
+  	</td>
+  	<td>
+	<div class="switch">
+	    <input name="enabled" type="checkbox" id="va-<%=id%>" <% if (enabled) {%>checked<%}%> >
+	</div>
+  	</td>
+  	<td>
+  		<nobr>
+  		<div class="update-section">
+  		<button class="btn update disabled" data-loading-text="wait ...">Update</button>
+		<button class="btn btn-danger delete" data-loading-text="wait ...">Delete</button>
+		</div>
+  		</nobr>
+  	</td>
