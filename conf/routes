@@ -39,28 +39,28 @@ POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
 GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
 
 # Device types
-GET		/device_type/index			controllers.DeviceType.index(all: Boolean ?= false)
+GET		/device_type/index			controllers.DeviceType.index(all: Boolean ?= true)
 GET		/device_type/:id			controllers.DeviceType.get(id: Int)
 PUT		/device_type/:id			controllers.DeviceType.update(id: Int)
 DELETE	/device_type/:id			controllers.DeviceType.delete(id: Int)
 POST	/device_type				controllers.DeviceType.create
 
 # Device groups
-GET		/device_group/index			controllers.DeviceGroup.index(all: Boolean ?= false)
+GET		/device_group/index			controllers.DeviceGroup.index(all: Boolean ?= true)
 GET		/device_group/:id			controllers.DeviceGroup.get(id: Int)
 PUT		/device_group/:id			controllers.DeviceGroup.update(id: Int)
 DELETE	/device_group/:id			controllers.DeviceGroup.delete(id: Int)
 POST	/device_group				controllers.DeviceGroup.create 
 
 # Vehicle
-GET		/vehicle/index				controllers.Vehicle.index(all: Boolean ?= false)
+GET		/vehicle/index				controllers.Vehicle.index(all: Boolean ?= true)
 GET		/vehicle/:id				controllers.Vehicle.get(id: Int)
 PUT		/vehicle/:id				controllers.Vehicle.update(id: Int)
 DELETE	/vehicle/:id				controllers.Vehicle.delete(id: Int)
 POST	/vehicle					controllers.Vehicle.create
 
 # Driver
-GET		/driver/index				controllers.Driver.index(all: Boolean ?= false)
+GET		/driver/index				controllers.Driver.index(all: Boolean ?= true)
 GET		/driver/:id					controllers.Driver.get(id: Int)
 PUT		/driver/:id					controllers.Driver.update(id: Int)
 DELETE	/driver/:id					controllers.Driver.delete(id: Int)

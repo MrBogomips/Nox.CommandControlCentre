@@ -60,11 +60,16 @@
 				<td>@t.name</td>
 				<td>@t.displayName</td>
 				<td>@t.description</td>
-				<td>@t.enabled</td>
+				<td><div class="switch">
+					<input type="checkbox" @if(t.enabled){
+						checked
+					} disabled >
+					</div>
+					</td>
 				<td>
 				<nobr>
-					<button class="btn btn-mini modify" data-device-id="@t.id">Modify</button>
-					<button class="btn btn-mini btn-danger delete" data-device-id="@t.id">Delete</button>
+					<button class="btn modify" data-device-id="@t.id">Modify</button>
+					<button class="btn btn-danger delete" data-device-id="@t.id">Delete</button>
 				</nobr>
 				</td>
 			</tr>
