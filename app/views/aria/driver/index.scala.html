@@ -61,11 +61,16 @@
 				<td>@v.name</td>
 				<td>@v.surname</td>
 				<td>@v.displayName</td>
-				<td>@v.enabled</td>
+				<td><div class="switch">
+					<input type="checkbox" @if(v.enabled){
+						checked
+					} disabled >
+					</div>
+				</td>
 				<td>
 				<nobr>
-					<button class="btn btn-mini modify" data-driver-id="@v.id">Modify</button>
-					<button class="btn btn-mini btn-danger delete" data-driver-id="@v.id">Delete</button>
+					<button class="btn modify" data-driver-id="@v.id">Modify</button>
+					<button class="btn btn-danger delete" data-driver-id="@v.id">Delete</button>
 				</nobr>
 				</td>
 			</tr>
