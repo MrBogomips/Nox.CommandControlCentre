@@ -39,6 +39,7 @@ steal(
 									self.element.html('');
 									self.destroy();
 								});
+								self.blockelement = el;
 							});
 						})();
 					},

@@ -66,26 +66,38 @@ steal(
 			_create : function(serverController) {
 				var self = this;
 				self._cancelErrors();
+				self.blockelement.block();
+				
 				serverController.create().ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = serverController.index().url;
-					},
-					error: self.proxy(self._reportError)
+					data: self.element.find('form').serialize()
+				})
+				.done(function(data, txtStatus, jqXHR) {
+					location = serverController.index().url;
+				})
+				.fail(function(data, txtStatus, jqXHR) {
+					self.proxy(self._reportError(data, txtStatus, jqXHR));
+				})
+				.always(function(){
+					self.blockelement.unblock();
 				});
 			},
 
 			_update : function(serverController) {
 				var self = this;
 				self._cancelErrors();
+				self.blockelement.block();
+				
 				serverController.update(self.options.id).ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = serverController.index().url;
-					},
-					error: function() {
-						self.proxy(self._reportError);
-					}
+					data: self.element.find('form').serialize()
+				})
+				.done(function(data, txtStatus, jqXHR) {
+					location = serverController.index().url;
+				})
+				.fail(function(data, txtStatus, jqXHR) {
+					self.proxy(self._reportError(data, txtStatus, jqXHR));
+				})
+				.always(function(){
+					self.blockelement.unblock();
 				});
 			}
 		});

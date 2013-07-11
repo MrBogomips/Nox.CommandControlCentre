@@ -13,7 +13,8 @@ steal(function($) {
 			display_name : '',
 			creation_time : '',
 			modification_time : '',
-			enabled : true
+			enabled : true,
+			serverController: jsRoutes.controllers.Driver
 		}
 	},
 	/** @Prototype */
@@ -34,6 +35,7 @@ steal(function($) {
 							self.element.html('');
 							self.destroy();
 						});
+						self.blockelement = el;
 					});
 			};
 
@@ -59,26 +61,14 @@ steal(function($) {
 
 		'.btn.driver-create click' : function(el, ev) {
 			var self = this;
-
-			jsRoutes.controllers.Driver.create().ajax({
-				data : self.element.find('form').serialize(),
-				success : function(data, txtStatus, jqXHR) {
-					location = jsRoutes.controllers.Driver.index().url;
-				},
-				error : self.proxy(self._reportError)
-			});
+			self._create(self.options.serverController);
+			return;
 		},
 
 		'.btn.driver-update click' : function(el, ev) {
 			var self = this;
-
-			jsRoutes.controllers.Driver.update(self.options.id).ajax({
-				data : self.element.find('form').serialize(),
-				success : function(data, txtStatus, jqXHR) {
-					location = jsRoutes.controllers.Driver.index().url;
-				},
-				error : self.proxy(self._reportError)
-			});
+			self._update(self.options.serverController);
+			return;
 		}
 	});
 
