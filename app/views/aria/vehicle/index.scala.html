@@ -24,7 +24,7 @@
 
 		$(".btn.delete").click(function(el, ev) {
 			var id = $(this).attr("data-vehicle-id");
-			jsRoutes.controllers.Vehicle.delete().ajax()
+			jsRoutes.controllers.Vehicle.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
 				location.reload(true);
 			})

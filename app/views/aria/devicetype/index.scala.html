@@ -24,7 +24,7 @@
 
 		$(".btn.delete").click(function(el, ev) {
 			var id = $(this).attr("data-device-id");
-			jsRoutes.controllers.DeviceType.delete().ajax()
+			jsRoutes.controllers.DeviceType.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
 				location.reload(true);
 			})
