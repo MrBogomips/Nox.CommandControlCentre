@@ -1,4 +1,4 @@
-<div class="modal hide fade">
+
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <% if (name != '') {%>
@@ -34,9 +34,21 @@
 	  </div>
 	  
 	  <div class="control-group">
+	    <label class="control-label" for="vehicle_id">Vehicle</label>
+	    <div class="controls">
+	      <select class="selectpicker" id="vehicle_id" name="vehicle_id">
+	      	<option value="" <% if (null == vehicle_id) {%> selected='selected' <%}%>>[None]</option>
+	         <% for(i in vehicles) {%>
+	          <option value="<%=vehicles[i].id%>" <% if (vehicles[i].id == vehicle_id) {%> selected='selected' <%}%>><%=vehicles[i].display_name%></option>
+	         <% } %>
+			</select>
+	    </div>
+	  </div>
+	  
+	  <div class="control-group">
 	    <label class="control-label" for="type_id">Type</label>
 	    <div class="controls">
-	      <select class="selectpicker" " id="type_id" name="type_id">
+	      <select class="selectpicker" id="type_id" name="type_id">
 	         <% for(i in types) {%>
 	          <option value="<%=types[i].id%>" <% if (types[i].id == type_id) {%> selected='selected' <%}%>><%=types[i].display_name%></option>
 	         <% } %>
@@ -85,4 +97,3 @@
     <a href="javascript: void(0);" class="btn btn-primary device-create">Create</a>
     <% } %>
   </div>
-</div>

@@ -26,13 +26,13 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_devicegroups');
+				this.element.addClass('webapp_devicegroups modal hide fade');
 				
 				var renderForm = function() {
 						(function() {
 							self.element.html(jsRoutes.controllers.Assets.at("webapp/devicegroups/views/default.ejs").url, self.options, function(el) {
 								self.element.find(".switch").bootstrapSwitch();
-								var el = self.element.find(".modal");
+								var el = self.element;
 								$el = $(el);
 								$el.modal('show');
 								$el.on('hidden', function(){
@@ -63,21 +63,6 @@ steal(
 					};
 				
 				fetchDeviceInfo();
-			} ,
-
-			destroy : function(){
-				var self = this;
-			    this._super();
-			},
-
-			'.btn.device-create click' : function(el, ev) {
-				var self = this;
-				self._create(self.options.serverController);
-			},
-
-			'.btn.device-update click' : function(el, ev) {
-				var self = this;
-				self._update(self.options.serverController);
 			}
 		});
 

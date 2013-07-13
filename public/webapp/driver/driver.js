@@ -22,20 +22,19 @@ steal(function($) {
 		init : function() {
 			var self = this;
 			this._super();
-			this.element.addClass('webapp_driver');
+			this.element.addClass('webapp_driver modal hide fade');
 			
 			var renderForm = function() {
 				self.element.html(jsRoutes.controllers.Assets.at("webapp/driver/views/default.ejs").url, self.options, 
 					function(el) {
 						self.element.find(".switch").bootstrapSwitch();
-						var el = self.element.find(".modal");
+						var el = self.element;
 						$el = $(el);
 						$el.modal('show');
 						$el.on('hidden', function() {
 							self.element.html('');
 							self.destroy();
 						});
-						self.blockelement = el;
 					});
 			};
 
@@ -52,23 +51,6 @@ steal(function($) {
 			} else {
 				renderForm();
 			}
-		},
-
-		destroy : function() {
-			var self = this;
-			this._super();
-		},
-
-		'.btn.driver-create click' : function(el, ev) {
-			var self = this;
-			self._create(self.options.serverController);
-			return;
-		},
-
-		'.btn.driver-update click' : function(el, ev) {
-			var self = this;
-			self._update(self.options.serverController);
-			return;
 		}
 	});
 

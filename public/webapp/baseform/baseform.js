@@ -8,7 +8,8 @@ steal(
 		/** @Static */
 		{
 			defaults : {
-				caller : null
+				caller : null,
+				uniqueId : 0
 			}
 		},
 		/** @Prototype */
@@ -55,18 +56,18 @@ steal(
 			},
 
 			_cancelErrors : function() {
-				$('.control-group').removeClass('error').find('.help-inline').remove();
+				var self = this;
+				self.find('.control-group').removeClass('error').find('.help-inline').remove();
 			},
 
 			'.btn.btn-cancel click' : function(el, ev) {
-				var self = this;
-				$('.modal').modal('hide');
+				this.element.modal('hide');
 			},
 
 			_create : function(serverController) {
 				var self = this;
 				self._cancelErrors();
-				self.blockelement.block();
+				self.element.block();
 				
 				serverController.create().ajax({
 					data: self.element.find('form').serialize()
@@ -78,14 +79,14 @@ steal(
 					self.proxy(self._reportError(data, txtStatus, jqXHR));
 				})
 				.always(function(){
-					self.blockelement.unblock();
+					self.element.unblock();
 				});
 			},
 
 			_update : function(serverController) {
 				var self = this;
 				self._cancelErrors();
-				self.blockelement.block();
+				self.element.block();
 				
 				serverController.update(self.options.id).ajax({
 					data: self.element.find('form').serialize()
@@ -97,8 +98,19 @@ steal(
 					self.proxy(self._reportError(data, txtStatus, jqXHR));
 				})
 				.always(function(){
-					self.blockelement.unblock();
+					self.element.unblock();
 				});
+			},
+			
+
+			'.btn.device-create click' : function(el, ev) {
+				var self = this;
+				self._create(self.options.serverController);
+			},
+
+			'.btn.device-update click' : function(el, ev) {
+				var self = this;
+				self._update(self.options.serverController);
 			}
 		});
 
