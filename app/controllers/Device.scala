@@ -24,6 +24,7 @@ object Device extends Secured {
         "enabled" -> d.enabled,
         "type_id" -> d.deviceType.id,
         "group_id" -> d.deviceGroup.id,
+        "vehicle_id" -> d.vehicle.map(v => v.id),
         "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
         "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
     }
