@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.table
 		 */
-		Webapp.BaseForm('Webapp.device',
+		Webapp.ModalForm('Webapp.device',
 		/** @Static */
 		{
 			defaults : {
@@ -28,20 +28,8 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_device modal hide fade');
-				
-				var renderForm = function() {
-					self.element.html(jsRoutes.controllers.Assets.at("webapp/device/views/default.ejs").url, self.options, function(el) {
-						self.element.find(".selectpicker").selectpicker();
-						self.element.find(".switch").bootstrapSwitch();
-						
-						self.element.modal('show');
-						self.element.on('hidden', function(){
-							self.element.html('');
-							self.destroy();
-						});
-					});
-				};
+				this.element.addClass('device');
+				var view = jsRoutes.controllers.Assets.at("webapp/device/views/default.ejs").url;
 				
 				if (parseInt(self.options["id"]) > 0) {
 					$.when(jsRoutes.controllers.DeviceType.index().ajax({
@@ -69,7 +57,7 @@ steal(
 					    	$.extend(self.options, {"groups": dg[0]});
 					    	$.extend(self.options, {"vehicles": v[0]});
 					    	$.extend(self.options, di[0]);
-					    	renderForm();
+					    	self.renderForm(view);
 					    });
 				} else {
 					$.when(jsRoutes.controllers.DeviceType.index().ajax({
@@ -91,7 +79,7 @@ steal(
 					    	$.extend(self.options, {"types": dt[0]});
 					    	$.extend(self.options, {"groups": dg[0]});
 					    	$.extend(self.options, {"vehicles": v[0]});
-					    	renderForm();
+					    	self.renderForm(view);
 					    });
 				}
 			}

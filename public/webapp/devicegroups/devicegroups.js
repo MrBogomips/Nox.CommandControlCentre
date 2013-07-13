@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.devicegroups
 		 */
-		Webapp.BaseForm('Webapp.devicegroups',
+		Webapp.ModalForm('Webapp.devicegroups',
 		/** @Static */
 		{
 			defaults : {
@@ -26,43 +26,23 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_devicegroups modal hide fade');
+				this.element.addClass('devicegroup');
+				var view = jsRoutes.controllers.Assets.at("webapp/devicegroups/views/default.ejs").url;
 				
-				var renderForm = function() {
-						(function() {
-							self.element.html(jsRoutes.controllers.Assets.at("webapp/devicegroups/views/default.ejs").url, self.options, function(el) {
-								self.element.find(".switch").bootstrapSwitch();
-								var el = self.element;
-								$el = $(el);
-								$el.modal('show');
-								$el.on('hidden', function(){
-									self.element.html('');
-									self.destroy();
-								});
-								self.blockelement = el;
-							});
-						})();
-					},
-					fetchDeviceInfo = function () {
-						(function() {
-							if (parseInt(self.options["id"]) > 0) {
-								jsRoutes.controllers.DeviceGroup.get(self.options["id"]).ajax({
-									headers: { 
-								        Accept : "application/json; charset=utf-8",
-								        "Content-Type": "application/json; charset=utf-8"
-								    },
-									success: function(data) {
-										$.extend(self.options, data);
-										renderForm();
-									}
-								});	
-							} else {
-								renderForm();
-							}
-						})();
-					};
-				
-				fetchDeviceInfo();
+				if (parseInt(self.options["id"]) > 0) {
+					jsRoutes.controllers.DeviceGroup.get(self.options["id"]).ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    },
+						success: function(data) {
+							$.extend(self.options, data);
+							self.renderForm(view);
+						}
+					});	
+				} else {
+					self.renderForm(view);
+				}
 			}
 		});
 

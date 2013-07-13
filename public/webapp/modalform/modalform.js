@@ -2,9 +2,9 @@ steal(
 	function($){
 
 		/**
-		 * @class Webapp.BaseForm
+		 * @class Webapp.ModalForm
 		 */
-		Aria.Controller('Webapp.BaseForm',
+		Aria.Controller('Webapp.ModalForm',
 		/** @Static */
 		{
 			defaults : {
@@ -17,12 +17,26 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_baseform');
+				this.element.addClass('modal hide fade');
 			},
 
 			destroy : function(){
 				var self = this;
 			    this._super();
+			},
+			
+			renderForm : function(view) {
+				var self = this;
+				self.element.html(view, self.options, function(el) {
+					self.element.find(".selectpicker").selectpicker();
+					self.element.find(".switch").bootstrapSwitch();
+					
+					self.element.modal('show');
+					self.element.on('hidden', function(){
+						self.element.html('');
+						self.destroy();
+					});
+				});
 			},
 			
 			_reportError : function(data, txtStatus, jqXHR) {
@@ -103,12 +117,12 @@ steal(
 			},
 			
 
-			'.btn.device-create click' : function(el, ev) {
+			'.btn.create click' : function(el, ev) {
 				var self = this;
 				self._create(self.options.serverController);
 			},
 
-			'.btn.device-update click' : function(el, ev) {
+			'.btn.update click' : function(el, ev) {
 				var self = this;
 				self._update(self.options.serverController);
 			}

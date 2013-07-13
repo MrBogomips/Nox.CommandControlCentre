@@ -40,7 +40,7 @@ steal('aria/page')
 	  
 	  )
 .then('/assets/javascripts/bootstrap-modal.js',
-	  '/assets/webapp/baseform/baseform.js',
+	  '/assets/webapp/modalform/modalform.js',
 	  '/assets/javascripts/jquery-blockui.js')
 .then('/assets/javascripts/defaults.js',		
 	function() {

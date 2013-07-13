@@ -3,7 +3,7 @@ steal(function($) {
 	/**
 	 * @class Webapp.table
 	 */
-	Webapp.BaseForm('Webapp.Driver',
+	Webapp.ModalForm('Webapp.Driver',
 	/** @Static */
 	{
 		defaults : {
@@ -22,22 +22,9 @@ steal(function($) {
 		init : function() {
 			var self = this;
 			this._super();
-			this.element.addClass('webapp_driver modal hide fade');
+			this.element.addClass('driver');
+			var view = jsRoutes.controllers.Assets.at("webapp/driver/views/default.ejs").url;
 			
-			var renderForm = function() {
-				self.element.html(jsRoutes.controllers.Assets.at("webapp/driver/views/default.ejs").url, self.options, 
-					function(el) {
-						self.element.find(".switch").bootstrapSwitch();
-						var el = self.element;
-						$el = $(el);
-						$el.modal('show');
-						$el.on('hidden', function() {
-							self.element.html('');
-							self.destroy();
-						});
-					});
-			};
-
 			if (parseInt(self.options["id"]) > 0) {
 				jsRoutes.controllers.Driver.get(self.options["id"]).ajax({
 					headers : {
@@ -46,10 +33,10 @@ steal(function($) {
 					}
 				}).done(function(data, dg, di) {
 					$.extend(self.options, data);
-					renderForm();
+					self.renderForm(view);
 				});
 			} else {
-				renderForm();
+				self.renderForm(view);
 			}
 		}
 	});

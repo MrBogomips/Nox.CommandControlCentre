@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.vehiclesassignements
 		 */
-		Webapp.BaseForm('Webapp.VehicleAssignements',
+		Aria.Controller('Webapp.VehicleAssignements',
 		/** @Static */
 		{
 			defaults : {
