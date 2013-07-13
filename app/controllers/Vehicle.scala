@@ -14,8 +14,8 @@ import org.joda.time.format.ISODateTimeFormat
 
 object Vehicle extends Secured {
   /**
-   * DevicePersisted JSON serializer
-   */
+    * DevicePersisted JSON serializer
+    */
   implicit val vehicleJsonWriter = new Writes[VehiclePersisted] {
     def writes(r: VehiclePersisted): JsValue = {
       Json.obj(
@@ -34,7 +34,7 @@ object Vehicle extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     val vehicles = all match {
       case false ⇒ Vehicles.findAllEnabled
-      case true ⇒ Vehicles.findAll
+      case true  ⇒ Vehicles.findAll
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(vehicles))
@@ -68,7 +68,7 @@ object Vehicle extends Secured {
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson)as("application/json"),
+      errors ⇒ BadRequest(errors.errorsAsJson) as ("application/json"),
       {
         case (name, display_name, description, model, license_plate, enabled) ⇒
           if (Vehicles.findByName(name).isDefined) {
@@ -87,7 +87,7 @@ object Vehicle extends Secured {
 
   def update(id: Int) = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson)as("application/json"),
+      errors ⇒ BadRequest(errors.errorsAsJson) as ("application/json"),
       {
         case (name, display_name, description, model, license_plate, enabled) ⇒
           Vehicles.findById(id).map { x ⇒
@@ -110,9 +110,21 @@ object Vehicle extends Secured {
   }
 
   def delete(id: Int) = WithAuthentication {
-    Vehicles.deleteById(id) match {
-      case true ⇒ Ok(s"Vehicle $id deleted successfully")
-      case _ ⇒ NotFound
+    import org.postgresql.util.{ PSQLException, ServerErrorMessage }
+
+    try {
+      Vehicles.deleteById(id) match {
+        case true ⇒ Ok(s"Vehicle $id deleted successfully")
+        case _    ⇒ NotFound
+      }
+    } catch {
+      case e: PSQLException ⇒ {
+        val msg = e.getServerErrorMessage().getMessage();
+        if (msg.contains("vehicles_drivers_vehicle_fk"))
+        	InternalServerError(s"""Vehicle $id is associated to a driver: you cannot delete it""") // getSQLState
+        else
+          InternalServerError(msg)
+      }
     }
   }
 }

@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.vehicles
 		 */
-		Webapp.BaseForm('Webapp.vehicles',
+		Webapp.ModalForm('Webapp.vehicles',
 		/** @Static */
 		{
 			defaults : {
@@ -26,57 +26,23 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_vehicles');
+				this.element.addClass('webapp_vehicles modal hide fade');
+				var view = jsRoutes.controllers.Assets.at("webapp/vehicles/views/default.ejs").url;
 				
-				var renderForm = function() {
-						(function() {
-							self.element.html(jsRoutes.controllers.Assets.at("webapp/vehicles/views/default.ejs").url, self.options, function(el) {
-								self.element.find(".switch").bootstrapSwitch();
-								var el = self.element.find(".modal");
-								$el = $(el);
-								$el.modal('show');
-								$el.on('hidden', function(){
-									self.element.html('');
-									self.destroy();
-								});
-							});
-						})();
-					},
-					fetchVehicleInfo = function () {
-						(function() {
-							if (parseInt(self.options["id"]) > 0) {
-								self.options.serverController.get(self.options["id"]).ajax({
-									headers: { 
-								        Accept : "application/json; charset=utf-8",
-								        "Content-Type": "application/json; charset=utf-8"
-								    },
-									success: function(data) {
-										$.extend(self.options, data);
-										renderForm();
-									}
-								});	
-							} else {
-								renderForm();
-							}
-						})();
-					};
-				
-				fetchVehicleInfo();
-			} ,
-
-			destroy : function(){
-				var self = this;
-			    this._super();
-			},
-			
-			'.btn.vehicle-create click' : function(el, ev) {
-				var self = this;
-				self._create(self.options.serverController);
-			},
-
-			'.btn.vehicle-update click' : function(el, ev) {
-				var self = this;
-				self._update(self.options.serverController);
+				if (parseInt(self.options["id"]) > 0) {
+					self.options.serverController.get(self.options["id"]).ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    },
+						success: function(data) {
+							$.extend(self.options, data);
+							self.renderForm(view);
+						}
+					});	
+				} else {
+					self.renderForm(view);
+				}
 			}
 		});
 
