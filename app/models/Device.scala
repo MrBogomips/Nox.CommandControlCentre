@@ -16,6 +16,10 @@ trait DeviceTrait extends NamedEntityTrait {
   val vehicle: Option[VehicleTrait]
 }
 
+case class DeviceInfo (id: Int, name: String, displayName: String, description: Option[String], enabled: Boolean, 
+        creationTime: Timestamp, modificationTime: Timestamp, version: Int, deviceTypeId: Int, deviceGroupId: Int, 
+        vehicleId: Option[Int], vehicleName: Option[String], vehicleLicensePlate: Option[String])
+
 case class Device(private val initName: String, displayName: String, description: Option[String], enabled: Boolean, deviceType: DeviceTypeTrait, deviceGroup: DeviceGroupTrait, vehicle: Option[VehicleTrait])
   extends DeviceTrait {
   lazy val name = normalizeName(initName)
@@ -95,9 +99,17 @@ object Devices
   private def recordExtractor(r: (DevicePersistedRecord, DeviceTypePersisted, DeviceGroupPersisted)): DevicePersisted =
     DevicePersisted(r._1.id, r._1.name, r._1.displayName, r._1.description, r._1.enabled, r._2, r._3, None, r._1.creationTime, r._1.modificationTime, r._1.version)
   
+  implicit private def deviceGetResult = GetResult(r =>
+    DeviceInfo(r.nextInt, r.nextString, r.nextString, r.nextStringOption, r.nextBoolean, r.nextTimestamp, r.nextTimestamp, 
+        r.nextInt, r.nextInt, r.nextInt, r.nextIntOption, r.nextStringOption, r.nextStringOption))  
+    
   private lazy val SELECT_STAR = 
     sql"""
-    SELECT *
+    SELECT 
+    	D.id, D.name, D.display_name, D.description, D.enabled, D.creation_time, D.modification_time, D.version,
+    	DT.id, DT.name, DT.display_name, DT.description, DT.enabled, DT.creation_time, DT.modification_time, DT.version,
+    	DG.id, DG.name, DG.display_name, DG.description, DG.enabled, DG.creation_time, DG.modification_time, DG.version,
+    	
     FROM #$tableName AS D.
     INNER JOIN #${DeviceTypes.tableName} AS DT
     	ON D.device_type_id = DT.id
@@ -129,6 +141,39 @@ object Devices
 
     qy.list.map(recordExtractor)
   }
+  
+  def findAllDeviceInfo(enabled: Option[Boolean] = None): Seq[DeviceInfo] = db withSession{
+    val sql = enabled.map(en =>sql"""
+    SELECT 
+    	D.id, D.name, D.display_name, D.description, D.enabled, D._ctime, D._mtime, D._ver,
+    	D.device_type_id, D.device_group_id, D.vehicle_id, V.name as vehicle_name, V.license_plate as vehicle_license_plate
+    FROM #$tableName D
+      LEFT JOIN vehicles V ON D.vehicle_id = V.id
+    WHERE D.enabled = $en
+    """).getOrElse(sql"""
+    SELECT 
+    	D.id, D.name, D.display_name, D.description, D.enabled, D._ctime, D._mtime, D._ver,
+    	D.device_type_id, D.device_group_id, D.vehicle_id, V.name as vehicle_name, V.license_plate as vehicle_license_plate
+    FROM #$tableName D
+      LEFT JOIN vehicles V ON D.vehicle_id = V.id    
+	""")
+	
+	executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[DeviceInfo]) { _.list }
+  }
+  
+  def findDeviceInfoById(id: Int): Option[DeviceInfo] = db withSession {
+    val sql = sql"""
+    SELECT 
+    	D.id, D.name, D.display_name, D.description, D.enabled, D._ctime, D._mtime, D._ver,
+    	D.device_type_id, D.device_group_id, D.vehicle_id, V.name as vehicle_name, V.license_plate as vehicle_license_plate
+    FROM #$tableName D
+      LEFT JOIN vehicles V ON D.vehicle_id = V.id
+    WHERE D.id = $id
+    """
+    
+    executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[DeviceInfo]) { _.firstOption }
+  }
+  
   def findById(id: Int): Option[models.DevicePersisted] = db withSession {
     val qy = for {
       dr <- Devices if (dr.id === id)
@@ -158,6 +203,11 @@ object Devices
       case o: DeviceGroupPersisted => o.id
       case o => DeviceGroups.findByName(o.name).get.id
     }
+    def vehicleId: Option[Int] = obj.vehicle match {
+      case o: Option[VehiclePersisted] => o.map(v => v.id)
+      case o: Option[Vehicle] => o.flatMap(v => Vehicles.findByName(v.name).map(v => v.id))
+      case None => None
+    }
     db withSession {
       val sql = sql"""
     INSERT INTO devices (
@@ -167,6 +217,7 @@ object Devices
     		enabled, 
     		device_type_id, 
     		device_group_id,
+    		vehicle_id,
     		_ctime,
     		_mtime,
     		_ver
@@ -178,6 +229,7 @@ object Devices
     		${obj.enabled},
     		${deviceTypeId},
     		${deviceGroupId},
+    		${vehicleId},
     		NOW(),
     		NOW(),
     		0
@@ -199,6 +251,7 @@ object Devices
     	   enabled = ${obj.enabled},
            device_type_id = ${obj.deviceType.id},
            device_group_id = ${obj.deviceGroup.id},
+           vehicle_id = ${obj.vehicle.map(v => v.id)},
            _mtime = NOW(),
            _ver = _ver + 1 
 	 WHERE id = ${obj.id}
@@ -216,6 +269,7 @@ object Devices
     	   enabled = ${obj.enabled},
            device_type_id = ${obj.deviceType.id},
            device_group_id = ${obj.deviceGroup.id},
+           vehicle_id = ${obj.vehicle.map(v => v.id)},
            _mtime = NOW(),
            _ver = _ver + 1 
 	 WHERE id = ${obj.id}

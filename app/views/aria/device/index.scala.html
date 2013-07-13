@@ -1,4 +1,4 @@
-@(devices: Seq[DevicePersisted], user: UserTrait)
+@(devices: Seq[DeviceInfo], user: UserTrait)
 
 
 @header_more = {}
@@ -24,14 +24,13 @@
 			
 		$(".btn.delete").click(function(el, ev) {
 			var id = $(this).attr("data-device-id");
-			jsRoutes.controllers.Device.delete().ajax()
+			jsRoutes.controllers.Device.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
 				location.reload(true);
 			})
 			.fail(function(data, txtStatus, jqXHR) {
-				//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-				//self.find(".alert_placeholder").html($alert);
-				alert(data.responseText);
+				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+				self.find(".alert_placeholder").html($alert);
 			});
 		});
 	});
@@ -41,14 +40,17 @@
 @aria.master.authenticated("Devices", user, footer_more = footer_scripts) {
 	<div class="ana-devices">
 	<h1>Devices</h1>
+	
+	<div class="alert_placeholder"></div>
 
 	<table class="table table-condensed table-bordered table-striped">
 		<thead>
 			<tr>
+				<th>ID</th>
 				<th>Device ID</th>
-				<th>Name</th>
 				<th>Display Name</th>
 				<th>Description</th>
+				<th>Vehicle Installed</th>
 				<th>Enabled</th>
 				<th width="1%"></th>
 			</tr>
@@ -60,6 +62,8 @@
 				<td>@d.name</td>
 				<td>@d.displayName</td>
 				<td>@d.description</td>
+				<td>@d.vehicleName (@d.vehicleLicensePlate.getOrElse("none"))
+				</td>
 				<td><div class="switch">
 					<input type="checkbox" @if(d.enabled){
 						checked
