@@ -61,38 +61,4 @@ trait Backend {
     Logger.info(s"SQL:$method[$operation]: $loginfo done with return value [$ret]")
     ret
   }
-
-  /**
-   * Helper method to check if an ``Persisted`` object requires to be persisted or not
-   *
-   * @return ``None`` if the operation has been skipped because the object was already persisted
-   */
-  def withPersistableObject[A <: Persisted[A,C], B, C](obj: A, force: Boolean = false)(f: => B): Option[B] =
-    withPersistableObject[A, Option[B]](obj, None, force)(Some(f))
-
-  /**
-   * Helper method to check if an ``Persisted`` object requires to be persisted or not
-   *
-   * @return ``defailt`` if the operation has been skipped because the object was already persisted
-   */
-  def withPersistableObject[A <: Persistable, B](obj: A, default: B, force: Boolean = false)(f: => B): B = {
-    def persist = {
-      val ret = f
-      obj.persisted 
-      ret
-    }
-    if (force) {
-      if (obj.isPersisted)
-        Logger.debug(s"object $obj is forced to be persisted even if it doesn't require it")
-      else
-        Logger.debug(s"object $obj requires to be persisted (with 'force' option)")
-      persist
-    } else if (!obj.isPersisted) {
-      Logger.debug(s"object $obj requires to be persisted")
-      persist
-    } else {
-      Logger.debug(s"object $obj is already persisted: skipped")
-      default
-    }
-  }
 }

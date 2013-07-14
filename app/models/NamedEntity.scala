@@ -124,8 +124,7 @@ abstract case class SimpleNameEntityTable[T <: SimpleNameEntityPersisted[T, T2],
     executeDelete("Deleting from #$tableName record identified by $id", sql) == 1
   }
 
-  def updateWithVersion(obj: T): Boolean = withPersistableObject(obj, default = false) {
-    db withSession {
+  def updateWithVersion(obj: T): Boolean = db withSession {
       val sql = sqlu"""
     UPDATE  #$tableName
        SET name = ${obj.name},
@@ -139,9 +138,7 @@ abstract case class SimpleNameEntityTable[T <: SimpleNameEntityPersisted[T, T2],
 	 """
       executeUpdate(s"$tableName $obj", sql) == 1
     }
-  }
-  def update(obj: T): Boolean = withPersistableObject(obj, default = false) {
-    db withSession {
+  def update(obj: T): Boolean = db withSession {
       val sql = sqlu"""
     UPDATE  #$tableName
        SET name = ${obj.name},
@@ -154,5 +151,4 @@ abstract case class SimpleNameEntityTable[T <: SimpleNameEntityPersisted[T, T2],
 	 """
       executeUpdate(s"$tableName $obj", sql) == 1
     }
-  }
 }

@@ -1,4 +1,4 @@
-@(devices: Seq[DeviceInfo], user: UserTrait)
+@(devices: Seq[DeviceInfoPersisted], user: UserTrait)
 
 
 @header_more = {}
@@ -62,7 +62,7 @@
 				<td>@d.name</td>
 				<td>@d.displayName</td>
 				<td>@d.description</td>
-				<td>@d.vehicleName (@d.vehicleLicensePlate.getOrElse("none"))
+				<td>@d.vehicleDisplayName (@d.vehicleLicensePlate.getOrElse("none"))
 				</td>
 				<td><div class="switch">
 					<input type="checkbox" @if(d.enabled){

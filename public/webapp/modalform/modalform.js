@@ -48,8 +48,8 @@ steal(
 			_enumerateErrors : function(errors) {
 				var globalErrors = '';
 				$.each(errors, function(label, value) {
-					if ($('input[name="' + label + '"]').length > 0) {
-						var obj = $('input[name="' + label + '"]');
+					var obj = $('input[name="' + label + '"],select[name="' + label + '"]');
+					if (obj.length > 0) {
 						obj.closest('.control-group').addClass('error');
 						var errorsList = '';
 						for (var i = 0; i < value.length; i++) {
@@ -60,7 +60,7 @@ steal(
 						}
 					}
 					else {
-						globalErrors += '<li style="font-size:12px;">' + value[i] + '</li>';
+						globalErrors += '<li style="font-size:12px;"><em>' + label + '</em>: ' + value + '</li>';
 					}
 				});
 				if (globalErrors != '') {
@@ -115,7 +115,6 @@ steal(
 					self.element.unblock();
 				});
 			},
-			
 
 			'.btn.create click' : function(el, ev) {
 				var self = this;
@@ -125,6 +124,10 @@ steal(
 			'.btn.update click' : function(el, ev) {
 				var self = this;
 				self._update(self.options.serverController);
+			},
+			
+			'input[type=checkbox] change' : function (el, ev) {
+				el.val(el.val() == "on");
 			}
 		});
 
