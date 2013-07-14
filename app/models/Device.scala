@@ -10,6 +10,8 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
+
 import org.joda.time.DateTime
 
 import utils.Converter._
@@ -24,14 +26,12 @@ trait DeviceTrait extends Validatable {
   val vehicleId: Option[Int]
   val enabled: Boolean
 
-  def validate: Seq[ValidationError] = {
-    import collection.mutable.{ HashMap, MultiMap, Set }
-    val errorsAccumulator = new HashMap[String, Set[String]] with MultiMap[String, String]
-    // Provide all the rule checked
-    if (false)
-      errorsAccumulator.addBinding("endAssignement", "End assignement must follow the begin")
-
-    errorsAccumulator.toList.map(v => ValidationError(v._1, collection.immutable.Set(v._2.toList: _*)))
+  def validate {
+    validateMinLength("name", name, 3)
+    validateMinLength("displayName", displayName, 3)
+    validateMinValue("deviceTypeId", deviceTypeId, 1)
+    validateMinValue("deviceGroupId", deviceGroupId, 1)
+    vehicleId.map(v => validateMinValue("vehicleId", v, 1))
   }
 }
 
@@ -50,7 +50,7 @@ case class DevicePersisted(id: Int, name: String, displayName0: Option[String], 
   extends DeviceTrait
   with Persistable {
   def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean) =
-   this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, new Timestamp(0), new Timestamp(0), 0)
+    this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, new Timestamp(0), new Timestamp(0), 0)
   def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, version: Int) =
     this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, new Timestamp(0), new Timestamp(0), version)
 }
@@ -81,6 +81,27 @@ object Devices
 
   def * = id ~ name ~ displayName.? ~ description.? ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ enabled ~ _ctime ~ _mtime ~ _ver <> (DevicePersisted, DevicePersisted.unapply _)
 
+  /**
+   * Exception mapper
+   * 
+   * Maps a native postgres exception to a ValidationException.
+   */
+  implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
+    val errMessage = e.getMessage() 
+    if (errMessage.contains("devices_name_key")) 
+      throw new ValidationException(e, "name", "Already in use")
+    else if (errMessage.contains("devices_vehicles_fk"))
+      throw new ValidationException(e, "vehicleId", "Not found")
+    else if (errMessage.contains("device_type_fk"))
+      throw new ValidationException(e, "deviceTypeId", "Not found")
+    else if (errMessage.contains("device_group_fk"))
+      throw new ValidationException(e, "deviceGroupId", "Not found")
+    else if (errMessage.contains("mtime_gte_ctime_chk"))
+      throw new ValidationException(e, "creationTime,modificationTime", "Not in the correct sequence")
+    else
+      throw e;
+  }
+  
   implicit private def deviceInfoGetResult = GetResult(r =>
     DeviceInfoPersisted(r.nextInt, r.nextString, r.nextStringOption, r.nextStringOption, r.nextInt, r.nextInt, r.nextIntOption, r.nextBoolean, r.nextTimestamp,
       r.nextTimestamp, r.nextInt, r.nextString, r.nextString, r.nextStringOption, r.nextStringOption))
@@ -189,10 +210,9 @@ object Devices
     )
     RETURNING id
     """
-
     executeSql(BackendOperation.INSERT, s"device $obj", sql.as[Int]) { _.first }
   }
-  def update(obj: DevicePersisted): Boolean = //withPersistableObject(obj, default = false) {
+  def update(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE devices
@@ -209,8 +229,8 @@ object Devices
 		 """
       executeUpdate(s"device $obj", sql) == 1
     }
-  //}
-  def updateWithVersion(obj: DevicePersisted): Boolean = //withPersistableObject(obj, default = false) {
+  }
+  def updateWithVersion(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE devices
@@ -228,7 +248,7 @@ object Devices
 		 """
       executeUpdate(s"device $obj", sql) == 1
     }
-  //}
+  }
   def delete(obj: DevicePersisted): Boolean = deleteById(obj.id)
   def deleteById(id: Int): Boolean = db withSession {
     val sql = sqlu"DELETE FROM devices WHERE id = ${id}"

@@ -10,9 +10,11 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
 import org.joda.time.DateTime
 
 import utils.Converter._
+
 
 trait VehicleAssignementTrait extends Validatable {
   val vehicleId: Int
@@ -21,14 +23,13 @@ trait VehicleAssignementTrait extends Validatable {
   val endAssignement: DateTime
   val enabled: Boolean
 
-  def validate: Seq[ValidationError] = {
+  def validate {
     import collection.mutable.{ HashMap, MultiMap, Set }
     val errorsAccumulator = new HashMap[String, Set[String]] with MultiMap[String, String]
     // Provide all the rule checked
     if (endAssignement.isBefore(beginAssignement))
       errorsAccumulator.addBinding("endAssignement","End assignement must follow the begin")
     
-    errorsAccumulator.toList.map(v => ValidationError(v._1, collection.immutable.Set(v._2.toList: _*)))
   }
 }
 
@@ -58,6 +59,8 @@ object VehicleAssignements
   def forInsert = vehicleId ~ driverId ~ beginAssignement ~ endAssignement ~ enabled <> (VehicleAssignement, VehicleAssignement.unapply _)
   def forUpdate = *
   
+  implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = {e => ???}
+  
   def qyFindById(id: Int) = (for { va <- VehicleAssignements if (va.id === id)} yield va)
 
   def findAll: Seq[VehicleAssignementPersisted] = db withSession (for { va <- VehicleAssignements } yield va).list
@@ -66,13 +69,13 @@ object VehicleAssignements
 
   def findById(id: Int): Option[VehicleAssignementPersisted] = db withSession qyFindById(id).firstOption
 
-  def insert(va: VehicleAssignement): Either[Seq[ValidationError], Int] = WithValidation(va).right.map { va =>
+  def insert(va: VehicleAssignement): Int = WithValidation(va) { va =>
     db withSession {
       VehicleAssignements.forInsert returning id insert va
     }
   }
 
-  def update(obj: VehicleAssignementPersisted): Either[Seq[ValidationError], Int] =  WithValidation(obj).right.map { vobj =>
+  def update(obj: VehicleAssignementPersisted): Int =  WithValidation(obj) { vobj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE #$tableName
@@ -89,7 +92,7 @@ object VehicleAssignements
     }
   }
   
-  def updateWithVersion(obj: VehicleAssignementPersisted): Either[Seq[ValidationError], Int] =  WithValidation(obj).right.map { vobj =>
+  def updateWithVersion(obj: VehicleAssignementPersisted): Int =  WithValidation(obj) { vobj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE #$tableName

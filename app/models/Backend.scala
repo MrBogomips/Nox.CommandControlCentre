@@ -6,6 +6,8 @@ import play.api.Play.current
 import scala.slick.session.{ Database, Session }
 import scala.slick.jdbc.{ StaticQuery0, SQLInterpolationResult, GetResult }
 
+import org.postgresql.util.PSQLException
+
 object BackendOperation extends Enumeration {
   type BackendOperation = Value
 
@@ -22,43 +24,43 @@ object BackendOperation extends Enumeration {
 import BackendOperation._
 
 /**
- * Provided backend interaction utilities
- */
+  * Provided backend interaction utilities
+  */
 trait Backend {
   /**
-   * The backend db
-   */
+    * The backend db
+    */
   val db = Database.forDataSource(DB.getDataSource())
 
   /**
-   * Execute an INSERT statement and returns the number of rows affected
-   */
+    * Execute an INSERT statement and returns the number of rows affected
+    */
   def executeInsert(loginfo: String, sql: StaticQuery0[Int])(implicit session: Session): Int =
     executeSql(BackendOperation.INSERT, loginfo, sql) { _.first }
 
   /**
-   * Execute an UPDATE statement and returns the number of rows affected
-   */
+    * Execute an UPDATE statement and returns the number of rows affected
+    */
   def executeUpdate(loginfo: String, sql: StaticQuery0[Int])(implicit session: Session): Int =
     executeSql(BackendOperation.UPDATE, loginfo, sql) { _.first }
 
   /**
-   * Execute a DELETE statement and returns the number of rows affected
-   */
+    * Execute a DELETE statement and returns the number of rows affected
+    */
   def executeDelete(loginfo: String, sql: StaticQuery0[Int])(implicit session: Session): Int =
     executeSql(BackendOperation.DELETE, loginfo, sql) { _.first }
 
   /**
-   * Execute a generic sql decorated with logging info
-   *
-   * @param f is the callback function where you provide the mani
-   */
+    * Execute a generic sql decorated with logging info
+    *
+    * @param f is the callback function where you provide the mani
+    */
   def executeSql[P, A](operation: BackendOperation, loginfo: String, sql: StaticQuery0[P])(f: StaticQuery0[P] => A)(implicit session: Session, getResult: GetResult[P]): A = {
-    val method = "executeSql"
-    Logger.info(s"SQL:$method[$operation]: $loginfo...")
-    Logger.debug(s"SQL:$method[$operation]: ${sql.getStatement}")
-    val ret = f(sql)
-    Logger.info(s"SQL:$method[$operation]: $loginfo done with return value [$ret]")
-    ret
+      val method = "executeSql"
+      Logger.info(s"SQL:$method[$operation]: $loginfo...")
+      Logger.debug(s"SQL:$method[$operation]: ${sql.getStatement}")
+      val ret = f(sql)
+      Logger.info(s"SQL:$method[$operation]: $loginfo done with return value [$ret]")
+      ret
   }
 }

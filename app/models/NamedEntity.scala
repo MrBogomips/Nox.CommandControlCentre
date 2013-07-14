@@ -12,6 +12,8 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
+
 trait NamedEntityTrait {
   val name: String
   val displayName: String
@@ -74,7 +76,8 @@ abstract case class SimpleNameEntityTable[T <: SimpleNameEntityPersisted[T, T2],
   def * = id ~ name ~ displayName ~ description.? ~ enabled ~ _ctime ~ _mtime ~ _ver <> (apply, unapply)
 
   private implicit val getResult = GetResult(r => apply(r.nextInt, r.nextString, r.nextString, r.nextStringOption, r.nextBoolean, r.nextTimestamp, r.nextTimestamp, r.nextInt))
-
+  private implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = {e => ???}
+  
   def findAll: Seq[T] = db withSession {
     val sql = sql"SELECT id, name, display_name, description, enabled, _ctime, _mtime, _ver FROM #$tableName"
     executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[T]) { _.list }

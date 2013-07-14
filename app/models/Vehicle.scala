@@ -10,6 +10,8 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
+
 trait VehicleTrait extends NamedEntityTrait {
   val model: String
   val licensePlate: String
@@ -72,6 +74,8 @@ object Vehicles
 
   def * = id ~ name ~ displayName ~ description.? ~ enabled ~ model ~ licensePlate ~ _ctime ~ _mtime ~ _ver <> (VehiclePersistedRecord.apply _, VehiclePersistedRecord.unapply _)
 
+  implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = {e => ???}
+  
   def delete(obj: models.DevicePersisted): Boolean = deleteById(obj.id)
   def deleteById(id: Int): Boolean = db withSession {
     val sql = sqlu"DELETE FROM vehicles WHERE id = ${id}"

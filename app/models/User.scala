@@ -12,6 +12,8 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
+
 /**
  * User status control the access to the system
  */
@@ -157,6 +159,8 @@ object Users
 
   def * = id ~ login ~ displayName ~ password.? ~ status ~ suspensionReason.? ~ _ctime ~ _mtime ~ _ver <> (UserPersisted.apply _, UserPersisted.unapply _)
 
+  implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = {e => ???}
+  
   // -- Queries
 
   /**

@@ -3,14 +3,12 @@ package models.json
 import play.api.libs.json._
 import org.joda.time.format.ISODateTimeFormat
 
-import models.{DevicePersisted, DeviceInfoPersisted}
-
-
+import models.{ DevicePersisted, DeviceInfoPersisted }
 
 object DevicePersistedSerializer {
   /**
-   * JSON serializer
-   */
+    * JSON serializer
+    */
   implicit val jsonWriter: Writes[DevicePersisted] = new Writes[DevicePersisted] {
     def writes(d: DevicePersisted): JsValue = {
       Json.obj(
@@ -24,16 +22,16 @@ object DevicePersistedSerializer {
         "vehicleId" -> d.vehicleId,
         "creationTime" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
         "modificationTime" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()),
-        "version" -> d.version    
-	)
+        "version" -> d.version,
+        "validationErrors" -> d.validationErrors)
     }
-  }  
+  }
 }
 
 object DeviceInfoPersistedSerializer {
   /**
-   * JSON serializer
-   */
+    * JSON serializer
+    */
   implicit val jsonWriter: Writes[DeviceInfoPersisted] = new Writes[DeviceInfoPersisted] {
     def writes(d: DeviceInfoPersisted): JsValue = {
       Json.obj(
@@ -51,8 +49,8 @@ object DeviceInfoPersistedSerializer {
         "vehicleLicensePlate" -> d.vehicleLicensePlate,
         "creationTime" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
         "modificationTime" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()),
-        "version" -> d.version
-        )
+        "version" -> d.version,
+        "validationErrors" -> d.validationErrors)
     }
   }
 }

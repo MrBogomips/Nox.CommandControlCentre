@@ -30,7 +30,8 @@ steal(
 				self.element.html(view, self.options, function(el) {
 					self.element.find(".selectpicker").selectpicker();
 					self.element.find(".switch").bootstrapSwitch();
-					
+					if (self.options.validationErrors != undefined)
+						self._enumerateErrors(self.options.validationErrors);
 					self.element.modal('show');
 					self.element.on('hidden', function(){
 						self.element.html('');
@@ -46,17 +47,19 @@ steal(
 			},
 
 			_enumerateErrors : function(errors) {
+				if (errors == undefined) return;
 				var globalErrors = '';
+				var counter = 0;
 				$.each(errors, function(label, value) {
 					var obj = $('input[name="' + label + '"],select[name="' + label + '"]');
 					if (obj.length > 0) {
 						obj.closest('.control-group').addClass('error');
 						var errorsList = '';
 						for (var i = 0; i < value.length; i++) {
-							errorsList += '<li style="font-size:12px;">' + value[i] + '</li>';
+							errorsList += '<li class="error-inline"><span class="counter">' + ++counter + '</span> ' + value[i] + '</li>';
 						}
 						if (errorsList != '') {
-							obj.closest('.controls').append('<span class="help-inline"><ul>' + errorsList + '</ul></span>');
+							obj.closest('.controls').append('<div class="help-inline"><ul class="error-inline">' + errorsList + '</ul></div>');
 						}
 					}
 					else {
