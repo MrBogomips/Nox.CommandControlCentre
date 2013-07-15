@@ -2,13 +2,14 @@ steal(
 	function($){
 
 		/**
-		 * @class Webapp.BaseForm
+		 * @class Webapp.ModalForm
 		 */
-		Aria.Controller('Webapp.BaseForm',
+		Aria.Controller('Webapp.ModalForm',
 		/** @Static */
 		{
 			defaults : {
-				caller : null
+				caller : null,
+				uniqueId : 0
 			}
 		},
 		/** @Prototype */
@@ -16,12 +17,26 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_baseform');
+				this.element.addClass('modal hide fade');
 			},
 
 			destroy : function(){
 				var self = this;
 			    this._super();
+			},
+			
+			renderForm : function(view) {
+				var self = this;
+				self.element.html(view, self.options, function(el) {
+					self.element.find(".selectpicker").selectpicker();
+					self.element.find(".switch").bootstrapSwitch();
+					
+					self.element.modal('show');
+					self.element.on('hidden', function(){
+						self.element.html('');
+						self.destroy();
+					});
+				});
 			},
 			
 			_reportError : function(data, txtStatus, jqXHR) {
@@ -55,38 +70,61 @@ steal(
 			},
 
 			_cancelErrors : function() {
-				$('.control-group').removeClass('error').find('.help-inline').remove();
+				var self = this;
+				self.find('.control-group').removeClass('error').find('.help-inline').remove();
 			},
 
 			'.btn.btn-cancel click' : function(el, ev) {
-				var self = this;
-				$('.modal').modal('hide');
+				this.element.modal('hide');
 			},
 
 			_create : function(serverController) {
 				var self = this;
 				self._cancelErrors();
+				self.element.block();
+				
 				serverController.create().ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = serverController.index().url;
-					},
-					error: self.proxy(self._reportError)
+					data: self.element.find('form').serialize()
+				})
+				.done(function(data, txtStatus, jqXHR) {
+					location = serverController.index().url;
+				})
+				.fail(function(data, txtStatus, jqXHR) {
+					self.proxy(self._reportError(data, txtStatus, jqXHR));
+				})
+				.always(function(){
+					self.element.unblock();
 				});
 			},
 
 			_update : function(serverController) {
 				var self = this;
 				self._cancelErrors();
+				self.element.block();
+				
 				serverController.update(self.options.id).ajax({
-					data: self.element.find('form').serialize(),
-					success: function(data, txtStatus, jqXHR) {
-						location = serverController.index().url;
-					},
-					error: function() {
-						self.proxy(self._reportError);
-					}
+					data: self.element.find('form').serialize()
+				})
+				.done(function(data, txtStatus, jqXHR) {
+					location = serverController.index().url;
+				})
+				.fail(function(data, txtStatus, jqXHR) {
+					self.proxy(self._reportError(data, txtStatus, jqXHR));
+				})
+				.always(function(){
+					self.element.unblock();
 				});
+			},
+			
+
+			'.btn.create click' : function(el, ev) {
+				var self = this;
+				self._create(self.options.serverController);
+			},
+
+			'.btn.update click' : function(el, ev) {
+				var self = this;
+				self._update(self.options.serverController);
 			}
 		});
 

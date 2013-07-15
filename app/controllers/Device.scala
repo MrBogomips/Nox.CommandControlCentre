@@ -24,6 +24,28 @@ object Device extends Secured {
         "enabled" -> d.enabled,
         "type_id" -> d.deviceType.id,
         "group_id" -> d.deviceGroup.id,
+        "vehicle_id" -> d.vehicle.map(v => v.id),
+        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
+        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
+    }
+  }
+  
+  /**
+   * DeviceInfo JSON serializer
+   */
+  implicit val deviceInfoJsonWriter = new Writes[DeviceInfo] {
+    def writes(d: DeviceInfo): JsValue = {
+      Json.obj(
+        "id" -> d.id,
+        "name" -> d.name,
+        "display_name" -> d.displayName,
+        "description" -> d.description,
+        "enabled" -> d.enabled,
+        "type_id" -> d.deviceTypeId,
+        "group_id" -> d.deviceGroupId,
+        "vehicle_id" -> d.vehicleId,
+        "vehicle_name" -> d.vehicleName,
+        "vehicle_license_plate" -> d.vehicleLicensePlate,
         "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
         "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
     }
@@ -50,8 +72,8 @@ object Device extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     implicit val req = request
     val devices = all match {
-      case false ⇒ Devices.findAllEnabled
-      case true ⇒ Devices.findAll
+      case false ⇒ Devices.findAllDeviceInfo(Some(true))
+      case true ⇒ Devices.findAllDeviceInfo(None)
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(devices))
@@ -64,7 +86,7 @@ object Device extends Secured {
 
   def get(id: Int) = WithAuthentication { (user, request) ⇒
     implicit val req = request
-    Devices.findById(id).map { d ⇒
+    Devices.findDeviceInfoById(id).map { d ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
@@ -82,20 +104,21 @@ object Device extends Secured {
       "description" -> optional(text),
       "type_id" -> number(min = 0),
       "group_id" -> number(min = 0),
+      "vehicle_id" -> optional(number(min = 0)),
       "enabled" -> optional(text)))
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, display_name, description, type_id, group_id, enabled) ⇒
+        case (name, display_name, description, type_id, group_id, vehicle_id, enabled) ⇒
           if (Devices.findByName(name).isDefined) {
             BadRequest("""{"name": ["A device with the same name already exists"]}""").as("application/json")
           } else {
             val dev_group = DeviceGroups.findById(group_id).get
             val dev_type = DeviceTypes.findById(type_id).get
-            var d = new Device(name, dev_type, dev_group)
-            //if (display_name.isDefined) d = d.copy(displayName = display_name.get)
+            val dev_vehicle = vehicle_id.flatMap(id => Vehicles.findById(id))
+            var d = new Device(name, dev_type, dev_group, dev_vehicle)
             display_name.map(desc ⇒ d = d.copy(displayName = desc))
             d = d.copy(
               enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false },
@@ -110,17 +133,19 @@ object Device extends Secured {
     createForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, display_name, description, type_id, group_id, enabled) ⇒
+        case (name, display_name, description, type_id, group_id, vehicle_id, enabled) ⇒
           Devices.findById(id).map { x ⇒
             var d = x
             val dev_group = DeviceGroups.findById(group_id).get
             val dev_type = DeviceTypes.findById(type_id).get
+            val dev_vehicle = vehicle_id.flatMap(id => Vehicles.findById(id))
             display_name.map(desc ⇒ d = d.copy(displayName = desc))
             d = d.copy(
               name = name,
               description = description,
               deviceType = dev_type,
               deviceGroup = dev_group,
+              vehicle = dev_vehicle,
               enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false })
             Ok(s"Device $id updated successfully")
             if (Devices.update(d)) {

@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.table
 		 */
-		Webapp.BaseForm('Webapp.device',
+		Webapp.ModalForm('Webapp.device',
 		/** @Static */
 		{
 			defaults : {
@@ -15,6 +15,7 @@ steal(
 				description: '',
 				type_id: '',
 				group_id: '',
+				vehicle_id: null,
 				creation_time: '',
 				enabled: true,
 				modification_time: '',
@@ -23,24 +24,12 @@ steal(
 		},
 		/** @Prototype */
 		{
+			
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_device');
-				
-				var renderForm = function() {
-					self.element.html(jsRoutes.controllers.Assets.at("webapp/device/views/default.ejs").url, self.options, function(el) {
-						self.element.find(".selectpicker").selectpicker();
-						self.element.find(".switch").bootstrapSwitch();
-						var el = self.element.find(".modal");
-						$el = $(el);
-						$el.modal('show');
-						$el.on('hidden', function(){
-							self.element.html('');
-							self.destroy();
-						});
-					});
-				};
+				this.element.addClass('device');
+				var view = jsRoutes.controllers.Assets.at("webapp/device/views/default.ejs").url;
 				
 				if (parseInt(self.options["id"]) > 0) {
 					$.when(jsRoutes.controllers.DeviceType.index().ajax({
@@ -57,11 +46,18 @@ steal(
 						headers: { 
 					        Accept : "application/json; charset=utf-8",
 					        "Content-Type": "application/json; charset=utf-8"
-					    }})).done(function(dt, dg, di) {
+					    }}),
+					    jsRoutes.controllers.Vehicle.index().ajax({
+							headers: { 
+						        Accept : "application/json; charset=utf-8",
+						        "Content-Type": "application/json; charset=utf-8"
+						    }})
+						).done(function(dt, dg, di, v) {
 					    	$.extend(self.options, {"types": dt[0]});
 					    	$.extend(self.options, {"groups": dg[0]});
+					    	$.extend(self.options, {"vehicles": v[0]});
 					    	$.extend(self.options, di[0]);
-					    	renderForm();
+					    	self.renderForm(view);
 					    });
 				} else {
 					$.when(jsRoutes.controllers.DeviceType.index().ajax({
@@ -73,27 +69,19 @@ steal(
 						headers: { 
 					        Accept : "application/json; charset=utf-8",
 					        "Content-Type": "application/json; charset=utf-8"
-					    }})).done(function(dt, dg) {
+					    }}),
+					    jsRoutes.controllers.Vehicle.index().ajax({
+							headers: { 
+						        Accept : "application/json; charset=utf-8",
+						        "Content-Type": "application/json; charset=utf-8"
+						    }})
+					    ).done(function(dt, dg, v) {
 					    	$.extend(self.options, {"types": dt[0]});
 					    	$.extend(self.options, {"groups": dg[0]});
-					    	renderForm();
+					    	$.extend(self.options, {"vehicles": v[0]});
+					    	self.renderForm(view);
 					    });
 				}
-			} ,
-
-			destroy : function(){
-				var self = this;
-			    this._super();
-			},
-			
-			'.btn.device-create click' : function(el, ev) {
-				var self = this;
-				self._create(self.options.serverController);
-			},
-
-			'.btn.device-update click' : function(el, ev) {
-				var self = this;
-				self._update(self.options.serverController);
 			}
 		});
 
