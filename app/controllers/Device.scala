@@ -67,7 +67,8 @@ object Device extends Secured {
       "deviceTypeId" -> number, //number(min = 100),
       "deviceGroupId" -> number,
       "vehicleId" -> optional(number(min = 1)),
-      "enabled" -> boolean))
+      "enabled" -> boolean,
+      "imei" -> optional(text)))
 
   val updateForm = Form(
     tuple(
@@ -78,14 +79,15 @@ object Device extends Secured {
       "deviceGroupId" -> number,
       "vehicleId" -> optional(number),
       "enabled" -> boolean,
+      "imei" -> optional(text),
       "version" -> number))
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled) ⇒
-          val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled)
+        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, imei) ⇒
+          val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, imei)
           val id = Devices.insert(d)
           Ok(s"""{"id"=id}""")
       })
@@ -95,8 +97,8 @@ object Device extends Secured {
     updateForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, version) ⇒
-          val dp = new DevicePersisted(id, name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, version)
+        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, imei, version) ⇒
+          val dp = new DevicePersisted(id, name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, imei, version)
           Devices.update(dp) match {
             case true ⇒ Ok(s"Device $id updated successfully")
             case _    ⇒ NotFound
