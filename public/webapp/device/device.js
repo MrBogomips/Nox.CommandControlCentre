@@ -15,6 +15,7 @@ steal(
 				description: '',
 				deviceTypeId: '',
 				deviceGroupId: '',
+				simcardId: '',
 				vehicleId: null,
 				creationTime: '',
 				modificationTime: '',
@@ -49,14 +50,20 @@ steal(
 					        "Content-Type": "application/json; charset=utf-8"
 					    }}),
 					    jsRoutes.controllers.Vehicle.index().ajax({
-							headers: { 
-						        Accept : "application/json; charset=utf-8",
-						        "Content-Type": "application/json; charset=utf-8"
-						    }})
-						).done(function(dt, dg, di, v) {
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }}),
+					    jsRoutes.controllers.Simcard.index().ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }})
+						).done(function(dt, dg, di, v, sc) {
 					    	$.extend(self.options, {"types": dt[0]});
 					    	$.extend(self.options, {"groups": dg[0]});
 					    	$.extend(self.options, {"vehicles": v[0]});
+					    	$.extend(self.options, {"simcards": sc[0]});
 					    	$.extend(self.options, di[0]);
 					    	self.renderForm(view);
 					    });
@@ -72,14 +79,20 @@ steal(
 					        "Content-Type": "application/json; charset=utf-8"
 					    }}),
 					    jsRoutes.controllers.Vehicle.index().ajax({
-							headers: { 
-						        Accept : "application/json; charset=utf-8",
-						        "Content-Type": "application/json; charset=utf-8"
-						    }})
-					    ).done(function(dt, dg, v) {
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }}),
+					    jsRoutes.controllers.Simcard.index().ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }})
+					    ).done(function(dt, dg, v, sc) {
 					    	$.extend(self.options, {"types": dt[0]});
 					    	$.extend(self.options, {"groups": dg[0]});
 					    	$.extend(self.options, {"vehicles": v[0]});
+					    	$.extend(self.options, {"simcards": sc[0]});
 					    	self.renderForm(view);
 					    });
 				}

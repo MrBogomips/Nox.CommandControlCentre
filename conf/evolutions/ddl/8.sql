@@ -1,4 +1,5 @@
 
+# --- !Ups
 
 CREATE SEQUENCE "simcard_id_seq";
 
@@ -24,6 +25,16 @@ CREATE  TABLE "simcards" (
 GRANT SELECT, INSERT,  UPDATE, DELETE, TRUNCATE ON TABLE "simcards" TO PUBLIC;
 GRANT ALL PRIVILEGES ON SEQUENCE "simcard_id_seq" TO PUBLIC; 
  
+ALTER TABLE "devices"
+	DROP COLUMN "imei";
+	
+ALTER TABLE "devices"
+	ADD "simcard_id" INT;
+	
+ALTER TABLE "devices"
+	ADD CONSTRAINT devices_simcard_fk FOREIGN KEY(simcard_id) REFERENCES simcards;
+
+
 
 # --- !Downs
 DROP TABLE IF EXISTS "simcards";

@@ -16,7 +16,7 @@ object Device extends Secured {
   import models.DeviceCommandRequest
   import models.DeviceCommandResponse._
 
-  def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) ⇒
+  def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) =>
     request.body.validate[DeviceCommandRequest].map { c ⇒
       Logger.debug("HTTP REQUEST: "+request.body.toString)
       val response = Json.toJson(c.sendToDevice())
@@ -31,7 +31,7 @@ object Device extends Secured {
     Ok(views.html.aria.device.configure(deviceId));
   }
 
-  def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
+  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
     implicit val req = request
     val devices = all match {
       case false ⇒ Devices.findWithInfo(Some(true))
@@ -46,9 +46,9 @@ object Device extends Secured {
     }
   }
 
-  def get(id: Int) = WithAuthentication { (user, request) ⇒
+  def get(id: Int) = WithAuthentication { (user, request) =>
     implicit val req = request
-    Devices.findById(id).map { d ⇒
+    Devices.findById(id).map { d =>
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
@@ -68,7 +68,7 @@ object Device extends Secured {
       "deviceGroupId" -> number,
       "vehicleId" -> optional(number(min = 1)),
       "enabled" -> boolean,
-      "imei" -> optional(text)))
+      "simcardId" -> optional(number)))
 
   val updateForm = Form(
     tuple(
@@ -79,15 +79,15 @@ object Device extends Secured {
       "deviceGroupId" -> number,
       "vehicleId" -> optional(number),
       "enabled" -> boolean,
-      "imei" -> optional(text),
+      "simcardId" -> optional(number),
       "version" -> number))
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, imei) ⇒
-          val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, imei)
+        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId) ⇒
+          val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId)
           val id = Devices.insert(d)
           Ok(s"""{"id"=id}""")
       })
@@ -97,8 +97,8 @@ object Device extends Secured {
     updateForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, imei, version) ⇒
-          val dp = new DevicePersisted(id, name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, imei, version)
+        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, version) ⇒
+          val dp = new DevicePersisted(id, name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, version)
           Devices.update(dp) match {
             case true ⇒ Ok(s"Device $id updated successfully")
             case _    ⇒ NotFound
