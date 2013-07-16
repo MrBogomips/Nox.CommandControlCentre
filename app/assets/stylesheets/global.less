@@ -2,6 +2,24 @@
 body, html {height: 100%}
 .page-container {height: 90%}
 
+/* Inline error messages within forms */
+div.help-inline {
+	/* border: solid 1px red; */
+	ul.error-inline {
+		margin-left: 0px;
+		margin-top: 3px;
+		list-style: none;
+		/* border: solid 1px black; */
+	}
+	li.error-inline {
+		font-size: 8pt;
+		line-height: 9pt;
+		.counter {
+			font-weight: bolder;
+		}
+	}
+}
+
 .webapp_table {
   background: white;
   box-shadow: 3px 3px 5px #888888;

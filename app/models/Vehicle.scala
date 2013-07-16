@@ -10,6 +10,8 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
+
 trait VehicleTrait extends NamedEntityTrait {
   val model: String
   val licensePlate: String
@@ -33,9 +35,7 @@ case class VehiclePersisted private[models] (id: Int, name: String, displayName:
   with Persisted[VehiclePersisted, Vehicle] {
 
   def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled, model: String = this.model, licensePlate: String = this.licensePlate) =
-    prepareCopy {
       VehiclePersisted(id, name, displayName, description, enabled, model, licensePlate, creationTime, modificationTime, version)
-    }
 
   def delete(): Boolean = ???
   def refetch(): Option[models.VehiclePersisted] = ???
@@ -74,6 +74,8 @@ object Vehicles
 
   def * = id ~ name ~ displayName ~ description.? ~ enabled ~ model ~ licensePlate ~ _ctime ~ _mtime ~ _ver <> (VehiclePersistedRecord.apply _, VehiclePersistedRecord.unapply _)
 
+  implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = {e => ???}
+  
   def delete(obj: models.DevicePersisted): Boolean = deleteById(obj.id)
   def deleteById(id: Int): Boolean = db withSession {
     val sql = sqlu"DELETE FROM vehicles WHERE id = ${id}"
@@ -144,8 +146,7 @@ object Vehicles
       executeSql(BackendOperation.INSERT, s"vehicle $obj", sql.as[Int]) { _.first }
     }
   }
-  def update(obj: models.VehiclePersisted): Boolean = withPersistableObject(obj, default = false) {
-    db withSession {
+  def update(obj: models.VehiclePersisted): Boolean = db withSession {
       Logger.debug(s"description = ${obj.description}")
       val sql = sqlu"""
    UPDATE vehicles
@@ -161,9 +162,7 @@ object Vehicles
 	 """
       executeUpdate(s"vehicle $obj", sql) == 1
     }
-  }
-  def updateWithVersion(obj: models.VehiclePersisted): Boolean = withPersistableObject(obj, default = false) {
-    db withSession {
+  def updateWithVersion(obj: models.VehiclePersisted): Boolean = db withSession {
       val sql = sqlu"""
     UPDATE vehicles
        SET name = ${obj.name},
@@ -179,7 +178,6 @@ object Vehicles
 	 """
       executeUpdate(s"vehicle $obj with version check", sql) == 1
     }
-  }
 }
 
   

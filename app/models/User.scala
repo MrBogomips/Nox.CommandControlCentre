@@ -12,6 +12,8 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
+
 /**
  * User status control the access to the system
  */
@@ -113,9 +115,7 @@ case class UserPersisted private[models] (id: Int, login: String, displayName: S
   with Persisted[UserPersisted, User] {
 
   def copy(displayName: String = this.displayName, password: Option[Password] = this.password, status: UserStatus = this.status, suspensionReason: Option[UserSuspensionReason] = this.suspensionReason) =
-    prepareCopy {
       UserPersisted(id, login, displayName, password, status, suspensionReason, creationTime, modificationTime, version)
-    }
 
   /**
    * Save current user without checking the version of the record, that means that other updates
@@ -159,6 +159,8 @@ object Users
 
   def * = id ~ login ~ displayName ~ password.? ~ status ~ suspensionReason.? ~ _ctime ~ _mtime ~ _ver <> (UserPersisted.apply _, UserPersisted.unapply _)
 
+  implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = {e => ???}
+  
   // -- Queries
 
   /**
@@ -239,8 +241,7 @@ object Users
    *
    * @return true if the update was executed successfully
    */
-  def update(user: UserPersisted): Boolean = withPersistableObject(user, default = false) {
-    db withSession {
+  def update(user: UserPersisted): Boolean = db withSession {
       val sql = sqlu"""
     UPDATE users
        SET display_name = ${user.displayName},
@@ -253,15 +254,13 @@ object Users
 	 """
       executeUpdate("user $user", sql) == 1
     }
-  }
   /**
    * Update a user checking the version of the record, that means that no other updates
    * have been occurred since the fetch of the record
    *
    * @return true if the update was executed successfully
    */
-  def updateWithVersion(user: UserPersisted): Boolean = withPersistableObject(user, default = false) {
-    db withSession {
+  def updateWithVersion(user: UserPersisted): Boolean = db withSession {
       val sql = sqlu"""
     UPDATE users
        SET display_name = ${user.displayName},
@@ -274,7 +273,6 @@ object Users
 	   AND _ver = ${user.version}"""
       executeUpdate("user $user with version check", sql) == 1
     }
-  }
   /**
    * Delete permanently the user identified by ``id`` from the DB
    *

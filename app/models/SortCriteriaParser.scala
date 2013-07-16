@@ -37,6 +37,8 @@ abstract class SortCriteriaParser(criterias: Map[String, String]) {
     }
   }
 }
-
+/**
+ * A usage example
+ */
 object SortCriteriaTest extends SortCriteriaParser(Map("name" -> "T1.chr_name", "surname" -> "T2.surname"))
 

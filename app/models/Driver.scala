@@ -10,14 +10,16 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
+
 trait DriverTrait extends Validatable {
   val name: String
   val surname: String
   val displayName: String
   val enabled: Boolean
 
-  def validate = {
-    Nil
+  def validate {
+    
   }
 }
 
@@ -49,6 +51,8 @@ object Drivers
   def forInsert = name ~ surname ~ displayName ~ enabled <> (Driver, Driver.unapply _)
   def forUpdate = *
   
+  private implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = {e => ???}
+  
   def qyFindById(id: Int) = (for { d <- Drivers if (d.id === id)} yield d)
 
   def findAll: Seq[DriverPersisted] = db withSession (for { d <- Drivers } yield d).list
@@ -57,13 +61,13 @@ object Drivers
 
   def findById(id: Int): Option[DriverPersisted] = db withSession qyFindById(id).firstOption
 
-  def insert(d: Driver): Either[Seq[ValidationError], Int] = WithValidation(d).right.map { d =>
+  def insert(d: Driver): Int = WithValidation(d) { d =>
     db withSession {
       Drivers.forInsert returning id insert d
     }
   }
 
-  def update(obj: DriverPersisted): Either[Seq[ValidationError], Int] =  WithValidation(obj).right.map { vobj =>
+  def update(obj: DriverPersisted): Int =  WithValidation(obj) { vobj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE #$tableName
@@ -79,7 +83,7 @@ object Drivers
     }
   }
   
-  def updateWithVersion(obj: DriverPersisted): Either[Seq[ValidationError], Int] =  WithValidation(obj).right.map { vobj =>
+  def updateWithVersion(obj: DriverPersisted): Int =  WithValidation(obj) { vobj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE #$tableName
