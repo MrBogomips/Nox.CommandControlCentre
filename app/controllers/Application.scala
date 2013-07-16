@@ -64,7 +64,13 @@ object Application extends Secured {
         VehicleAssignement.get,
         VehicleAssignement.create,
         VehicleAssignement.update,
-        VehicleAssignement.delete
+        VehicleAssignement.delete,
+        
+        Simcard.index,
+        Simcard.get,
+        Simcard.create,
+        Simcard.update,
+        Simcard.delete
       )
      ).as("text/javascript")
   }

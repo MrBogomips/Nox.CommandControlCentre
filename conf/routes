@@ -74,6 +74,12 @@ PUT		/vehicle_assignement/:id	controllers.VehicleAssignement.update(id: Int)
 DELETE	/vehicle_assignement/:id	controllers.VehicleAssignement.delete(id: Int)
 POST	/vehicle_assignement		controllers.VehicleAssignement.create
 
+# Simcards
+GET		/simcard/index				controllers.Simcard.index(all: Boolean ?= true)
+GET		/simcard/:id				controllers.Simcard.get(id: Int)
+PUT		/simcard/:id				controllers.Simcard.update(id: Int)
+DELETE	/simcard/:id				controllers.Simcard.delete(id: Int)
+POST	/simcard					controllers.Simcard.create
 
 
 
