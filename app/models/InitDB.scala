@@ -36,14 +36,14 @@ object InitDB {
     // Creating a new Device without using persisted types and groups
     val dt1 = new DeviceType("tipo1")
     val dg1 = new DeviceGroup("group1")
-    val d1 = new Device("device1", dt1, dg1)
+    //val d1 = new Device("device1", dt1, dg1)
     
     // Creating a new Device using persisted types and groups
     val dt2 = DeviceTypes.findByName("tipo1").get
     val dg2 = DeviceGroups.findByName("group1").get
-    val d2 = new Device("device2", dt2, dg2)
+    //val d2 = new Device("device2", dt2, dg2)
     
-    Devices.insert(d1)
-    Devices.insert(d2)
+    //Devices.insert(d1)
+    //Devices.insert(d2)
   }
 }

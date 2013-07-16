@@ -1,7 +1,13 @@
 package models
 
-case class ValidationException(validationErrors: Seq[ValidationError]) extends RuntimeException {
-  override def toString = "ValidationException: " + validationErrors.toString()
+import org.postgresql.util.PSQLException
+
+case class ValidationException(cause: Throwable, val validationErrors: Seq[ValidationError]) extends RuntimeException(cause) {
+  //def this(key: String, conditions: Set[String]) = this(Seq(ValidationError(key, conditions)))
+  def this(cause: Throwable, key: String, conditions: String*) = this(cause, Seq(ValidationError(key, conditions.toSet)))
+  def this(key: String, conditions: String*) = this(null, Seq(ValidationError(key, conditions.toSet)))
+  def this( validationErrors: Seq[ValidationError]) = this(null, validationErrors)
+  override def getMessage() = "ValidationException: "+validationErrors.mkString("; ")
 }
 
 /*
@@ -16,12 +22,51 @@ trait Validatable {
   /*
    * Each concrete class must provide the validation logic
    */
-  protected def validate: Seq[ValidationError]
+  protected def validate: Unit
 
-  lazy val validationErrors = validate
+  lazy val validationErrors: Seq[ValidationError] = {
+    validate
+    errorsAccumulator.toSeq.map( e => ValidationError(e._1, e._2.toSet) )
+  }
   lazy val isValid = validationErrors.isEmpty
 
-  def requireValidation = if (!isValid) throw ValidationException(validationErrors)
+  def requireValidation: Unit = if (!isValid) throw new ValidationException(validationErrors)
+  
+  import collection.mutable.{ HashMap, MultiMap, Set }
+  protected val errorsAccumulator = new HashMap[String, Set[String]] with MultiMap[String, String]
+  
+  /**
+   * @param key the key used to signal the violation to the end user form
+   * @param value the value checked
+   * @param minLength the minimum length required
+   */
+  protected def validateMinLength(key: String, string: String, minLength: Int) = {
+    require(minLength > 0)
+    if (string.length() < minLength)
+      errorsAccumulator.addBinding(key, s"Minimum length is $minLength")
+  }
+  protected def validateMinValue(key: String, value: Int, minValue: Int) = {
+    if (value < minValue)
+      errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
+  }
+  protected def validateMinValue(key: String, value: Long, minValue: Long) = {
+    if (value < minValue)
+      errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
+  }
+  protected def validateMinValue(key: String, value: Double, minValue: Double) = {
+    if (value < minValue)
+      errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
+  }
+  protected def validateEmail(key: String, email: String) = {
+    ???
+  }
+  protected def validateEmailList(key: String, emails: String, separator: String = ";") = {
+    ???
+  }
+  protected def validateUri(key: String, uri: String) = {
+    ???
+  }
+  
 }
 
 trait ValidationRequired extends Validatable {
@@ -30,15 +75,21 @@ trait ValidationRequired extends Validatable {
 
 /*
  * Utility object to catch and chain validation errors
+ * 
+ * The main purpose is to ensure that the model entity is in a valid state before to perform any persistent operation
+ * and, moreover, remaps persistence layer exception (unique key violations, foreign keys… and so on) to a more
+ * meaningful `ValidationException`
  */
 object WithValidation {
-  def apply[A <: Validatable](f: => A): Either[Seq[ValidationError], A] = try {
-    val v = f
-    if (v.isValid)
-    	Right(v)
-    else
-      Left(v.validationErrors)
-  } catch {
-    case e: ValidationException => Left(e.validationErrors)
+  /**
+   * @param exMapper: a user provided DB exception to ValidationException mapper
+   */
+  def apply[A <: Validatable, B](obj: A)(f: A => B)(implicit exMapper: (PSQLException => Nothing)): B = {
+    if (!obj.isValid) throw new ValidationException(obj.validationErrors)
+    try {
+      f(obj)
+    } catch {
+      case e: PSQLException => exMapper(e)
+    }
   }
 }

@@ -45,9 +45,7 @@ case class DeviceTypePersisted private[models] (id: Int, name: String, displayNa
   val entityTableMapper = DeviceTypes
   
   def copy(name: String = this.name, displayName: String = this.displayName, description: Option[String] = this.description, enabled: Boolean = this.enabled) =
-    prepareCopy {
       DeviceTypePersisted(id, name, displayName, description, enabled, creationTime, modificationTime, version)
-    }
 }
 
 

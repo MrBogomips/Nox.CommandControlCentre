@@ -31,7 +31,7 @@ object Driver extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     val drivers = all match {
       case false ⇒ Drivers.findAllEnabled
-      case true ⇒ Drivers.findAll
+      case true  ⇒ Drivers.findAll
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(drivers))
@@ -69,7 +69,8 @@ object Driver extends Secured {
           val d: Driver = display_name.fold(new Driver(name, surname, enabled)) {
             new Driver(name, surname, _, enabled)
           }
-          Drivers.insert(d).fold(_ => BadRequest, id => Ok(s"id=$id"))
+          val id = Drivers.insert(d)
+          Ok(s"id=$id")
       })
   }
 
@@ -84,15 +85,18 @@ object Driver extends Secured {
               surname = surname,
               displayName = display_name.fold(d.displayName) { s => s },
               enabled = enabled)
-            Drivers.update(d2).fold(_ => BadRequest(""), _ => Ok(s"Driver $id updated successfully"))
+            if (Drivers.update(d2) > 0)
+              Ok(s"Driver $id updated successfully")
+            else
+              NotFound("")
           }
       })
   }
 
   def delete(id: Int) = WithAuthentication {
-    if (Drivers.deleteById(id) > 0) 
-     Ok(s"Driver $id deleted successfully")
-    else 
+    if (Drivers.deleteById(id) > 0)
+      Ok(s"Driver $id deleted successfully")
+    else
       NotFound
   }
 }
