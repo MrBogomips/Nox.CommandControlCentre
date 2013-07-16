@@ -17,20 +17,22 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 				
 				devices = {};
 				self.socket = io.connect(Aria.Page.getInstance().configuration.eventsWebSocket);  // events_ws_uri
+				
+				var initializeClientChannels = function () {
+					self._onNewSubscription(null, {topic: self.app.configuration.mqttClientTopic});
+					self._onNewSubscription(null, {topic: self.app.configuration.mqttApplicationTopic});
+					self._onNewSubscription(null, {topic: self.app.configuration.mqttUserTopic});
+					self._onNewSubscription(null, {topic: self.app.configuration.mqttSessionTopic});
+				}
 			  
 				self.socket.on('connect', function () {
 					self.socket.on('mqtt', self.proxy(self._onNewMsg));
 					console.log('socket.io::connect');
+					initializeClientChannels();
 			      });
 			    
 				self.WS_Channel = self.app.getChannelByName("WS_MQTT");
 				self.WS_Channel.subscribe("new_topic", self.proxy(self._onNewSubscription));
-				
-				
-				self._onNewSubscription(null, {topic: self.app.configuration.mqttClientTopic});
-				self._onNewSubscription(null, {topic: self.app.configuration.mqttApplicationTopic});
-				self._onNewSubscription(null, {topic: self.app.configuration.mqttUserTopic});
-				self._onNewSubscription(null, {topic: self.app.configuration.mqttSessionTopic});
 			},
 			
 			_onNewMsg: function(msg) {
