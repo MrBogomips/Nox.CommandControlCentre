@@ -30,21 +30,6 @@ trait Persistable {
    * @throws NoSuchElementException if the object wasn't persisted
    */
   val version: Int
-  
-  private var _isPersisted: Boolean = true
-  /**
-   * Indicate if the object has been modified since the last fetch
-   */
-  def isPersisted = _isPersisted
-
-  private[models] def persisted = _isPersisted = true
-
-  def prepareCopy[A <: Persistable](f: => A): A = {
-    val ret = f
-    ret._isPersisted = false
-    ret
-  }
-  
 }
 
 /**

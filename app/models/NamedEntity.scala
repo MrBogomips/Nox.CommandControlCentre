@@ -12,6 +12,8 @@ import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 
+import org.postgresql.util.PSQLException
+
 trait NamedEntityTrait {
   val name: String
   val displayName: String
@@ -74,7 +76,8 @@ abstract case class SimpleNameEntityTable[T <: SimpleNameEntityPersisted[T, T2],
   def * = id ~ name ~ displayName ~ description.? ~ enabled ~ _ctime ~ _mtime ~ _ver <> (apply, unapply)
 
   private implicit val getResult = GetResult(r => apply(r.nextInt, r.nextString, r.nextString, r.nextStringOption, r.nextBoolean, r.nextTimestamp, r.nextTimestamp, r.nextInt))
-
+  private implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = {e => ???}
+  
   def findAll: Seq[T] = db withSession {
     val sql = sql"SELECT id, name, display_name, description, enabled, _ctime, _mtime, _ver FROM #$tableName"
     executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[T]) { _.list }
@@ -124,8 +127,7 @@ abstract case class SimpleNameEntityTable[T <: SimpleNameEntityPersisted[T, T2],
     executeDelete("Deleting from #$tableName record identified by $id", sql) == 1
   }
 
-  def updateWithVersion(obj: T): Boolean = withPersistableObject(obj, default = false) {
-    db withSession {
+  def updateWithVersion(obj: T): Boolean = db withSession {
       val sql = sqlu"""
     UPDATE  #$tableName
        SET name = ${obj.name},
@@ -139,9 +141,7 @@ abstract case class SimpleNameEntityTable[T <: SimpleNameEntityPersisted[T, T2],
 	 """
       executeUpdate(s"$tableName $obj", sql) == 1
     }
-  }
-  def update(obj: T): Boolean = withPersistableObject(obj, default = false) {
-    db withSession {
+  def update(obj: T): Boolean = db withSession {
       val sql = sqlu"""
     UPDATE  #$tableName
        SET name = ${obj.name},
@@ -154,5 +154,4 @@ abstract case class SimpleNameEntityTable[T <: SimpleNameEntityPersisted[T, T2],
 	 """
       executeUpdate(s"$tableName $obj", sql) == 1
     }
-  }
 }

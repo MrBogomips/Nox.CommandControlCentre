@@ -32,7 +32,7 @@ object VehicleAssignement extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     val assigns = all match {
       case false ⇒ VehicleAssignements.findAllEnabled
-      case true ⇒ VehicleAssignements.findAll
+      case true  ⇒ VehicleAssignements.findAll
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(assigns))
@@ -69,10 +69,8 @@ object VehicleAssignement extends Secured {
       {
         case (vehicleId, driverId, beginAssignement, endAssignement, enabled) ⇒
           val va = models.VehicleAssignement(vehicleId, driverId, beginAssignement, endAssignement, enabled)
-          VehicleAssignements.insert(va).fold(
-              errs => BadRequest(Json.toJson(errs)), 
-              id => Ok(s"""{"id":$id}""").as("application/json")
-          )
+          val id = VehicleAssignements.insert(va)
+          Ok(s"""{"id":$id}""").as("application/json")
       })
   }
 
@@ -89,18 +87,18 @@ object VehicleAssignement extends Secured {
               beginAssignement = beginAssignement,
               endAssignement = endAssignement,
               enabled = enabled)
-            VehicleAssignements.update(va2).fold(
-                errs => BadRequest(Json.toJson(errs).toString), 
-                _ => Ok("")
-            )
+            if (VehicleAssignements.update(va2) > 0)
+              Ok("")
+            else
+              NotFound("")
           }
       })
   }
 
   def delete(id: Int) = WithAuthentication {
-    if (VehicleAssignements.deleteById(id) > 0) 
-     Ok
-    else 
+    if (VehicleAssignements.deleteById(id) > 0)
+      Ok
+    else
       NotFound
   }
 }

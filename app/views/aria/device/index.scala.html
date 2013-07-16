@@ -1,4 +1,4 @@
-@(devices: Seq[DeviceInfo], user: UserTrait)
+@(devices: Seq[DeviceInfoPersisted], user: UserTrait)
 
 
 @header_more = {}
@@ -29,7 +29,7 @@
 				location.reload(true);
 			})
 			.fail(function(data, txtStatus, jqXHR) {
-				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
 				self.find(".alert_placeholder").html($alert);
 			});
 		});
@@ -58,11 +58,15 @@
 		<tbody>
 		@devices.map { d =>
 			<tr>
-				<td>@d.id</td>
+				<td>@d.id
+				@if(!d.validationErrors.isEmpty){
+					<i class="icon-exclamation-sign"></i>
+				}
+				</td>
 				<td>@d.name</td>
 				<td>@d.displayName</td>
 				<td>@d.description</td>
-				<td>@d.vehicleName (@d.vehicleLicensePlate.getOrElse("none"))
+				<td>@d.vehicleDisplayName (@d.vehicleLicensePlate.getOrElse("none"))
 				</td>
 				<td><div class="switch">
 					<input type="checkbox" @if(d.enabled){

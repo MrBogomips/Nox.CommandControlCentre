@@ -9,29 +9,25 @@ import playguard._
 
 object Map extends Secured {
   
-  val rule1 = Allow
-  val rule2 = Allow
-  val rule3 = Allow
+  val rule1 = Allow	// Custom rule
+  val rule2 = Allow // Custom rule
+  val rule3 = Allow // Custom rule
   
   def index = WithAuthentication {  (user, request) =>
     implicit val u = user
     implicit val r = request
     
-    WithPolicy(Allow).apply {
+    WithPolicy(rule1).apply {
     	Logger.debug("Eseguito solo se")
     }
     
-    WithPolicy(Allow).apply(
-    	Logger.debug("Eseguito solo se")
-    )
-    
-    val numero: Int = WithPolicy(Allow).apply{
+    val numero: Int = WithPolicy(rule2).apply{
 					    	1
 					    }.getOrElse{
 					    	2
 					    }
     
-	WithPolicyElse(Allow).apply{
+	WithPolicyElse(rule3).apply{
 		Logger.debug("Plicy holds")
 	}{
 		Logger.debug("Plicy doesn't hold")
