@@ -2,9 +2,9 @@
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <% if (name != '') {%>
-    <h3>Modify device «<%=name%>» (<%=id%>)</h3>
+    <h3>Modify simcard «<%=imei%>» (<%=id%>)</h3>
     <% } else {%>
-    <h3>New device</h3>
+    <h3>New simcard</h3>
     <% } %>
   </div>
   <div class="modal-body">
@@ -13,9 +13,9 @@
 
     <form class="form-horizontal">
 	  <div class="control-group">
-	    <label class="control-label" for="name">Device ID</label>
+	    <label class="control-label" for="imei">IMEI</label>
 	    <div class="controls">
-	      <input type="text" name="name" id="name" placeholder="name" value="<%=name%>">
+	      <input type="text" name="imei" id="imei" placeholder="imei" value="<%=imei%>">
 	    </div>
 	  </div>
 	  
@@ -34,53 +34,19 @@
 	  </div>
 	  
 	  <div class="control-group">
-	    <label class="control-label" for="simcardId">IMEI</label>
+	    <label class="control-label" for="mobileNumber">Mobile Number</label>
 	    <div class="controls">
-	      <select class="selectpicker" id="simcardId" name="simcardId">
-	      	<option value="" <% if (null == simcardId) {%> selected='selected' <%}%>>[None]</option>
-	         <% for(i in simcards) {%>
-	          <option value="<%=simcards[i].id%>" <% if (simcards[i].id == simcardId) {%> selected='selected' <%}%>><%=simcards[i].displayName%></option>
-	         <% } %>
-			</select>
+	      <input type="text" name="mobileNumber" id="mobileNumber" placeholder="mobile number" value="<%=mobileNumber%>">
+	    </div>
+	  </div>
+	  
+	  <div class="control-group">
+	    <label class="control-label" for="carrierId">Carrier</label>
+	    <div class="controls">
+	      <input type="text" name="carrierId" id="carrierId" placeholder="carrier" value="<%=carrierId%>">
 	    </div>
 	  </div>
 	  	  
-	  <div class="control-group">
-	    <label class="control-label" for="vehicleId">Vehicle</label>
-	    <div class="controls">
-	      <select class="selectpicker" id="vehicleId" name="vehicleId">
-	      	<option value="" <% if (null == vehicleId) {%> selected='selected' <%}%>>[None]</option>
-	         <% for(i in vehicles) {%>
-	          <option value="<%=vehicles[i].id%>" <% if (vehicles[i].id == vehicleId) {%> selected='selected' <%}%>><%=vehicles[i].display_name%></option>
-	         <% } %>
-			</select>
-	    </div>
-	  </div>
-	  
-	  <div class="control-group">
-	    <label class="control-label" for="deviceTypeId">Type</label>
-	    <div class="controls">
-	      <select class="selectpicker" id="deviceTypeId" name="deviceTypeId">
-	         <% if (version == -1) {%><option value="">[None]</option><%}%>
-	         <% for(i in types) {%>
-	          <option value="<%=types[i].id%>" <% if (types[i].id == deviceTypeId) {%> selected='selected' <%}%>><%=types[i].display_name%></option>
-	         <% } %>
-			</select>
-	    </div>
-	  </div>
-	  
-	  <div class="control-group">
-	    <label class="control-label" for="deviceGroupId">Group</label>
-	    <div class="controls">
-	      <select class="selectpicker" id="deviceGroupId" name="deviceGroupId">
-	          <% if (version == -1) {%><option value="">[None]</option><%}%>
-			  <% for(i in groups) {%>
-	          <option value="<%=groups[i].id%>"  <% if (groups[i].id == deviceGroupId) {%> selected='selected' <%}%>><%=groups[i].display_name%></option>
-	         <% } %>
-			</select>
-	    </div>
-	  </div>
-	  
 	  <div class="control-group">
 		  <label class="control-label" for="enabled">Enabled</label>
 		    <div class="controls">

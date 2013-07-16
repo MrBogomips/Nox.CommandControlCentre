@@ -1,30 +1,29 @@
-@(devices: Seq[DeviceInfoPersisted], user: UserTrait)
-
+@(simcards: Seq[SimcardPersisted], user: UserTrait)
 
 @header_more = {}
 
 @footer_scripts = {
 <script type='text/javascript'>
 	steal('/assets/webapp/webapp_init.js')
-	.then('/assets/webapp/device/device.js')
+	.then('/assets/webapp/simcard/simcard.js')
 	.then(function() {
-		$("#create_device").click(function() {            	
+		$("#create_simcard").click(function() {
 			var $el = $("<div></div>")
 			$('body').append($el);
-			$el.webapp_device();
+			$el.webapp_simcard();
 		});
             		
 		$(".btn.modify").click(function(el, ev) {
 			var options = {};
-			options["id"] = $(this).attr("data-device-id");
+			options["id"] = $(this).attr("data-simcard-id");
 			var $el = $("<div></div>");
 			$('body').append($el);
-			$el.webapp_device(options);
+			$el.webapp_simcard(options);
 		});
 			
 		$(".btn.delete").click(function(el, ev) {
-			var id = $(this).attr("data-device-id");
-			jsRoutes.controllers.Device.delete(id).ajax()
+			var id = $(this).attr("data-simcard-id");
+			jsRoutes.controllers.simcard.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
 				location.reload(true);
 			})
@@ -37,55 +36,54 @@
 </script>
 }
 
-@aria.master.authenticated("Devices", user, footer_more = footer_scripts) {
+@aria.master.authenticated("simcards", user, footer_more = footer_scripts) {
 	<div class="ana-devices">
-	<h1>Devices</h1>
+	<h1>Simcards</h1>
 	
 	<div class="alert_placeholder"></div>
 
-	<table class="table table-condensed table-bordered table-striped">
+	<table class="table table-condensed table-bordered table-striped simcards">
 		<thead>
 			<tr>
 				<th>ID</th>
-				<th>Device ID</th>
+				<th>IMEI</th>
 				<th>Display Name</th>
 				<th>Description</th>
-				<th>IMEI</th>
-				<th>Vehicle Installed</th>
+				<th>Mobile Number</th>
+				<th>Carrier ID</th>
 				<th>Enabled</th>
 				<th width="1%"></th>
 			</tr>
 		</thead>
 		<tbody>
-		@devices.map { d =>
+		@simcards.map { s =>
 			<tr>
-				<td>@d.id
-				@if(!d.validationErrors.isEmpty){
+				<td>@s.id
+				@if(!s.validationErrors.isEmpty){
 					<i class="icon-exclamation-sign"></i>
 				}
 				</td>
-				<td>@d.name</td>
-				<td>@d.displayName</td>
-				<td>@d.description</td>
-				<td>@d.simcardDisplayName</td>
-				<td>@d.vehicleDisplayName (@d.vehicleLicensePlate.getOrElse("none"))
-				</td>
+				<td>@s.imei</td>
+				<td>@s.displayName</td>
+				<td>@s.description</td>
+				<td>@s.mobileNumber</td>
+				<td>@s.carrierId</td>
 				<td><div class="switch">
-					<input type="checkbox" @if(d.enabled){
+					<input type="checkbox" @if(s.enabled){
 						checked
 					} disabled >
 					</div>
-					</td>
+				</td>
 				<td>
 				<nobr>
-					<button class="btn modify" data-device-id="@d.id">Modify</button>
-					<button class="btn btn-danger delete" data-device-id="@d.id">Delete</button>
+					<button class="btn modify" data-simcard-id="@s.id">Modify</button>
+					<button class="btn btn-danger delete" data-simcard-id="@s.id">Delete</button>
 				</nobr>
 				</td>
 			</tr>
 		}
 		</tbody>
 	</table>
-	<button class="btn btn-primary" id="create_device">Create new device</button>
+	<button class="btn btn-primary" id="create_simcard">Create new simcard</button>
 	</div>
 }

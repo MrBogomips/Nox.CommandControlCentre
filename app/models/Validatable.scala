@@ -45,6 +45,21 @@ trait Validatable {
     if (string.length() < minLength)
       errorsAccumulator.addBinding(key, s"Minimum length is $minLength")
   }
+  /**
+   * Validate an exact length
+   */
+  protected def validateLength(key: String, string: String, length: Int) = {
+    require(length > 0)
+    if (string.length() != length)
+      errorsAccumulator.addBinding(key, s"Length must be $length")
+  }
+  /**
+   * Validate an exact length
+   */
+  protected def validateImei(key: String, imei: String) = {
+    if (!imei.matches("^[0-9]{15}$"))
+      errorsAccumulator.addBinding(key, s"Not a valid IMEI")
+  }   
   protected def validateMinValue(key: String, value: Int, minValue: Int) = {
     if (value < minValue)
       errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
@@ -57,8 +72,10 @@ trait Validatable {
     if (value < minValue)
       errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
   }
+  private val emailPattern = """\b[a-zA-Z0-9.!#$%&���*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\b"""
   protected def validateEmail(key: String, email: String) = {
-    ???
+   if (!email.matches(emailPattern))
+      errorsAccumulator.addBinding(key, s"Not a valid email")
   }
   protected def validateEmailList(key: String, emails: String, separator: String = ";") = {
     ???
@@ -88,6 +105,13 @@ object WithValidation {
     if (!obj.isValid) throw new ValidationException(obj.validationErrors)
     try {
       f(obj)
+    } catch {
+      case e: PSQLException => exMapper(e)
+    }
+  }
+  def apply[A](f: => A)(implicit exMapper: (PSQLException => Nothing)): A = {
+    try {
+      f
     } catch {
       case e: PSQLException => exMapper(e)
     }
