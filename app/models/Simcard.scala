@@ -27,10 +27,10 @@ trait SimcardTrait extends Validatable {
   val carrierId: Int
 
   def validate {
-    validateMinLength("imei", imei, 15)
     validateMinLength("displayName", displayName, 3)
     validateMinLength("mobileNumber", mobileNumber, 5)
     validateMinValue("carrierId", carrierId, 1)
+    validateImei("imei", imei)
   }
 }
 
@@ -67,10 +67,10 @@ object Simcards
   def * = id ~ imei ~ displayName.? ~ description.? ~ enabled ~ mobileNumber ~ carrierId ~ _ctime ~ _mtime ~ _ver <> (SimcardPersisted, SimcardPersisted.unapply _)
 
   /**
-   * Exception mapper
-   *
-   * Maps a native postgres exception to a ValidationException.
-   */
+    * Exception mapper
+    *
+    * Maps a native postgres exception to a ValidationException.
+    */
   implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
     val errMessage = e.getMessage()
     if (errMessage.contains("simcards_imei_ak"))
@@ -85,7 +85,7 @@ object Simcards
 
   def find(enabled: Option[Boolean] = None): Seq[SimcardPersisted] = db withSession {
     val qy = enabled match {
-      case None => for { s <- Simcards } yield s
+      case None     => for { s <- Simcards } yield s
       case Some(en) => for { s <- Simcards if (s.enabled === en) } yield s
     }
 
@@ -110,8 +110,10 @@ object Simcards
     qy.firstOption
   }
 
-  def insert(obj: Simcard): Int = db withSession {
-    val sql = sql"""
+  def insert(uobj: Simcard): Int = WithValidation(uobj) { obj =>
+    db withSession {
+
+      val sql = sql"""
     INSERT INTO #$tableName  (
     		imei, 
     		display_name,
@@ -136,7 +138,8 @@ object Simcards
     )
     RETURNING id
     """
-    executeSql(BackendOperation.INSERT, s"$tableName $obj", sql.as[Int]) { _.first }
+      executeSql(BackendOperation.INSERT, s"$tableName $obj", sql.as[Int]) { _.first }
+    }
   }
   def update(uobj: SimcardPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
@@ -174,11 +177,12 @@ object Simcards
     }
   }
   def delete(obj: SimcardPersisted): Boolean = deleteById(obj.id)
-  def deleteById(id: Int): Boolean = db withSession {
-    val sql = sqlu"DELETE FROM #$tableName WHERE id = ${id}"
-    executeDelete(s"$tableName $id", sql) == 1
+  def deleteById(id: Int): Boolean = WithValidation {
+    db withSession {
+      val sql = sqlu"DELETE FROM #$tableName WHERE id = ${id}"
+      executeDelete(s"$tableName $id", sql) == 1
+    }
   }
-
 }
 
 

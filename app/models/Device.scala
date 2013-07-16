@@ -83,17 +83,17 @@ object Devices
   def deviceTypeFk = foreignKey("device_type_fk", deviceTypeId, DeviceTypes)(_.id)
   def deviceGroupFk = foreignKey("device_group_fk", deviceGroupId, DeviceGroups)(_.id)
   def vehicleFk = foreignKey("vehicle_fk", vehicleId, Vehicles)(_.id)
-  
+
   def * = id ~ name ~ displayName.? ~ description.? ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ enabled ~ simcardId.? ~ _ctime ~ _mtime ~ _ver <> (DevicePersisted, DevicePersisted.unapply _)
 
   /**
-   * Exception mapper
-   * 
-   * Maps a native postgres exception to a ValidationException.
-   */
+    * Exception mapper
+    *
+    * Maps a native postgres exception to a ValidationException.
+    */
   implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
-    val errMessage = e.getMessage() 
-    if (errMessage.contains("devices_name_key")) 
+    val errMessage = e.getMessage()
+    if (errMessage.contains("devices_name_key"))
       throw new ValidationException(e, "name", "Already in use")
     else if (errMessage.contains("devices_vehicles_fk"))
       throw new ValidationException(e, "vehicleId", "Not found")
@@ -108,15 +108,15 @@ object Devices
     else
       throw e;
   }
-  
+
   implicit private def deviceInfoGetResult = GetResult(r =>
-    DeviceInfoPersisted(r.nextInt, r.nextString, r.nextStringOption, r.nextStringOption, r.nextInt, r.nextInt, r.nextIntOption, r.nextBoolean, 
-        r.nextIntOption, //simcardId 
-        r.nextTimestamp,
-      r.nextTimestamp, r.nextInt, r.nextString, r.nextString, r.nextStringOption, 
+    DeviceInfoPersisted(r.nextInt, r.nextString, r.nextStringOption, r.nextStringOption, r.nextInt, r.nextInt, r.nextIntOption, r.nextBoolean,
+      r.nextIntOption, //simcardId 
+      r.nextTimestamp,
+      r.nextTimestamp, r.nextInt, r.nextString, r.nextString, r.nextStringOption,
       r.nextStringOption,
       r.nextStringOption, // simcardImei
-      r.nextStringOption  // simcardDisplayName
+      r.nextStringOption // simcardDisplayName
       ))
 
   def find(enabled: Option[Boolean] = None): Seq[DevicePersisted] = db withSession {
@@ -199,8 +199,9 @@ object Devices
     executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[DeviceInfoPersisted]) { _.firstOption }
   }
 
-  def insert(obj: Device): Int = db withSession {
-    val sql = sql"""
+  def insert(uobj: Device): Int = WithValidation(uobj) { obj =>
+    db withSession {
+      val sql = sql"""
     INSERT INTO #$tableName  (
     		name, 
     		display_name,
@@ -229,7 +230,8 @@ object Devices
     )
     RETURNING id
     """
-    executeSql(BackendOperation.INSERT, s"$tableName $obj", sql.as[Int]) { _.first }
+      executeSql(BackendOperation.INSERT, s"$tableName $obj", sql.as[Int]) { _.first }
+    }
   }
   def update(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
@@ -271,8 +273,10 @@ object Devices
     }
   }
   def delete(obj: DevicePersisted): Boolean = deleteById(obj.id)
-  def deleteById(id: Int): Boolean = db withSession {
-    val sql = sqlu"DELETE FROM #$tableName WHERE id = ${id}"
-    executeDelete("$tableName $id", sql) == 1
+  def deleteById(id: Int): Boolean = WithValidation {
+    db withSession {
+      val sql = sqlu"DELETE FROM #$tableName WHERE id = ${id}"
+      executeDelete("$tableName $id", sql) == 1
+    }
   }
 }
