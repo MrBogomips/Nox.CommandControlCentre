@@ -47,6 +47,7 @@
 							<li><a tabindex="-1" href="#" id="btnDevices">Devices</a></li>
 							<li><a tabindex="-1" href="#" id="btnDeviceTypes">Device types</a></li>
 							<li><a tabindex="-1" href="#" id="btnDeviceGroups">Device groups</a></li>
+							<li><a tabindex="-1" href="#" id="btnSimcards">Simcards</a></li>
 						</ul>
 					</li>
 					@{/***** VEHICLES *****/}
@@ -181,6 +182,9 @@
 					window.location.pathname = jsRoutes.controllers.VehicleAssignement.index().url;
 				});
 				
+				$("#btnSimcards").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.Simcard.index().url;
+				});
 			});
 		});
 </script>

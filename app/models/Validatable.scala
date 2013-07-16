@@ -45,6 +45,7 @@ trait Validatable {
     if (string.length() < minLength)
       errorsAccumulator.addBinding(key, s"Minimum length is $minLength")
   }
+     
   protected def validateMinValue(key: String, value: Int, minValue: Int) = {
     if (value < minValue)
       errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
@@ -57,6 +58,13 @@ trait Validatable {
     if (value < minValue)
       errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
   }
+  
+  protected def validateLength(key: String, string: String, length: Int) = {
+    require(length > 0)
+    if (string.length() != length)
+      errorsAccumulator.addBinding(key, s"Length must be $length")
+  }
+
   protected def validateEmail(key: String, email: String) = {
     ???
   }
