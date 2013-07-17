@@ -3,9 +3,11 @@ package models
 import play.api._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import org.eclipse.paho.client.mqttv3._
 import java.util.Date
 import java.util.UUID
+import patterns.disposable._
+
+import mqtt.SimpleClient
 
 /** Represents a command sent to the webapp */
 case class DeviceCommandRequest(val device: String, /*val tranId: String, */ val command: String, val arguments: Seq[DeviceCommandArgument]) {
@@ -36,33 +38,12 @@ case class DeviceCommandRequest(val device: String, /*val tranId: String, */ val
 	
 	      val mqRequestTopic = conf.getString("nox.mqtt.Command.RequestTopic")
 	      val mqBrokerURI = conf.getString("nox.mqtt.BrokerURI")
-	      val clientId = { // MqttClient constructors requires a 22 long string
-	        val t = MqttClient.generateClientId()
-	        if (t.length() > 22)
-	          t.substring(0, 22)
-	        else
-	          t
+	      
+	      WithDisposition(new SimpleClient(mqBrokerURI)) { mqtt =>
+	        mqtt.connect
+	        mqtt.publish(mqRequestTopic, Json.toJson(cmdReqEnh))
 	      }
 	      
-	
-	      Logger.debug(s"MQTT: Client created... try to connect [$mqBrokerURI] on clientId[$clientId]");
-	
-	      val mqtt = new MqttClient(mqBrokerURI, clientId)
-	
-	      mqtt.connect();
-	
-	      val payload = Json.stringify(Json.toJson(cmdReqEnh));
-	      
-	      Logger.debug("MQTT: Payload=" + payload)
-	
-	      val message = new MqttMessage(payload.getBytes());
-	
-	      mqtt.publish(mqRequestTopic, message)
-	
-	      println("Command Sended! Disconnetting..");
-	      mqtt.disconnect()
-	      println("Disconnetted!!");
-	
 	      DeviceCommandResponseOK(cmdReqEnh.tranId, "Command sent successfully")
 	    } catch {
 	      case e: Exception =>
