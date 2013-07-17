@@ -58,3 +58,28 @@ object DeviceInfoPersistedSerializer {
     }
   }
 }
+
+object DeviceInfoChannelPersistedSerializer {
+  /**
+    * JSON serializer
+    */
+  implicit val jsonWriter: Writes[DevicePersisted] = new Writes[DevicePersisted] {
+    def writes(d: DevicePersisted): JsValue = {
+      Json.obj(
+         "id" -> d.id,
+        "name" -> d.name,
+        "displayName" -> d.displayName,
+        "description" -> d.description,
+        "enabled" -> d.enabled,
+        "simcardId" -> d.simcardId,
+        "deviceTypeId" -> d.deviceTypeId,
+        "deviceGroupId" -> d.deviceGroupId,
+        "vehicleId" -> d.vehicleId,
+        "creationTime" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
+        "modificationTime" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()),
+        "version" -> d.version,
+        "channels" -> List("NOXT1", "NOXT2"),
+        "validationErrors" -> d.validationErrors)
+    }
+  }
+}

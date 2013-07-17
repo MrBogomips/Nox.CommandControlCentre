@@ -7,7 +7,6 @@ import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
 import models.{ Devices, Device ⇒ DeviceModel, DevicePersisted, DeviceInfoPersisted }
-import models.json._
 import org.joda.time.format.ISODateTimeFormat
 import models.ValidationException
 
@@ -15,6 +14,7 @@ object Device extends Secured {
 
   import models.DeviceCommandRequest
   import models.DeviceCommandResponse._
+  import models.json.{ devicePersistedJsonWriter, deviceInfoPersistedJsonWriter }
 
   def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) =>
     request.body.validate[DeviceCommandRequest].map { c ⇒
@@ -100,16 +100,24 @@ object Device extends Secured {
         case (name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, version) ⇒
           val dp = new DevicePersisted(id, name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, version)
           Devices.update(dp) match {
-            case true ⇒ Ok(s"Device $id updated successfully")
-            case _    ⇒ NotFound
+            case true ⇒ {
+              notifications.notifyDeviceChangeConfiguration(dp.name)
+              Ok(s"Device $id updated successfully")
+            }
+            case _ ⇒ NotFound
           }
       })
   }
 
   def delete(id: Int) = WithAuthentication {
-    Devices.deleteById(id) match {
-      case true ⇒ Ok(s"Device $id deleted successfully")
-      case _    ⇒ NotFound
+    Devices.findById(id).fold(NotFound("")) { dp =>
+      notifications.notifyDeviceChangeConfiguration(dp.name)
+      Devices.deleteById(id) match {
+        case true ⇒ {
+          Ok(s"Device $id deleted successfully")
+        }
+        case _ ⇒ NotFound("")
+      }
     }
   }
 }
