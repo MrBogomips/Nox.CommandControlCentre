@@ -12,24 +12,8 @@ import models.{Devices, Device ⇒ DeviceModel, DevicePersisted, DeviceInfoPersi
 import org.joda.time.format.ISODateTimeFormat
 
 object Device extends ControllerBase {
-  /**
-   * DevicePersisted JSON serializer
-   */
-  implicit val deviceJsonWriter = new Writes[DevicePersisted] {
-    def writes(d: DevicePersisted): JsValue = {
-      Json.obj(
-        "id" -> d.id,
-        "name" -> d.name,
-        "display_name" -> d.displayName,
-        "description" -> d.description,
-        "enabled" -> d.enabled,
-        "type_id" -> d.deviceTypeId,
-        "group_id" -> d.deviceGroupId,
-        "channels" -> List("NOXT1","NOXT2"),
-        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
-        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
-    }
-  }
+  import models.json.deviceInfoChannelPersistedSerializer
+
   def index(all: Boolean = false) = Action { implicit request ⇒
     implicit val req = request
     val devices = all match {
