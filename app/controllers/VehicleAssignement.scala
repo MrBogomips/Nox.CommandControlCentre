@@ -6,36 +6,22 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
-import models._
-import utils.Converter._
+import models.{ VehicleAssignement => VehicleAssignementModel, VehicleAssignementPersisted, VehicleAssignements }
 
 import org.joda.time.format.ISODateTimeFormat
 
+import models.json.vehicleAssignementPersistedJsonWriter
+
 object VehicleAssignement extends Secured {
-  /**
-    * DriverPersisted JSON serializer
-    */
-  implicit val vehicleAssignementJsonWriter = new Writes[VehicleAssignementPersisted] {
-    def writes(va: VehicleAssignementPersisted): JsValue = {
-      Json.obj(
-        "id" -> va.id,
-        "vehicleId" -> va.vehicleId,
-        "driverId" -> va.driverId,
-        "beginAssignement" -> ISODateTimeFormat.date.print(va.beginAssignement.getTime()),
-        "endAssignement" -> ISODateTimeFormat.date.print(va.endAssignement.getTime()),
-        "enabled" -> va.enabled,
-        "creationTime" -> ISODateTimeFormat.dateTime.print(va.creationTime.getTime()),
-        "modificationTime" -> ISODateTimeFormat.dateTime.print(va.modificationTime.getTime()))
-    }
-  }
 
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
-    val assigns = all match {
-      case false ⇒ VehicleAssignements.findAllEnabled
-      case true  ⇒ VehicleAssignements.findAll
+    implicit val req = request
+    val vehicleAssignements = all match {
+      case false => VehicleAssignements.find(Some(true))
+      case true  => VehicleAssignements.find(None)
     }
     if (acceptsJson(request)) {
-      Ok(Json.toJson(assigns))
+      Ok(Json.toJson(vehicleAssignements))
     } else if (acceptsHtml(request)) {
       Ok(views.html.aria.vehicleassignement.index(user))
     } else {
@@ -43,8 +29,8 @@ object VehicleAssignement extends Secured {
     }
   }
 
-  def get(id: Int) = WithAuthentication { (user, request) ⇒
-    VehicleAssignements.findById(id).map { va ⇒
+  def get(id: Int) = WithAuthentication { (user, request) =>
+    VehicleAssignements.findById(id).map { va =>
       if (acceptsJson(request)) {
         Ok(Json.toJson(va))
       } else if (acceptsHtml(request)) {
@@ -61,44 +47,44 @@ object VehicleAssignement extends Secured {
       "driverId" -> number(min = 0),
       "beginAssignement" -> jodaDate("yyyy-MM-dd"),
       "endAssignement" -> jodaDate("yyyy-MM-dd"),
-      "enabled" -> optional(text)))
+      "enabled" -> boolean))
+  val updateForm = Form(
+    tuple(
+      "vehicleId" -> number(min = 0),
+      "driverId" -> number(min = 0),
+      "beginAssignement" -> jodaDate("yyyy-MM-dd"),
+      "endAssignement" -> jodaDate("yyyy-MM-dd"),
+      "enabled" -> boolean,
+      "version" -> number))
 
-  def create = WithAuthentication { implicit request ⇒
+  def create = WithAuthentication { implicit request =>
     createForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (vehicleId, driverId, beginAssignement, endAssignement, enabled) ⇒
-          val va = models.VehicleAssignement(vehicleId, driverId, beginAssignement, endAssignement, enabled)
+        case (vehicleId, driverId, beginAssignement, endAssignement, enabled) =>
+          val va = VehicleAssignementModel(vehicleId, driverId, beginAssignement, endAssignement, enabled)
           val id = VehicleAssignements.insert(va)
           Ok(s"""{"id":$id}""").as("application/json")
       })
   }
 
-  def update(id: Int) = WithAuthentication { implicit request ⇒
-    Thread.sleep(1000)
-    createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
+  def update(id: Int) = WithAuthentication { implicit request =>
+    updateForm.bindFromRequest.fold(
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (vehicleId, driverId, beginAssignement, endAssignement, enabled) ⇒
-          models.VehicleAssignements.findById(id).fold(NotFound("Vehicle assignement $id wasn't found")) { va =>
-            val va2 = va.copy(
-              vehicleId = vehicleId,
-              driverId = driverId,
-              beginAssignement = beginAssignement,
-              endAssignement = endAssignement,
-              enabled = enabled)
-            if (VehicleAssignements.update(va2) > 0)
-              Ok("")
-            else
-              NotFound("")
+        case (vehicleId, driverId, beginAssignement, endAssignement, enabled, version) =>
+          val va = VehicleAssignementPersisted(id, vehicleId, driverId, beginAssignement, endAssignement, enabled, version = version)
+          VehicleAssignements.update(va) match {
+            case true => Ok
+            case _    => NotFound
           }
       })
   }
 
   def delete(id: Int) = WithAuthentication {
-    if (VehicleAssignements.deleteById(id) > 0)
-      Ok
-    else
-      NotFound
+    VehicleAssignements.deleteById(id) match {
+      case true ⇒ Ok
+      case _    ⇒ NotFound
+    }
   }
 }

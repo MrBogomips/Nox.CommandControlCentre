@@ -6,35 +6,20 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
-import models._
+import models.{ Vehicle => VehicleModel, VehiclePersisted, Vehicles }
 
 import utils.Converter._
 
 import org.joda.time.format.ISODateTimeFormat
 
-object Vehicle extends Secured {
-  /**
-    * DevicePersisted JSON serializer
-    */
-  implicit val vehicleJsonWriter = new Writes[VehiclePersisted] {
-    def writes(r: VehiclePersisted): JsValue = {
-      Json.obj(
-        "id" -> r.id,
-        "name" -> r.name,
-        "display_name" -> r.displayName,
-        "description" -> r.description,
-        "enabled" -> r.enabled,
-        "model" -> r.model,
-        "license_plate" -> r.licensePlate,
-        "creation_time" -> ISODateTimeFormat.dateTime.print(r.creationTime.getTime()),
-        "modification_time" -> ISODateTimeFormat.dateTime.print(r.modificationTime.getTime()))
-    }
-  }
+import models.json.vehiclePersistedJsonWriter
 
+object Vehicle extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
+    implicit val req = request
     val vehicles = all match {
-      case false ⇒ Vehicles.findAllEnabled
-      case true  ⇒ Vehicles.findAll
+      case false => Vehicles.find(Some(true))
+      case true  => Vehicles.find(None)
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(vehicles))
@@ -65,66 +50,46 @@ object Vehicle extends Secured {
       "model" -> nonEmptyText(minLength = 3),
       "license_plate" -> nonEmptyText(minLength = 3),
       "enabled" -> optional(text)))
+  val updateForm = Form(
+    tuple(
+      "name" -> nonEmptyText(minLength = 3),
+      "display_name" -> optional(text),
+      "description" -> optional(text),
+      "model" -> nonEmptyText(minLength = 3),
+      "license_plate" -> nonEmptyText(minLength = 3),
+      "enabled" -> optional(text),
+      "version" -> number))
 
-  def create = WithAuthentication { implicit request ⇒
+  def create = WithAuthentication { implicit request =>
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson) as ("application/json"),
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, display_name, description, model, license_plate, enabled) ⇒
-          if (Vehicles.findByName(name).isDefined) {
-            BadRequest("""{"name": ["A vehicle with the same name already exists"]}""").as("application/json")
-          } else {
-            var v = new Vehicle(name, model, license_plate)
-            display_name.map(desc ⇒ v = v.copy(displayName = desc))
-            v = v.copy(
-              enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false },
-              description = description)
-            val id = Vehicles.insert(v)
-            Ok(s"id=id")
+        case (name, displayName, description, model, licensePlate, enabled) =>
+          val v = VehicleModel(name, displayName, description, enabled, model, licensePlate)
+          val id = Vehicles.insert(v)
+          Ok(s"""{"id"=id}""")
+      })
+  }
+
+  def update(id: Int) = WithAuthentication { implicit request =>
+    updateForm.bindFromRequest.fold(
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
+      {
+        case (name, displayName, description, model, licensePlate, enabled, version) =>
+          val vp = VehiclePersisted(id, name, displayName, description, enabled, model, licensePlate, version = version)
+          //Simcards.up
+          Vehicles.update(vp) match {
+            case true => Ok
+            case _    => NotFound
           }
       })
   }
 
-  def update(id: Int) = WithAuthentication { implicit request ⇒
-    createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson) as ("application/json"),
-      {
-        case (name, display_name, description, model, license_plate, enabled) ⇒
-          Vehicles.findById(id).map { x ⇒
-            var v = x
-            display_name.map(desc ⇒ v = v.copy(displayName = desc))
-            v = v.copy(
-              name = name,
-              description = description,
-              model = model,
-              licensePlate = license_plate,
-              enabled = enabled)
-            Ok(s"Vehicle $id updated successfully")
-            if (Vehicles.update(v)) {
-              Ok(s"Vehicle $id updated successfully")
-            } else {
-              NotFound("Vehicle $id wasn't updated")
-            }
-          }.getOrElse(NotFound)
-      })
-  }
-
   def delete(id: Int) = WithAuthentication {
-    import org.postgresql.util.{ PSQLException, ServerErrorMessage }
-
-    try {
-      Vehicles.deleteById(id) match {
-        case true ⇒ Ok(s"Vehicle $id deleted successfully")
-        case _    ⇒ NotFound
-      }
-    } catch {
-      case e: PSQLException ⇒ {
-        val msg = e.getServerErrorMessage().getMessage();
-        if (msg.contains("vehicles_drivers_vehicle_fk"))
-        	InternalServerError(s"""Vehicle $id is associated to a driver: you cannot delete it""") // getSQLState
-        else
-          InternalServerError(msg)
-      }
+    Vehicles.deleteById(id) match {
+      case true ⇒ Ok
+      case _    ⇒ NotFound
     }
   }
+
 }

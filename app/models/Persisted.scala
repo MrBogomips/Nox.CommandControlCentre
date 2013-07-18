@@ -11,7 +11,11 @@ import Q.interpolation
 /**
  * Represents a model class that could require persistance
  */
-trait Persistable {
+trait Persistable[+A] extends Validatable {
+  /**
+   * The record surrogate primary key
+   */
+  val id: Int
   /**
    * The record creation time
    *
@@ -32,12 +36,14 @@ trait Persistable {
   val version: Int
 }
 
+trait Model[+A] extends Validatable with ValidationRequired
+
 /**
  * Represents a model class that is always persisted
  *
  * A ``Persisted`` model class is designed to be exclusively fetched from the backend
  */
-trait Persisted[+T, +T2] extends Persistable {
+trait Persisted[+T, +T2] extends Persistable[T] {
   /**
    *  Retrieve a refreshed version of the persisted object
    */

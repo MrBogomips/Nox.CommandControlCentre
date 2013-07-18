@@ -36,17 +36,19 @@ trait SimcardTrait extends Validatable {
 
 case class Simcard(imei: String, displayName0: Option[String], description: Option[String], enabled: Boolean, mobileNumber: String, carrierId: Int)
   extends SimcardTrait
-  with ValidationRequired
+  with Model[SimcardTrait]
 
 case class SimcardPersisted(id: Int, imei: String, displayName0: Option[String], description: Option[String], enabled: Boolean, mobileNumber: String, carrierId: Int, creationTime: Timestamp, modificationTime: Timestamp, version: Int)
   extends SimcardTrait
-  with Persistable {
-  def this(id: Int, imei: String, displayName0: Option[String], description: Option[String], enabled: Boolean, mobileNumber: String, carrierId: Int, version: Int) = this(id, imei, displayName0, description, enabled, mobileNumber, carrierId, new Timestamp(0), new Timestamp(0), version)
+  with Persistable[SimcardTrait] {
+  def this(id: Int, imei: String, displayName0: Option[String], description: Option[String], enabled: Boolean, mobileNumber: String, carrierId: Int, version: Int) =
+    this(id, imei, displayName0, description, enabled, mobileNumber, carrierId, new Timestamp(0), new Timestamp(0), version)
 }
 
 object Simcards
   extends Table[SimcardPersisted]("simcards")
-  with Backend {
+  with Backend
+  with NameEntityCrudOperations[SimcardTrait, Simcard, SimcardPersisted] {
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def imei = column[String]("imei")
@@ -59,10 +61,6 @@ object Simcards
   def _ctime = column[Timestamp]("_ctime")
   def _mtime = column[Timestamp]("_mtime")
   def _ver = column[Int]("_ver")
-
-  //  def deviceTypeFk = foreignKey("device_type_fk", deviceTypeId, DeviceTypes)(_.id)
-  //  def deviceGroupFk = foreignKey("device_group_fk", deviceGroupId, DeviceGroups)(_.id)
-  //  def vehicleFk = foreignKey("vehicle_fk", vehicleId, Vehicles)(_.id)
 
   def * = id ~ imei ~ displayName.? ~ description.? ~ enabled ~ mobileNumber ~ carrierId ~ _ctime ~ _mtime ~ _ver <> (SimcardPersisted, SimcardPersisted.unapply _)
 
@@ -103,6 +101,8 @@ object Simcards
 
     qy.firstOption
   }
+
+  def findByName(name: String) = findByImei(name)
 
   def findByMobileNumber(number: String): Option[SimcardPersisted] = db withSession {
     val qy = for { s <- Simcards if (s.mobileNumber === number) } yield s
@@ -176,7 +176,6 @@ object Simcards
       executeUpdate(s"$tableName $obj", sql) == 1
     }
   }
-  def delete(obj: SimcardPersisted): Boolean = deleteById(obj.id)
   def deleteById(id: Int): Boolean = WithValidation {
     db withSession {
       val sql = sqlu"DELETE FROM #$tableName WHERE id = ${id}"

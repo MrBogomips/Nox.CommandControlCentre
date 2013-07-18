@@ -33,9 +33,6 @@ object Simcard extends Secured {
     Simcards.findById(id).map { s =>
       if (acceptsJson(request)) {
         Ok(Json.toJson(s))
-        //} else if (acceptsHtml(request)) {
-        //  OK("get")
-        //Ok(views.html.aria.device.item(d.id, user))
       } else {
         BadRequest
       }
@@ -80,7 +77,7 @@ object Simcard extends Secured {
           val sp = new SimcardPersisted(id, imei, displayName0, description, enabled, mobileNumber, carrierId, version)
           //Simcards.up
           Simcards.update(sp) match {
-            case true => Ok(s"Simcard $id updated successfully")
+            case true => Ok
             case _ => NotFound
           }
       })
@@ -88,7 +85,7 @@ object Simcard extends Secured {
 
   def delete(id: Int) = WithAuthentication {
     Simcards.deleteById(id) match {
-      case true ⇒ Ok(s"Simcard $id deleted successfully")
+      case true ⇒ Ok
       case _ ⇒ NotFound
     }
   }

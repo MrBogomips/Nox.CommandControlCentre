@@ -6,32 +6,18 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
-import models._
-import utils.Converter._
+import models.{ Driver => DriverModel, DriverPersisted, Drivers }
 
 import org.joda.time.format.ISODateTimeFormat
 
-object Driver extends Secured {
-  /**
-    * DriverPersisted JSON serializer
-    */
-  implicit val driverJsonWriter = new Writes[DriverPersisted] {
-    def writes(d: DriverPersisted): JsValue = {
-      Json.obj(
-        "id" -> d.id,
-        "name" -> d.name,
-        "surname" -> d.surname,
-        "display_name" -> d.displayName,
-        "enabled" -> d.enabled,
-        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
-        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
-    }
-  }
+import models.json.driverPersistedJsonWriter
 
+object Driver extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
+    implicit val req = request
     val drivers = all match {
-      case false ⇒ Drivers.findAllEnabled
-      case true  ⇒ Drivers.findAll
+      case false => Drivers.find(Some(true))
+      case true  => Drivers.find(None)
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(drivers))
@@ -59,44 +45,44 @@ object Driver extends Secured {
       "name" -> nonEmptyText(minLength = 3),
       "surname" -> nonEmptyText(minLength = 3),
       "display_name" -> optional(text),
-      "enabled" -> optional(text)))
+      "enabled" -> boolean))
+  val updateForm = Form(
+    tuple(
+      "name" -> nonEmptyText(minLength = 3),
+      "surname" -> nonEmptyText(minLength = 3),
+      "display_name" -> optional(text),
+      "enabled" -> boolean,
+      "version" -> number))
 
-  def create = WithAuthentication { implicit request ⇒
+  def create = WithAuthentication { implicit request =>
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, surname, display_name, enabled) ⇒
-          val d: Driver = display_name.fold(new Driver(name, surname, enabled)) {
-            new Driver(name, surname, _, enabled)
-          }
-          val id = Drivers.insert(d)
-          Ok(s"id=$id")
+        case (name, surname, displayName, enabled) =>
+          val dt = DriverModel(name, surname, displayName, enabled)
+          val id = Drivers.insert(dt)
+          Ok(s"""{"id"=id}""")
       })
   }
 
-  def update(id: Int) = WithAuthentication { implicit request ⇒
-    createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
+  def update(id: Int) = WithAuthentication { implicit request =>
+    updateForm.bindFromRequest.fold(
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, surname, display_name, enabled) ⇒
-          Drivers.findById(id).fold(NotFound("Driver $id wasn't found")) { d =>
-            val d2 = d.copy(
-              name = name,
-              surname = surname,
-              displayName = display_name.fold(d.displayName) { s => s },
-              enabled = enabled)
-            if (Drivers.update(d2) > 0)
-              Ok(s"Driver $id updated successfully")
-            else
-              NotFound("")
+        case (name, surname, displayName, enabled, version) =>
+          val d = DriverPersisted(id, name, surname, displayName, enabled, version = version)
+          //Simcards.up
+          Drivers.update(d) match {
+            case true => Ok
+            case _    => NotFound
           }
       })
   }
 
   def delete(id: Int) = WithAuthentication {
-    if (Drivers.deleteById(id) > 0)
-      Ok(s"Driver $id deleted successfully")
-    else
-      NotFound
+    Drivers.deleteById(id) match {
+      case true ⇒ Ok
+      case _    ⇒ NotFound
+    }
   }
 }

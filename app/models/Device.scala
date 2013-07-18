@@ -47,12 +47,12 @@ trait DeviceInfoTrait extends DeviceTrait {
 }
 
 case class Device(name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int])
-  extends DeviceTrait
-  with ValidationRequired
+  extends DeviceTrait 
+  with Model[DeviceTrait]
 
 case class DevicePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int)
   extends DeviceTrait
-  with Persistable {
+  with Persistable[DeviceTrait] {
   def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int]) =
     this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, new Timestamp(0), new Timestamp(0), 0)
   def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], version: Int) =
@@ -61,11 +61,13 @@ case class DevicePersisted(id: Int, name: String, displayName0: Option[String], 
 
 case class DeviceInfoPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int, deviceTypeDisplayName: String, deviceGroupDisplayName: String, vehicleDisplayName: Option[String], vehicleLicensePlate: Option[String], simcardImei: Option[String], simcardDisplayName: Option[String])
   extends DeviceInfoTrait
-  with Persistable
+  with Persistable[DeviceInfoTrait]
 
 object Devices
   extends Table[DevicePersisted]("devices")
-  with Backend {
+  with Backend 
+  with NameEntityCrudOperations[DeviceTrait, Device, DevicePersisted]
+  {
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
@@ -272,7 +274,6 @@ object Devices
       executeUpdate(s"$tableName $obj", sql) == 1
     }
   }
-  def delete(obj: DevicePersisted): Boolean = deleteById(obj.id)
   def deleteById(id: Int): Boolean = WithValidation {
     db withSession {
       val sql = sqlu"DELETE FROM #$tableName WHERE id = ${id}"
