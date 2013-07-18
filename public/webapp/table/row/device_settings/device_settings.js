@@ -15,9 +15,16 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('device_settings');
+				this.element.addClass('device_settings modal hide fade commands');
+				
+				this.element.attr("tabindex", "-1").attr("aria-hidden", "true");
+				
+				//tabindex="-1" aria-hidden="true"
+				
+				
 				this.element.html('/assets/webapp/table/row/device_settings/views/view.ejs', self.options, function(el) {
-					var el = self.element.find('.modal.commands');
+					//var el = self.element.find('.modal.commands');
+					var el = self.element;
 					$el = $(el);
 					$el.modal({remote: '/device/'+ self.options.device +'/configure'});
 					$el.on('hidden', function(){
@@ -74,7 +81,8 @@ steal(
 				
 				if (cmdArgs === undefined) {
 					if (cmdConfirm !== undefined) {
-						this.element.find('.modal.confirmation').modal({replace: true});
+						if (confirm("Dow you want proceed?"))
+							this.pendingCommand();
 					} else {
 						this.pendingCommand();
 					}
@@ -84,13 +92,29 @@ steal(
 				//this.pendingCommand = undefined;
 			},
 			
+			_renderConfirmationModal : function () {
+				return '<div class="modal hide fade confirmation" tabindex="-1">' +
+				  +'<div class="modal-header">'  
+				  + '<h3>Confirmation</h3>'
+				  + '</div>'
+				  + '<div class="modal-body">'
+				  + '  Do you confirm the execution of the command?'
+				  + '</div>'
+				  + '<div class="modal-footer">'
+				  + '  <button class="btn btn-danger cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>'
+				  + '  <button class="btn btn-success confirm" data-dismiss="modal" aria-hidden="true">Confirm</button>'
+				  + '</div>'
+			},
+			
 			".btn.cancel click" :  function () {
 				this.pendingCommand = undefined;
+				this.confirmationModal.modal('hide');
 			},
 			
 			".btn.confirm click" :  function () {
 				this.pendingCommand();
 				this.pendingCommand = undefined;
+				this.confirmationModal.modal('hide');//.destroy();
 			},
 			
 			_buildCommand : function (command, args) {
