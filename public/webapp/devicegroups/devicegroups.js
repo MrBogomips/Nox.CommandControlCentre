@@ -18,6 +18,7 @@ steal(
 				creation_time: '',
 				enabled: true,
 				modification_time: '',
+				version: -1,
 				serverController: jsRoutes.controllers.DeviceGroup
 			}
 		},

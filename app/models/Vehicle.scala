@@ -31,7 +31,7 @@ case class Vehicle(name: String, displayName0: Option[String], description: Opti
     this(name, Some(name), None, true, model, licensePlate)
 }
 
-case class VehiclePersisted (id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
+case class VehiclePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends VehicleTrait
   with Persistable[VehicleTrait]
 
@@ -83,10 +83,8 @@ object Vehicles
     val qy = for { v <- Vehicles if (v.name === name) } yield v
     qy.firstOption
   }
-  
-  
-  
-  def insert(obj: Vehicle): Int = {
+
+  def insert(uobj: Vehicle): Int = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sql"""
     INSERT INTO vehicles (
@@ -117,9 +115,10 @@ object Vehicles
       executeSql(BackendOperation.INSERT, s"vehicle $obj", sql.as[Int]) { _.first }
     }
   }
-  def update(obj: models.VehiclePersisted): Boolean = db withSession {
-    Logger.debug(s"description = ${obj.description}")
-    val sql = sqlu"""
+  def update(uobj: models.VehiclePersisted): Boolean = WithValidation(uobj) { obj =>
+    db withSession {
+      Logger.debug(s"description = ${obj.description}")
+      val sql = sqlu"""
    UPDATE vehicles
        SET name = ${obj.name},
            display_name = ${obj.displayName},
@@ -131,10 +130,12 @@ object Vehicles
            _ver = _ver + 1 
 	 WHERE id = ${obj.id}
 	 """
-    executeUpdate(s"vehicle $obj", sql) == 1
+      executeUpdate(s"vehicle $obj", sql) == 1
+    }
   }
-  def updateWithVersion(obj: models.VehiclePersisted): Boolean = db withSession {
-    val sql = sqlu"""
+  def updateWithVersion(uobj: models.VehiclePersisted): Boolean = WithValidation(uobj) { obj =>
+    db withSession {
+      val sql = sqlu"""
     UPDATE vehicles
        SET name = ${obj.name},
            display_name = ${obj.displayName},
@@ -147,7 +148,8 @@ object Vehicles
 	 WHERE id = ${obj.id}
 	   AND _ver = ${obj.version}
 	 """
-    executeUpdate(s"vehicle $obj with version check", sql) == 1
+      executeUpdate(s"vehicle $obj with version check", sql) == 1
+    }
   }
   def deleteById(id: Int): Boolean = db withSession {
     val sql = sqlu"DELETE FROM #$tableName WHERE id = $id"

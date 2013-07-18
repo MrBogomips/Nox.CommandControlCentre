@@ -8,7 +8,7 @@ steal(
 		/** @Static */
 		{
 			defaults : {
-				
+				version: -1
 			}
 		},
 		/** @Prototype */

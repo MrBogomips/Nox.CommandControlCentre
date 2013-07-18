@@ -14,6 +14,7 @@ steal(function($) {
 			creation_time : '',
 			modification_time : '',
 			enabled : true,
+			version: -1,
 			serverController: jsRoutes.controllers.Driver
 		}
 	},

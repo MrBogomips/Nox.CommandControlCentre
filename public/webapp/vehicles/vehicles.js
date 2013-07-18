@@ -17,6 +17,7 @@ steal(
 				vehicle_model: '',
 				enabled: true,
 				modification_time: '',
+				version: -1,
 				license_plate: '',
 				serverController: jsRoutes.controllers.Vehicle
 			}

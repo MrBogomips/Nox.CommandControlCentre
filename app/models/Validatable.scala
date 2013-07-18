@@ -35,6 +35,17 @@ trait Validatable {
   import collection.mutable.{ HashMap, MultiMap, Set }
   protected val errorsAccumulator = new HashMap[String, Set[String]] with MultiMap[String, String]
   
+   /**
+   * Material implication
+   */
+  import scala.language.{ implicitConversions, reflectiveCalls }
+  protected implicit def extendedBoolean(a: Boolean) = new {
+    def implies(b: => Boolean) = !a || b
+  }
+  
+  protected def addValidationError(key: String, condition: String) =
+     errorsAccumulator.addBinding(key, condition)
+  
   /**
    * @param key the key used to signal the violation to the end user form
    * @param value the value checked
@@ -43,7 +54,7 @@ trait Validatable {
   protected def validateMinLength(key: String, string: String, minLength: Int) = {
     require(minLength > 0)
     if (string.length() < minLength)
-      errorsAccumulator.addBinding(key, s"Minimum length is $minLength")
+      addValidationError(key, s"Minimum length is $minLength")
   }
   /**
    * Validate an exact length
@@ -51,31 +62,31 @@ trait Validatable {
   protected def validateLength(key: String, string: String, length: Int) = {
     require(length > 0)
     if (string.length() != length)
-      errorsAccumulator.addBinding(key, s"Length must be $length")
+      addValidationError(key, s"Length must be $length")
   }
   /**
    * Validate an exact length
    */
   protected def validateImei(key: String, imei: String) = {
     if (!imei.matches("^[0-9]{15}$"))
-      errorsAccumulator.addBinding(key, s"Not a valid IMEI")
+      addValidationError(key, s"Not a valid IMEI")
   }   
   protected def validateMinValue(key: String, value: Int, minValue: Int) = {
     if (value < minValue)
-      errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
+      addValidationError(key, s"Must be greater or equal to $minValue")
   }
   protected def validateMinValue(key: String, value: Long, minValue: Long) = {
     if (value < minValue)
-      errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
+      addValidationError(key, s"Must be greater or equal to $minValue")
   }
   protected def validateMinValue(key: String, value: Double, minValue: Double) = {
     if (value < minValue)
-      errorsAccumulator.addBinding(key, s"Must be greater or equal to $minValue")
+      addValidationError(key, s"Must be greater or equal to $minValue")
   }
   private val emailPattern = """\b[a-zA-Z0-9.!#$%&���*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\b"""
   protected def validateEmail(key: String, email: String) = {
    if (!email.matches(emailPattern))
-      errorsAccumulator.addBinding(key, s"Not a valid email")
+      addValidationError(key, s"Not a valid email")
   }
   protected def validateEmailList(key: String, emails: String, separator: String = ";") = {
     ???
