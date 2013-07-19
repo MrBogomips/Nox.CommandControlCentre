@@ -21,7 +21,8 @@ object VehicleAssignementPersistedSerializer {
         "endAssignement" -> ISODateTimeFormat.date.print(va.endAssignement.getTime()),
         "enabled" -> va.enabled,
         "creationTime" -> ISODateTimeFormat.dateTime.print(va.creationTime.getTime()),
-        "modificationTime" -> ISODateTimeFormat.dateTime.print(va.modificationTime.getTime()))
+        "modificationTime" -> ISODateTimeFormat.dateTime.print(va.modificationTime.getTime()),
+        "version" -> va.version)
     }
   }
 }

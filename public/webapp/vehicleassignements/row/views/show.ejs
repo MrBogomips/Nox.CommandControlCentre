@@ -1,4 +1,4 @@
-  	<td><%=id%><input type="hidden" name="id" value="<%=id%>"><input type="hidden" id="version" name="version" value="<%=version%>"></td>
+  	<td><%=id%></td>
   	<td>
 	  	<select class="selectpicker span2" name="vehicleId">
 		  <% for(i in vehicles) {%>
@@ -27,10 +27,12 @@
   	</td>
   	<td>
 	<div class="switch">
-	    <input name="enabled" type="checkbox" id="va-<%=id%>" <% if (enabled){%>checked value="true"<%}%> >
+	    <input name="enabled" type="checkbox" id="va-cb-<%=id%>" <% if (enabled){%>checked value="true"<%}%> >
 	</div>
   	</td>
   	<td>
+  		<input type="hidden" name="id" value="<%=id%>">
+  		<input type="hidden" id="version" name="version" value="<%=version%>">
   		<nobr>
   		<div class="update-section">
   		<button class="btn update disabled" data-loading-text="wait ...">Update</button>
