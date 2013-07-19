@@ -8,7 +8,7 @@ steal(
 		/** @Static */
 		{
 			defaults : {
-				
+				id: -1
 			}
 		},
 		/** @Prototype */
@@ -24,7 +24,7 @@ steal(
 				var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 				// select the view
 				var view = '';
-				if (self.options['id'] != undefined) {
+				if (self.options['id'] > -1) {
 					view = "/assets/webapp/vehicleassignements/row/views/show.ejs";
 				}
 				else
@@ -94,6 +94,7 @@ steal(
 					// SUCCESS
 					self.options.id = data.id;
 					self.element.find("td.assignement-id").html(data.id);
+					self.element.find('input[name="id"]').val(data.id);
 					self.element.find("div.insert-section").hide();
 					self.element.find("div.update-section").show();
 					self.container.parent().find("button.create").removeClass('disabled');
@@ -130,6 +131,8 @@ steal(
 				.done(function(data, txtStatus, jqXHR) {
 					// SUCCESS
 					el.button('reset');
+					$version = self.element.find('input[name="version"]');
+					$version.attr('value', 1 + parseInt($version.attr('value')));
 					setTimeout(function() {
 					    el.addClass('disabled');
 					}, 0);

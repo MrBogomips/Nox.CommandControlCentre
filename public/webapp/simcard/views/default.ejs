@@ -51,7 +51,7 @@
 		  <label class="control-label" for="enabled">Enabled</label>
 		    <div class="controls">
 		    <div class="switch">
-		      <input type="checkbox" id="enabled" placeholder="enabled" name="enabled" <% if (enabled){%>checked value="true"<%}%> >
+		      <input type="checkbox" id="enabled" placeholder="enabled" name="enabled" <% if (enabled){%>checked<%}%> >
 		      </div>
 		    </div>
 	   </div>
@@ -65,8 +65,8 @@
 		  <label class="control-label" for="enabled">Last modification time</label>
 		    <div class="controls"><span class="uneditable-input"><%=modificationTime%></span></div>
 	   </div>
-	   <input type="hidden" id="version" name="version" value="<%=version%>">
 	 <%}%>
+	 <input type="hidden" name="version" value="<%=version%>">
 	</form>
 
   </div>
