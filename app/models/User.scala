@@ -12,6 +12,10 @@ import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 import org.postgresql.util.PSQLException
 
+private[models] object UserConstants {
+  val ANONYMOUS_LOGIN = "Anonymous"
+}
+
 /**
   * User status control the access to the system
   */
@@ -33,17 +37,18 @@ trait UserTrait extends Validatable {
   import scala.language.{ implicitConversions, reflectiveCalls }
 
   val login0: String
-  val login: String = login0.toLowerCase()
+  lazy val login: String = login0.toLowerCase()
   val displayName0: Option[String]
-  val displayName: String = displayName0.map(v => v).getOrElse(login)
+  lazy val displayName: String = displayName0.map(v => v).getOrElse(login)
   val password: Option[Password]
   val status: UserStatus
   val suspensionReason: Option[UserSuspensionReason]
 
   def validate {
+    val anonymousLogin = UserConstants.ANONYMOUS_LOGIN
     validateMinLength("login", login, 6)
-    if (login == Anonymous.login)
-      addValidationError("login", s"""login "${Anonymous.login}" is reserved""")
+    if (login == anonymousLogin)
+      addValidationError("login", s"""login "$anonymousLogin" is reserved""")
     if (status == UserStatus.SUSPENDED implies suspensionReason.isDefined)
       addValidationError("status", "suspended users requires a reason")
     if (suspensionReason.isDefined implies status == UserStatus.SUSPENDED)
@@ -96,8 +101,21 @@ case class User(login0: String, displayName0: Option[String], password: Option[P
 /**
   * Represents an unauthenticated user
   */
-//object Anonymous extends UserTrait 
-object Anonymous extends User("Anonymous", None, UserStatus.ACTIVE, None)
+
+object Anonymous
+  extends User("Anonymous", None, UserStatus.ACTIVE, None) {
+  override def validate {}
+}
+/*
+object Anonymous
+  extends UserTrait
+  with Model[UserTrait] {
+  val login0 = UserConstants.ANONYMOUS_LOGIN
+  val displayName0 = None
+  val password = None
+  val status = UserStatus.ACTIVE
+  val suspensionReason = None
+}*/
 
 //User(login = "Anonymous", None, UserStatus.ACTIVE, None)
 /**
