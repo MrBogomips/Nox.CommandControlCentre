@@ -1,5 +1,6 @@
 package models
 
+import patterns.models._
 import play.api.Logger
 import play.api.db._
 import play.api.Play.current
@@ -9,11 +10,8 @@ import scala.slick.session.Database
 import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
-
 import org.postgresql.util.PSQLException
-
 import org.joda.time.DateTime
-
 import utils.Converter._
 
 trait SimcardTrait extends Validatable {
@@ -40,29 +38,29 @@ case class Simcard(imei: String, displayName0: Option[String], description: Opti
 
 case class SimcardPersisted(id: Int, imei: String, displayName0: Option[String], description: Option[String], enabled: Boolean, mobileNumber: String, carrierId: Int, creationTime: Timestamp, modificationTime: Timestamp, version: Int)
   extends SimcardTrait
-  with Persistable[SimcardTrait] {
+  with Persisted[Simcard] {
   def this(id: Int, imei: String, displayName0: Option[String], description: Option[String], enabled: Boolean, mobileNumber: String, carrierId: Int, version: Int) =
     this(id, imei, displayName0, description, enabled, mobileNumber, carrierId, new Timestamp(0), new Timestamp(0), version)
 }
 
 object Simcards
-  extends Table[SimcardPersisted]("simcards")
+  extends Table[SimcardPersisted]("Simcards")
   with Backend
   with NameEntityCrudOperations[SimcardTrait, Simcard, SimcardPersisted] {
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def imei = column[String]("imei")
-  def displayName = column[String]("display_name")
+  def displayName = column[String]("displayName")
   def description = column[String]("description", O.Nullable)
   def enabled = column[Boolean]("enabled")
-  def mobileNumber = column[String]("mobile_number")
-  def carrierId = column[Int]("carrier_id")
+  def mobileNumber = column[String]("mobileNumber")
+  def carrierId = column[Int]("carrierId")
 
-  def _ctime = column[Timestamp]("_ctime")
-  def _mtime = column[Timestamp]("_mtime")
-  def _ver = column[Int]("_ver")
+  def creationTime = column[Timestamp]("creationTime")
+  def modificationTime = column[Timestamp]("modificationTime")
+  def version = column[Int]("version")
 
-  def * = id ~ imei ~ displayName.? ~ description.? ~ enabled ~ mobileNumber ~ carrierId ~ _ctime ~ _mtime ~ _ver <> (SimcardPersisted, SimcardPersisted.unapply _)
+  def * = id ~ imei ~ displayName.? ~ description.? ~ enabled ~ mobileNumber ~ carrierId ~ creationTime ~ modificationTime ~ version <> (SimcardPersisted, SimcardPersisted.unapply _)
 
   /**
     * Exception mapper
@@ -75,7 +73,7 @@ object Simcards
       throw new ValidationException(e, "imei", "Already in use")
     else if (errMessage.contains("simcards_mobile_number_ak"))
       throw new ValidationException(e, "mobileNumber", "Already in use")
-    else if (errMessage.contains("mtime_gte_ctime_chk"))
+    else if (errMessage.contains("mtime_gte_creationTime_chk"))
       throw new ValidationException(e, "creationTime,modificationTime", "Not in the correct sequence")
     else
       throw e;
@@ -114,16 +112,16 @@ object Simcards
     db withSession {
 
       val sql = sql"""
-    INSERT INTO #$tableName  (
+    INSERT INTO "#$tableName"  (
     		imei, 
-    		display_name,
+    		"displayName",
     		description,
     		enabled,
-    		mobile_number,
-    		carrier_id, 
-    		_ctime,
-    		_mtime,
-    		_ver
+    		"mobileNumber",
+    		"carrierId", 
+    		"creationTime",
+    		"modificationTime",
+    		version
     ) 
     VALUES (
     		${obj.imei},
@@ -144,15 +142,15 @@ object Simcards
   def update(uobj: SimcardPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
-	   UPDATE #$tableName
+	   UPDATE "#$tableName"
 	       SET imei = ${obj.imei},
-	           display_name = ${obj.displayName},
+	           "displayName" = ${obj.displayName},
 	    	   description = ${obj.description},
 	    	   enabled = ${obj.enabled},
-	    	   mobile_number = ${obj.mobileNumber},
-	           carrier_id = ${obj.carrierId},
-	           _mtime = NOW(),
-	           _ver = _ver + 1 
+	    	   "mobileNumber" = ${obj.mobileNumber},
+	           "carrierId" = ${obj.carrierId},
+	           "modificationTime" = NOW(),
+	           version = version + 1 
 		 WHERE id = ${obj.id}
 		 """
       executeUpdate(s"$tableName $obj", sql) == 1
@@ -161,24 +159,24 @@ object Simcards
   def updateWithVersion(uobj: SimcardPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
-	   UPDATE #$tableName
+	   UPDATE "#$tableName"
 	       SET imei = ${obj.imei},
-	           display_name = ${obj.displayName},
+	           "displayName" = ${obj.displayName},
 	    	   description = ${obj.description},
 	    	   enabled = ${obj.enabled},
-	    	   mobile_number = ${obj.mobileNumber},
-	           carrier_id = ${obj.carrierId},
-	           _mtime = NOW(),
-	           _ver = _ver + 1
+	    	   "mobileNumber" = ${obj.mobileNumber},
+	           "carrierId" = ${obj.carrierId},
+	           "modificationTime" = NOW(),
+	           version = version + 1
 		 WHERE id = ${obj.id}
-		   AND _ver = ${obj.version}
+		   AND version = ${obj.version}
 		 """
       executeUpdate(s"$tableName $obj", sql) == 1
     }
   }
   def deleteById(id: Int): Boolean = WithValidation {
     db withSession {
-      val sql = sqlu"DELETE FROM #$tableName WHERE id = ${id}"
+      val sql = sqlu"""DELETE FROM "#$tableName" WHERE id = ${id}"""
       executeDelete(s"$tableName $id", sql) == 1
     }
   }

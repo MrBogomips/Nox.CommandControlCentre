@@ -1,17 +1,16 @@
 package models
 
+import patterns.models._
+
 import play.api.Logger
 import play.api.db._
 import play.api.Play.current
-
 import java.sql.Timestamp
-
 import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.session.Database
 import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
-
 import org.postgresql.util.PSQLException
 
 trait DeviceGroupTrait extends NamedEntityTrait
@@ -25,26 +24,26 @@ case class DeviceGroup(name: String, displayName0: Option[String] = None, descri
 
 case class DeviceGroupPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends DeviceGroupTrait
-  with Persistable[DeviceGroupTrait]
+  with Persisted[DeviceGroup]
 
 /**
   * DeviceGroups table mapper
   */
 object DeviceGroups
-  extends Table[DeviceGroupPersisted]("device_groups")
+  extends Table[DeviceGroupPersisted]("DeviceGroups")
   with Backend
   with NameEntityCrudOperations[DeviceGroupTrait, DeviceGroup, DeviceGroupPersisted] {
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
-  def displayName = column[String]("display_name", O.Nullable)
+  def displayName = column[String]("displayName", O.Nullable)
   def description = column[String]("description", O.Nullable)
   def enabled = column[Boolean]("enabled")
-  def _ctime = column[Timestamp]("_ctime")
-  def _mtime = column[Timestamp]("_mtime")
-  def _ver = column[Int]("_ver")
+  def creationTime = column[Timestamp]("creationTime")
+  def modificationTime = column[Timestamp]("modificationTime")
+  def version = column[Int]("version")
 
-  def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ _ctime ~ _mtime ~ _ver <> (DeviceGroupPersisted, DeviceGroupPersisted.unapply _)
+  def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (DeviceGroupPersisted, DeviceGroupPersisted.unapply _)
 
   /**
     * Exception mapper
@@ -78,14 +77,14 @@ object DeviceGroups
     db withSession {
 
       val sql = sql"""
-    INSERT INTO #$tableName (
+    INSERT INTO "#$tableName" (
     		name, 
-    		display_name,
+    		"displayName",
     		description, 
     		enabled, 
-    		_ctime,
-    		_mtime,
-    		_ver
+    		"creationTime",
+    		"modificationTime",
+    		version
     ) 
     VALUES (
     		${obj.name},
@@ -104,13 +103,13 @@ object DeviceGroups
   def update(uobj: DeviceGroupPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
-    UPDATE  #$tableName
+    UPDATE  "#$tableName"
        SET name = ${obj.name},
-    	   display_name = ${obj.displayName},
+    	   "displayName" = ${obj.displayName},
     	   description = ${obj.description},
     	   enabled = ${obj.enabled},
-           _mtime = NOW(),
-           _ver = _ver + 1 
+           "modificationTime" = NOW(),
+           version = version + 1 
 	 WHERE id = ${obj.id}
 	 """
       executeUpdate(s"$tableName $obj", sql) == 1
@@ -119,21 +118,21 @@ object DeviceGroups
   def updateWithVersion(uobj: DeviceGroupPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
-    UPDATE  #$tableName
+    UPDATE  "#$tableName"
        SET name = ${obj.name},
-    	   display_name = ${obj.displayName},
+    	   "displayName" = ${obj.displayName},
     	   description = ${obj.description},
     	   enabled = ${obj.enabled},
-           _mtime = NOW(),
-           _ver = _ver + 1 
+           "modificationTime" = NOW(),
+           version = version + 1 
 	 WHERE id = ${obj.id}
-	 AND _ver = ${obj.version}
+	 AND version = ${obj.version}
 	 """
       executeUpdate(s"$tableName $obj", sql) == 1
     }
   }
   def deleteById(id: Int): Boolean = db withSession {
-    val sql = sqlu"DELETE FROM #$tableName WHERE id = $id"
+    val sql = sqlu"""DELETE FROM "#$tableName" WHERE id = $id"""
     executeDelete("Deleting from #$tableName record identified by $id", sql) == 1
   }
 }

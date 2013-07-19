@@ -1,5 +1,6 @@
 package models
 
+import patterns.models._
 import play.api.Logger
 import play.api.db._
 import play.api.Play.current

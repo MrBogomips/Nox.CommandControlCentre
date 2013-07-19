@@ -1,7 +1,10 @@
-package models
+package patterns.models
 
 import org.postgresql.util.PSQLException
 
+/**
+ * Represents a validation exception
+ */
 case class ValidationException(cause: Throwable, val validationErrors: Seq[ValidationError]) extends RuntimeException(cause) {
   //def this(key: String, conditions: Set[String]) = this(Seq(ValidationError(key, conditions)))
   def this(cause: Throwable, key: String, conditions: String*) = this(cause, Seq(ValidationError(key, conditions.toSet)))

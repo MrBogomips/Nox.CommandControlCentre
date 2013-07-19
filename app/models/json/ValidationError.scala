@@ -2,7 +2,7 @@ package models.json
 
 import play.api.libs.json._
 
-import models.ValidationError
+import patterns.models.ValidationError
 
 object ValidationErrorSerializer {
   /**

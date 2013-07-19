@@ -1,5 +1,7 @@
 package models
 
+import patterns.models._
+
 import play.api.Logger
 import play.api.db._
 import play.api.Play.current
@@ -9,12 +11,10 @@ import scala.slick.session.Database
 import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
-
 import org.postgresql.util.PSQLException
-
 import org.joda.time.DateTime
-
 import utils.Converter._
+
 
 trait DeviceTrait extends Validatable {
   val name: String
@@ -52,7 +52,7 @@ case class Device(name: String, displayName0: Option[String], description: Optio
 
 case class DevicePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int)
   extends DeviceTrait
-  with Persistable[DeviceTrait] {
+  with Persisted[Device] {
   def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int]) =
     this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, new Timestamp(0), new Timestamp(0), 0)
   def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], version: Int) =
@@ -61,32 +61,32 @@ case class DevicePersisted(id: Int, name: String, displayName0: Option[String], 
 
 case class DeviceInfoPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int, deviceTypeDisplayName: String, deviceGroupDisplayName: String, vehicleDisplayName: Option[String], vehicleLicensePlate: Option[String], simcardImei: Option[String], simcardDisplayName: Option[String])
   extends DeviceInfoTrait
-  with Persistable[DeviceInfoTrait]
+  with Persisted[Device]
 
 object Devices
-  extends Table[DevicePersisted]("devices")
+  extends Table[DevicePersisted]("Devices")
   with Backend 
   with NameEntityCrudOperations[DeviceTrait, Device, DevicePersisted]
   {
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
-  def displayName = column[String]("display_name")
+  def displayName = column[String]("displayName")
   def description = column[String]("description", O.Nullable)
   def enabled = column[Boolean]("enabled")
-  def simcardId = column[Int]("simcard_id", O.Nullable)
-  def deviceTypeId = column[Int]("device_type_id")
-  def deviceGroupId = column[Int]("device_group_id")
-  def vehicleId = column[Int]("vehicle_id", O.Nullable)
-  def _ctime = column[Timestamp]("_ctime")
-  def _mtime = column[Timestamp]("_mtime")
-  def _ver = column[Int]("_ver")
+  def simcardId = column[Int]("simcardId", O.Nullable)
+  def deviceTypeId = column[Int]("deviceTypeId")
+  def deviceGroupId = column[Int]("deviceGroupId")
+  def vehicleId = column[Int]("vehicleId", O.Nullable)
+  def creationTime = column[Timestamp]("creationTime")
+  def modificationTime = column[Timestamp]("modificationTime")
+  def version = column[Int]("version")
 
   def deviceTypeFk = foreignKey("device_type_fk", deviceTypeId, DeviceTypes)(_.id)
   def deviceGroupFk = foreignKey("device_group_fk", deviceGroupId, DeviceGroups)(_.id)
   def vehicleFk = foreignKey("vehicle_fk", vehicleId, Vehicles)(_.id)
 
-  def * = id ~ name ~ displayName.? ~ description.? ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ enabled ~ simcardId.? ~ _ctime ~ _mtime ~ _ver <> (DevicePersisted, DevicePersisted.unapply _)
+  def * = id ~ name ~ displayName.? ~ description.? ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ enabled ~ simcardId.? ~ creationTime ~ modificationTime ~ version <> (DevicePersisted, DevicePersisted.unapply _)
 
   /**
     * Exception mapper
@@ -97,7 +97,7 @@ object Devices
     val errMessage = e.getMessage()
     if (errMessage.contains("devices_name_key"))
       throw new ValidationException(e, "name", "Already in use")
-    else if (errMessage.contains("devices_vehicles_fk"))
+    else if (errMessage.contains("devices_Vehicles_fk"))
       throw new ValidationException(e, "vehicleId", "Not found")
     else if (errMessage.contains("device_type_fk"))
       throw new ValidationException(e, "deviceTypeId", "Not found")
@@ -105,7 +105,7 @@ object Devices
       throw new ValidationException(e, "deviceGroupId", "Not found")
     else if (errMessage.contains("devices_simcard_fk"))
       throw new ValidationException(e, "simcardId", "Not found")
-    else if (errMessage.contains("mtime_gte_ctime_chk"))
+    else if (errMessage.contains("mtime_gtecreationTime_chk"))
       throw new ValidationException(e, "creationTime,modificationTime", "Not in the correct sequence")
     else
       throw e;
@@ -134,24 +134,24 @@ object Devices
     val sql = enabled.map(en =>
       sql"""
     SELECT 
-    	D.id, D.name, D.display_name, D.description, D.device_type_id, D.device_group_id, D.vehicle_id, D.enabled, D.simcard_id, D._ctime, D._mtime, D._ver,
-    	DT.display_name, DG.display_name, V.display_name, V.license_plate, SC.imei, SC.display_name
-    FROM #$tableName D
-      INNER JOIN device_types DT ON D.device_type_id = DT.id
-      INNER JOIN device_groups DG ON D.device_group_id = DG.id
-      LEFT JOIN vehicles V ON D.vehicle_id = V.id
-      LEFT JOIN simcards SC ON D.simcard_id = SC.id
-    WHERE D.enabled = $en
+    	D."id", D."name", D."displayName", D."description", D."deviceTypeId", D."deviceGroupId", D."vehicleId", D."enabled", D."simcardId", D."creationTime", D."modificationTime", D."version",
+    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC."imei", SC."displayName"
+    FROM "#$tableName" D
+      INNER JOIN "DeviceTypes" DT ON D."deviceTypeId" = DT."id"
+      INNER JOIN "DeviceGroups" DG ON D."deviceGroupId" = DG."id"
+      LEFT JOIN "Vehicles" V ON D."vehicleId" = V."id"
+      LEFT JOIN "Simcards" SC ON D."simcardId" = SC."id"
+    WHERE D."enabled" = $en
     """).getOrElse(
       sql"""
     SELECT 
-    	D.id, D.name, D.display_name, D.description, D.device_type_id, D.device_group_id, D.vehicle_id, D.enabled, D.simcard_id, D._ctime, D._mtime, D._ver,
-    	DT.display_name, DG.display_name, V.display_name, V.license_plate, SC.imei, SC.display_name
-    FROM #$tableName D
-      INNER JOIN device_types DT ON D.device_type_id = DT.id
-      INNER JOIN device_groups DG ON D.device_group_id = DG.id
-      LEFT JOIN vehicles V ON D.vehicle_id = V.id
-      LEFT JOIN simcards SC ON D.simcard_id = SC.id
+    	D."id", D."name", D."displayName", D."description", D."deviceTypeId", D."deviceGroupId", D."vehicleId", D."enabled", D."simcardId", D."creationTime", D."modificationTime", D."version",
+    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC."imei", SC."displayName"
+    FROM "#$tableName" D
+      INNER JOIN "DeviceTypes" DT ON D."deviceTypeId" = DT."id"
+      INNER JOIN "DeviceGroups" DG ON D."deviceGroupId" = DG."id"
+      LEFT JOIN "Vehicles" V ON D."vehicleId" = V."id"
+      LEFT JOIN "Simcards" SC ON D."simcardId" = SC."id"
     """)
 
     executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[DeviceInfoPersisted]) { _.list }
@@ -166,13 +166,13 @@ object Devices
   def findWithInfoById(id: Int): Option[DeviceInfoPersisted] = db withSession {
     val sql = sql"""
     SELECT 
-    	D.id, D.name, D.display_name, D.description, D.device_type_id, D.device_group_id, D.vehicle_id, D.enabled, D.simcard_id, D._ctime, D._mtime, D._ver,
-    	DT.display_name, DG.display_name, V.display_name, V.license_plate, SC.imei, SC.display_name
-    FROM #$tableName D
-      INNER JOIN device_types DT ON D.device_type_id = DT.id
-      INNER JOIN device_groups DG ON D.device_group_id = DG.id
-      LEFT JOIN vehicles V ON D.vehicle_id = V.id
-      LEFT JOIN simcards SC ON D.simcard_id = SC.id
+    	D.id, D.name, D."displayName", D.description, D."deviceTypeId", D."deviceGroupId", D."vehicleId", D.enabled, D."simcardId", D."creationTime", D."modificationTime", D.version,
+    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC.imei, SC."displayName"
+    FROM "#$tableName" D
+      INNER JOIN "DeviceTypes" DT ON D."deviceTypeId" = DT.id
+      INNER JOIN "DeviceGroups" DG ON D."deviceGroupId" = DG.id
+      LEFT JOIN "Vehicles" V ON D."vehicleId" = V.id
+      LEFT JOIN "Simcards" SC ON D."simcardId" = SC.id
     WHERE D.id = $id
     """
 
@@ -188,13 +188,13 @@ object Devices
   def findWithInfoByName(name: String): Option[DeviceInfoPersisted] = db withSession {
     val sql = sql"""
     SELECT 
-    	D.id, D.name, D.display_name, D.description, D.device_type_id, D.device_group_id, D.vehicle_id, D.enabled, D.simcard_id, D._ctime, D._mtime, D._ver,
-    	DT.display_name, DG.display_name, V.display_name, V.license_plate, SC.imei, SC.display_name
-    FROM #$tableName D
-      INNER JOIN device_types DT ON D.device_type_id = DT.id
-      INNER JOIN device_groups DG ON D.device_group_id = DG.id
-      LEFT JOIN vehicles V ON D.vehicle_id = V.id
-      LEFT JOIN simcards SC ON D.simcard_id = SC.id
+    	D.id, D.name, D."displayName", D.description, D."deviceTypeId", D."deviceGroupId", D."vehicleId", D.enabled, D."simcardId", D."creationTime", D."modificationTime", D.version,
+    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC.imei, SC."displayName"
+    FROM "#$tableName" D
+      INNER JOIN "DeviceTypes" DT ON D."deviceTypeId" = DT.id
+      INNER JOIN "DeviceGroups" DG ON D."deviceGroupId" = DG.id
+      LEFT JOIN "Vehicles" V ON D."vehicleId" = V.id
+      LEFT JOIN "Simcards" SC ON D."simcardId" = SC.id
     WHERE D.name = $name
     """
 
@@ -204,18 +204,18 @@ object Devices
   def insert(uobj: Device): Int = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sql"""
-    INSERT INTO #$tableName  (
+    INSERT INTO "#$tableName"  (
     		name, 
-    		display_name,
+    		"displayName",
     		description,
     		enabled,
-    		simcard_id,
-    		device_type_id, 
-    		device_group_id,
-    		vehicle_id,
-    		_ctime,
-    		_mtime,
-    		_ver
+    		"simcardId",
+    		"deviceTypeId", 
+    		"deviceGroupId",
+    		"vehicleId",
+    		"creationTime",
+    		"modificationTime",
+    		version
     ) 
     VALUES (
     		${obj.name},
@@ -238,17 +238,17 @@ object Devices
   def update(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
-	   UPDATE #$tableName
+	   UPDATE "#$tableName"
 	       SET name = ${obj.name},
-	           display_name = ${obj.displayName},
+	           "displayName" = ${obj.displayName},
 	    	   description = ${obj.description},
 	    	   enabled = ${obj.enabled},
-	    	   simcard_id = ${obj.simcardId},
-	           device_type_id = ${obj.deviceTypeId},
-	           device_group_id = ${obj.deviceGroupId},
-	           vehicle_id = ${obj.vehicleId},
-	           _mtime = NOW(),
-	           _ver = _ver + 1 
+	    	   "simcardId" = ${obj.simcardId},
+	           "deviceTypeId" = ${obj.deviceTypeId},
+	           "deviceGroupId" = ${obj.deviceGroupId},
+	           "vehicleId" = ${obj.vehicleId},
+	           "modificationTime" = NOW(),
+	           version = version + 1 
 		 WHERE id = ${obj.id}
 		 """
       executeUpdate(s"$tableName $obj", sql) == 1
@@ -257,26 +257,26 @@ object Devices
   def updateWithVersion(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
-	   UPDATE #$tableName
+	   UPDATE "#$tableName"
 	       SET name = ${obj.name},
-	           display_name = ${obj.displayName},
+	           "displayName" = ${obj.displayName},
 	    	   description = ${obj.description},
 	    	   enabled = ${obj.enabled},
-	    	   simcard_id = ${obj.simcardId},	    	   
-	           device_type_id = ${obj.deviceTypeId},
-	           device_group_id = ${obj.deviceGroupId},
-	           vehicle_id = ${obj.vehicleId},
-	           _mtime = NOW(),
-	           _ver = _ver + 1 
+	    	   "simcardId" = ${obj.simcardId},	    	   
+	           "deviceTypeId" = ${obj.deviceTypeId},
+	           "deviceGroupId" = ${obj.deviceGroupId},
+	           "vehicleId" = ${obj.vehicleId},
+	           "modificationTime" = NOW(),
+	           version = version + 1 
 		 WHERE id = ${obj.id}
-		   AND _ver = ${obj.version}
+		   AND version = ${obj.version}
 		 """
       executeUpdate(s"$tableName $obj", sql) == 1
     }
   }
   def deleteById(id: Int): Boolean = WithValidation {
     db withSession {
-      val sql = sqlu"DELETE FROM #$tableName WHERE id = ${id}"
+      val sql = sqlu"""DELETE FROM "#$tableName" WHERE id = ${id}"""
       executeDelete("$tableName $id", sql) == 1
     }
   }

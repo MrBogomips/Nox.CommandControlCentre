@@ -1,12 +1,10 @@
-package models
+package patterns.models
 
 import play.api.Logger
 import play.api.db.DB
 import play.api.Play.current
 import scala.slick.session.{ Database, Session }
-import scala.slick.jdbc.{ StaticQuery0, SQLInterpolationResult, GetResult }
-
-import org.postgresql.util.PSQLException
+import scala.slick.jdbc.{StaticQuery0, GetResult}
 
 object BackendOperation extends Enumeration {
   type BackendOperation = Value

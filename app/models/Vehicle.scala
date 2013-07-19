@@ -1,5 +1,6 @@
 package models
 
+import patterns.models._
 import play.api.Logger
 import play.api.db._
 import play.api.Play.current
@@ -9,7 +10,6 @@ import scala.slick.session.Database
 import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
-
 import org.postgresql.util.PSQLException
 
 trait VehicleTrait extends NamedEntityTrait {
@@ -33,27 +33,27 @@ case class Vehicle(name: String, displayName0: Option[String], description: Opti
 
 case class VehiclePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends VehicleTrait
-  with Persistable[VehicleTrait]
+  with Persisted[Vehicle]
 
 object Vehicles
-  extends Table[VehiclePersisted]("vehicles")
+  extends Table[VehiclePersisted]("Vehicles")
   with Backend
   with NameEntityCrudOperations[VehicleTrait, Vehicle, VehiclePersisted] {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
-  def displayName = column[String]("display_name")
+  def displayName = column[String]("displayName")
   def description = column[String]("description", O.Nullable)
   def enabled = column[Boolean]("enabled")
   def model = column[String]("model")
-  def licensePlate = column[String]("license_plate")
-  def _ctime = column[Timestamp]("_ctime")
-  def _mtime = column[Timestamp]("_mtime")
-  def _ver = column[Int]("_ver")
+  def licensePlate = column[String]("licensePlate")
+  def creationTime = column[Timestamp]("creationTime")
+  def modificationTime = column[Timestamp]("modificationTime")
+  def version = column[Int]("version")
 
   //def deviceTypeFk = foreignKey("defice_type_fk", deviceTypeId, DeviceTypes)(_.id)
   //def deviceGroupFk = foreignKey("defice_group_fk", deviceGroupId, DeviceGroups)(_.id)
 
-  def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ model ~ licensePlate ~ _ctime ~ _mtime ~ _ver <> (VehiclePersisted.apply _, VehiclePersisted.unapply _)
+  def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ model ~ licensePlate ~ creationTime ~ modificationTime ~ version <> (VehiclePersisted.apply _, VehiclePersisted.unapply _)
 
   /**
     * Exception mapper
@@ -87,16 +87,16 @@ object Vehicles
   def insert(uobj: Vehicle): Int = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sql"""
-    INSERT INTO vehicles (
+    INSERT INTO "#$tableName" (
     		name, 
-    		display_name,
+    		"displayName",
     		description,
     		enabled, 
     		model,
-    		license_plate,
-    		_ctime,
-    		_mtime,
-    		_ver
+    		"licensePlate",
+    		"creationTime",
+    		"modificationTime",
+    		version
     ) 
     VALUES (
     		${obj.name},
@@ -119,15 +119,15 @@ object Vehicles
     db withSession {
       Logger.debug(s"description = ${obj.description}")
       val sql = sqlu"""
-   UPDATE vehicles
+   UPDATE "#$tableName"
        SET name = ${obj.name},
-           display_name = ${obj.displayName},
+           "displayName" = ${obj.displayName},
     	   description = ${obj.description},
     	   enabled = ${obj.enabled},
     	   model = ${obj.model},
-    	   license_plate = ${obj.licensePlate}, 
-           _mtime = NOW(),
-           _ver = _ver + 1 
+    	   "licensePlate" = ${obj.licensePlate}, 
+           "modificationTime" = NOW(),
+           version = version + 1 
 	 WHERE id = ${obj.id}
 	 """
       executeUpdate(s"vehicle $obj", sql) == 1
@@ -136,23 +136,23 @@ object Vehicles
   def updateWithVersion(uobj: models.VehiclePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
-    UPDATE vehicles
+    UPDATE "#$tableName"
        SET name = ${obj.name},
-           display_name = ${obj.displayName},
+           "displayName" = ${obj.displayName},
     	   description = ${obj.description},
     	   enabled = ${obj.enabled},
     	   model = ${obj.model},
-    	   license_plate = ${obj.licensePlate},
-           _mtime = NOW(),
-           _ver = _ver + 1 
+    	   "licensePlate" = ${obj.licensePlate},
+           "modificationTime" = NOW(),
+           version = version + 1 
 	 WHERE id = ${obj.id}
-	   AND _ver = ${obj.version}
+	   AND version = ${obj.version}
 	 """
       executeUpdate(s"vehicle $obj with version check", sql) == 1
     }
   }
   def deleteById(id: Int): Boolean = db withSession {
-    val sql = sqlu"DELETE FROM #$tableName WHERE id = $id"
+    val sql = sqlu"""DELETE FROM "#$tableName" WHERE id = $id"""
     executeDelete("Deleting from #$tableName record identified by $id", sql) == 1
   }
 }

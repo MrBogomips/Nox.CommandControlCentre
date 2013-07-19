@@ -1,17 +1,15 @@
 package models
 
+import patterns.models._
 import play.api.Logger
 import play.api.db._
 import play.api.Play.current
-
 import java.sql.Timestamp
-
 import scala.slick.driver.PostgresDriver.simple._
 import scala.slick.session.Database
 import Database.threadLocalSession
 import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
-
 import org.postgresql.util.PSQLException
 
 /**
@@ -107,7 +105,7 @@ object Anonymous extends User("Anonymous", None, UserStatus.ACTIVE, None)
   */
 case class UserPersisted(id: Int, login0: String, displayName0: Option[String], password: Option[Password], status: UserStatus, suspensionReason: Option[UserSuspensionReason], creationTime: Timestamp, modificationTime: Timestamp, version: Int)
   extends UserTrait
-  with Persistable[UserTrait] {
+  with Persisted[User] {
 
   /**
     * Save current user without checking the version of the record, that means that other updates
@@ -134,7 +132,7 @@ case class UserPersisted(id: Int, login0: String, displayName0: Option[String], 
 }
 
 object Users
-  extends Table[UserPersisted]("users")
+  extends Table[UserPersisted]("Users")
   with Backend
   with NameEntityCrudOperations[UserTrait, User, UserPersisted] {
   implicit val statusMapper = MappedTypeMapper.base[UserStatus, String](_.toString, UserStatus.withName(_))
@@ -143,15 +141,15 @@ object Users
 
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def login = column[String]("login")
-  def displayName = column[String]("display_name")
+  def displayName = column[String]("displayName")
   def password = column[Password]("password")
   def status = column[UserStatus]("status")
-  def suspensionReason = column[UserSuspensionReason]("suspension_reason")
-  def _ctime = column[Timestamp]("_ctime")
-  def _mtime = column[Timestamp]("_mtime")
-  def _ver = column[Int]("_ver")
+  def suspensionReason = column[UserSuspensionReason]("suspensionReason")
+  def creationTime = column[Timestamp]("creationTime")
+  def modificationTime = column[Timestamp]("modificationTime")
+  def version = column[Int]("version")
 
-  def * = id ~ login ~ displayName.? ~ password.? ~ status ~ suspensionReason.? ~ _ctime ~ _mtime ~ _ver <> (UserPersisted.apply _, UserPersisted.unapply _)
+  def * = id ~ login ~ displayName.? ~ password.? ~ status ~ suspensionReason.? ~ creationTime ~ modificationTime ~ version <> (UserPersisted.apply _, UserPersisted.unapply _)
 
   /**
     * Exception mapper
@@ -218,13 +216,13 @@ object Users
       val sql = sql"""
     INSERT INTO #$tableName (
     		login, 
-    		display_name,
+    		displayName,
     		password, 
     		status, 
-    		suspension_reason,
-    		_ctime,
-    		_mtime,
-    		_ver
+    		suspensionReason,
+    		creationTime,
+    		modificationTime,
+    		version
     ) 
     VALUES (
     		${user.login},
@@ -253,12 +251,12 @@ object Users
     db withSession {
       val sql = sqlu"""
     UPDATE #$tableName
-       SET display_name = ${user.displayName},
+       SET displayName = ${user.displayName},
     	   password = ${user.password.map(_.secretPassword)},
     	   status = ${user.status.toString},
-           suspension_reason = ${user.suspensionReason.map(_.toString)},
-           _mtime = NOW(),
-           _ver = _ver + 1 
+           suspensionReason = ${user.suspensionReason.map(_.toString)},
+           modificationTime = NOW(),
+           version = version + 1 
 	 WHERE id = ${user.id}
 	 """
       executeUpdate("user $user", sql) == 1
@@ -274,14 +272,14 @@ object Users
     db withSession {
       val sql = sqlu"""
     UPDATE #$tableName
-       SET display_name = ${user.displayName},
+       SET displayName = ${user.displayName},
     	   password = ${user.password.map(_.secretPassword)},
     	   status = ${user.status.toString},
-           suspension_reason = ${user.suspensionReason.map(_.toString)},
-           _mtime = NOW(),
-           _ver = _ver + 1
+           suspensionReason = ${user.suspensionReason.map(_.toString)},
+           modificationTime = NOW(),
+           version = version + 1
 	 WHERE id = ${user.id}
-	   AND _ver = ${user.version}"""
+	   AND version = ${user.version}"""
       executeUpdate("user $user with version check", sql) == 1
     }
   }

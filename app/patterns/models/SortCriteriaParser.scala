@@ -1,4 +1,7 @@
-package models
+package patterns.models
+
+import scala.Array.canBuildFrom
+import scala.Option.option2Iterable
 
 /**
   * Utility class to define sorting criterias over a query (i.e. a table)

@@ -1,5 +1,6 @@
 package models
 
+import patterns.models._
 import play.api.libs.json._
 
 package object json {

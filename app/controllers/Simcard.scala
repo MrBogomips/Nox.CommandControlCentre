@@ -9,7 +9,7 @@ import play.api.data.Forms._
 import models.{ Simcards, Simcard => SimcardModel, SimcardPersisted }
 import models.json._
 import org.joda.time.format.ISODateTimeFormat
-import models.ValidationException
+import patterns.models.ValidationException
 
 object Simcard extends Secured {
 

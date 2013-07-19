@@ -1,4 +1,4 @@
-package models
+package patterns.models
 
 import scala.slick.driver.PostgresDriver.simple._
 
@@ -9,7 +9,7 @@ import scala.slick.driver.PostgresDriver.simple._
   * @tparam B Represents the model class
   * @tparam C Represents the persisted class
   */
-trait CrudOperations[A <: Validatable, B <: Model[A], C <: Persistable[A]] {
+trait CrudOperations[A <: Validatable, B <: Model[A], C <: Persisted[B]] {
   def find(enabled: Option[Boolean] = None): Seq[C]
   def findById(id: Int): Option[C]
   def insert(uobj: B): Int
@@ -26,7 +26,7 @@ trait CrudOperations[A <: Validatable, B <: Model[A], C <: Persistable[A]] {
  * @tparam B Represents the model class
  * @tparam C Represents the persisted class
  */
-trait NameEntityCrudOperations[A <: Validatable, B <: Model[A], C <: Persistable[A]]
+trait NameEntityCrudOperations[A <: Validatable, B <: Model[A], C <: Persisted[B]]
   extends CrudOperations[A, B, C] {
   def findByName(name: String): Option[C]
 }
