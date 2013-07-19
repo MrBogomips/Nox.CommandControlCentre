@@ -10,9 +10,9 @@ steal(function($) {
 			id : '',
 			name : '',
 			surname : '',
-			display_name : '',
-			creation_time : '',
-			modification_time : '',
+			displayName : '',
+			creationTime : '',
+			modificationTime : '',
 			enabled : true,
 			version: -1,
 			serverController: jsRoutes.controllers.Driver

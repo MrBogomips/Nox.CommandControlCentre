@@ -2,14 +2,14 @@
   	<td>
 	  	<select class="selectpicker span2" name="vehicleId">
 		  <% for(i in vehicles) {%>
-	      <option value="<%=vehicles[i].id%>"  <% if (vehicles[i].id == vehicleId) {%> selected='selected' <%}%>><%=vehicles[i].display_name%></option>
+	      <option value="<%=vehicles[i].id%>"  <% if (vehicles[i].id == vehicleId) {%> selected='selected' <%}%>><%=vehicles[i].displayName%></option>
 	     <% } %>
 		</select>
   	</td>
   	<td>
   	<select class="selectpicker span2" name="driverId">
 		  <% for(i in drivers) {%>
-	      <option value="<%=drivers[i].id%>"  <% if (drivers[i].id == driverId) {%> selected='selected' <%}%>><%=drivers[i].display_name%></option>
+	      <option value="<%=drivers[i].id%>"  <% if (drivers[i].id == driverId) {%> selected='selected' <%}%>><%=drivers[i].displayName%></option>
 	     <% } %>
 		</select>
   	</td>
@@ -27,7 +27,7 @@
   	</td>
   	<td>
 	<div class="switch">
-	    <input name="enabled" type="checkbox" id="va-cb-<%=id%>" <% if (enabled){%>checked value="true"<%}%> >
+	    <input name="enabled" type="checkbox" id="va-cb-<%=id%>" <% if (enabled){%>checked<%}%> >
 	</div>
   	</td>
   	<td>

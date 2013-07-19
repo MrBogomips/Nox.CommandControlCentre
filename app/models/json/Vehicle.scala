@@ -14,13 +14,14 @@ object VehiclePersistedSerializer {
       Json.obj(
         "id" -> r.id,
         "name" -> r.name,
-        "display_name" -> r.displayName,
+        "displayName" -> r.displayName,
         "description" -> r.description,
         "enabled" -> r.enabled,
         "model" -> r.model,
-        "license_plate" -> r.licensePlate,
-        "creation_time" -> ISODateTimeFormat.dateTime.print(r.creationTime.getTime()),
-        "modification_time" -> ISODateTimeFormat.dateTime.print(r.modificationTime.getTime()))
+        "licensePlate" -> r.licensePlate,
+        "creationTime" -> ISODateTimeFormat.dateTime.print(r.creationTime.getTime()),
+        "modificationTime" -> ISODateTimeFormat.dateTime.print(r.modificationTime.getTime()),
+        "version" -> r.version)
     }
   }
 }

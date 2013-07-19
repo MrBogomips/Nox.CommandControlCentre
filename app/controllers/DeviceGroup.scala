@@ -45,13 +45,13 @@ object DeviceGroup extends Secured {
   val createForm = Form(
     tuple(
       "name" -> nonEmptyText(minLength = 3),
-      "display_name" -> optional(text),
+      "displayName" -> optional(text),
       "description" -> optional(text),
       "enabled" -> boolean))
   val updateForm = Form(
     tuple(
       "name" -> nonEmptyText(minLength = 3),
-      "display_name" -> optional(text),
+      "displayName" -> optional(text),
       "description" -> optional(text),
       "enabled" -> boolean,
       "version" -> number))

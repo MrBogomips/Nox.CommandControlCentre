@@ -44,13 +44,13 @@ object Driver extends Secured {
     tuple(
       "name" -> nonEmptyText(minLength = 3),
       "surname" -> nonEmptyText(minLength = 3),
-      "display_name" -> optional(text),
+      "displayName" -> optional(text),
       "enabled" -> boolean))
   val updateForm = Form(
     tuple(
       "name" -> nonEmptyText(minLength = 3),
       "surname" -> nonEmptyText(minLength = 3),
-      "display_name" -> optional(text),
+      "displayName" -> optional(text),
       "enabled" -> boolean,
       "version" -> number))
 

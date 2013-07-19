@@ -21,7 +21,7 @@
 	  <div class="control-group">
 	    <label class="control-label" for="display_name">Display name</label>
 	    <div class="controls">
-	      <input type="text" name="display_name" id="display_name" placeholder="display name" value="<%=display_name%>">
+	      <input type="text" name="displayName" id="displayName" placeholder="display name" value="<%=displayName%>">
 	    </div>
 	  </div>
 	  
@@ -36,22 +36,22 @@
 		  <label class="control-label" for="enabled">Enabled</label>
 		    <div class="controls">
 		    <div class="switch">
-		      <input type="checkbox" id="enabled" placeholder="enabled" name="enabled" <% if (enabled){%>checked value="true"<%}%> >
+		      <input type="checkbox" id="enabled" placeholder="enabled" name="enabled" <% if (enabled){%>checked<%}%> >
 		    </div>
 		    </div>
 	   </div>
 	   
-	 <% if (creation_time != "") {%>
+	 <% if (creationTime != "") {%>
 	   <div class="control-group">
 		  <label class="control-label" for="enabled">Creation time</label>
-		    <div class="controls"><span class="uneditable-input"><%=creation_time%></span></div>
+		    <div class="controls"><span class="uneditable-input"><%=creationTime%></span></div>
 	   </div>
 	   <div class="control-group">
 		  <label class="control-label" for="enabled">Last modification time</label>
-		    <div class="controls"><span class="uneditable-input"><%=modification_time%></span></div>
+		    <div class="controls"><span class="uneditable-input"><%=modificationTime%></span></div>
 	   </div>
-	   <input type="hidden" id="version" name="version" value="<%=version%>">
 	 <%}%>
+	 <input type="hidden" name="version" value="<%=version%>">
 	</form>
 
   </div>

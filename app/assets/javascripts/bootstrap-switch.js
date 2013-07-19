@@ -35,6 +35,12 @@
 
             if ($element.data('on') !== undefined)
               color = "switch-" + $element.data('on');
+           
+            
+            if ($element.find('input').is(':checked')) // GC: supports true/false values
+            	$element.find('input').val(true)
+            else
+            	$element.find('input').val(false)
 
             if ($element.data('on-label') !== undefined)
               onLabel = $element.data('on-label');

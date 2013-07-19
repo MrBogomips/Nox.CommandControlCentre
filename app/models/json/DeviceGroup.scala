@@ -14,11 +14,12 @@ object DeviceGroupPersistedSerializer {
       Json.obj(
         "id" -> d.id,
         "name" -> d.name,
-        "display_name" -> d.displayName,
+        "displayName" -> d.displayName,
         "description" -> d.description,
         "enabled" -> d.enabled,
-        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
-        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
+        "creationTime" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
+        "modificationTime" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()),
+        "version" -> d.version)
     }
   }
 }

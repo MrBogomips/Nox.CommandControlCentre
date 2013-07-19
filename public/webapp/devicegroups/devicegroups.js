@@ -11,13 +11,13 @@ steal(
 				id : '',
 				model : '',
 				name : '',
-				display_name : '',
+				displayName : '',
 				description: '',
-				type_id: '',
-				group_id: '',
-				creation_time: '',
+				//type_id: '',
+				//group_id: '',
+				creationTime: '',
 				enabled: true,
-				modification_time: '',
+				modificationTime: '',
 				version: -1,
 				serverController: jsRoutes.controllers.DeviceGroup
 			}
