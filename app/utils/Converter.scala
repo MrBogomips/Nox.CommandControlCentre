@@ -4,7 +4,7 @@ import scala.language.implicitConversions
 import scala.slick.lifted.MappedTypeMapper
 import java.sql.Timestamp
 import org.joda.time.DateTime
-import models.ValidationError
+import patterns.models.ValidationError
 import play.api.libs.json.Writes
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json

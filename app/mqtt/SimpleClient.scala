@@ -5,13 +5,13 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 import org.eclipse.paho.client.mqttv3._
-import patterns.disposable._
 
 /**
   * A very simple MQTT client
   */
 class SimpleClient(brokerUri: String, clientId: String)
-  extends Disposable {
+  extends java.lang.AutoCloseable
+  {
 
   private val conf = play.Configuration.root()
   
@@ -45,7 +45,7 @@ class SimpleClient(brokerUri: String, clientId: String)
     mqtt.disconnect()
   }
 
-  def dispose = if (isConnected) disconnect
+  def close = if (isConnected) disconnect
 
   def publish(topic: String, message: String): Unit = logMethod("publish") {
     if (conf.getBoolean("nox.mqtt.logging.log_message"))

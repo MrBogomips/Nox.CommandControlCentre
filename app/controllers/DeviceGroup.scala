@@ -6,42 +6,31 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
-import models._
+import models.{DeviceGroup => DeviceGroupModel, DeviceGroupPersisted, DeviceGroups}
+
+import java.sql.Timestamp
 
 import org.joda.time.format.ISODateTimeFormat
 
-object DeviceGroup extends Secured {
-  /**
-    * DeviceGroupPersisted JSON serializer
-    */
-  implicit val groupJsonWriter = new Writes[DeviceGroupPersisted] {
-    def writes(d: DeviceGroupPersisted): JsValue = {
-      Json.obj(
-        "id" -> d.id,
-        "name" -> d.name,
-        "display_name" -> d.displayName,
-        "description" -> d.description,
-        "enabled" -> d.enabled,
-        "creation_time" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
-        "modification_time" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()))
-    }
-  }
+import models.json.deviceGroupPersistedJsonWriter
 
+object DeviceGroup extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
-    val groups = all match {
-      case false ⇒ DeviceGroups.findAllEnabled
-      case true  ⇒ DeviceGroups.findAll
+    implicit val req = request
+    val deviceGroups = all match {
+      case false => DeviceGroups.find(Some(true))
+      case true => DeviceGroups.find(None)
     }
     if (acceptsJson(request)) {
-      Ok(Json.toJson(groups))
+      Ok(Json.toJson(deviceGroups))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.devicegroup.index(groups, user))
+      Ok(views.html.aria.devicegroup.index(deviceGroups, user))
     } else {
       BadRequest
     }
   }
   
-   def get(id: Int) = WithAuthentication { (user, request) ⇒
+  def get(id: Int) = WithAuthentication { (user, request) ⇒
     DeviceGroups.findById(id).map { d ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
@@ -52,58 +41,52 @@ object DeviceGroup extends Secured {
       }
     }.getOrElse(NotFound);
   }
-  
+
   val createForm = Form(
     tuple(
       "name" -> nonEmptyText(minLength = 3),
-      "display_name" -> optional(text),
+      "displayName" -> optional(text),
       "description" -> optional(text),
-      "enabled" -> optional(text)))
-      
-  def create = WithAuthentication { implicit request ⇒
+      "enabled" -> boolean))
+  val updateForm = Form(
+    tuple(
+      "name" -> nonEmptyText(minLength = 3),
+      "displayName" -> optional(text),
+      "description" -> optional(text),
+      "enabled" -> boolean,
+      "version" -> number))
+
+  def create = WithAuthentication { implicit request =>
     createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, display_name, description, enabled) ⇒
-          if (DeviceGroups.findByName(name).isDefined) {
-            BadRequest("""{"name": ["A device group with the same name already exists"]}""").as("application/json")
-          } else {
-            var d = new DeviceGroup(name, description)
-            display_name.map(desc ⇒ d = d.copy(displayName = desc))
-            d = d.copy(
-              enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false },
-              description = description)
-            val id = DeviceGroups.insert(d)
-            Ok(s"id=$id")
+        case (name, displayName, description, enabled) =>
+          val dt = DeviceGroupModel(name, displayName, description, enabled)
+          val id = DeviceGroups.insert(dt)
+          Ok(s"""{"id"=id}""")
+      })
+  }
+  
+  def update(id: Int) = WithAuthentication { implicit request =>
+    updateForm.bindFromRequest.fold(
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
+      {
+        case (name, displayName, description, enabled, version) =>
+          val dtp = DeviceGroupPersisted(id, name, displayName, description, enabled, version = version)
+          //Simcards.up
+          DeviceGroups.update(dtp) match {
+            case true => Ok(s"DeviceGroup $id updated successfully")
+            case _ => NotFound
           }
       })
   }
-  
-  def update(id: Int) = WithAuthentication { implicit request ⇒
-    createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (name, display_name, description, enabled) ⇒
-          DeviceGroups.findById(id).map { x ⇒
-            var d = x
-            display_name.map(desc ⇒ d = d.copy(displayName = desc))
-            d = d.copy(
-              name = name,
-              description = description,
-              enabled = enabled match { case Some("on") ⇒ true case _ ⇒ false })
-            if (DeviceGroups.update(d)) {
-              Ok(s"Device group $id updated successfully")
-            } else {
-              NotFound("Device group $id wasn't updated")
-            }
-          }.getOrElse(NotFound)
-      })
-  }
-  
+
   def delete(id: Int) = WithAuthentication {
     DeviceGroups.deleteById(id) match {
-      case true ⇒ Ok(s"Device type $id deleted successfully")
+      case true ⇒ Ok(s"Device Group $id deleted successfully")
       case _ ⇒ NotFound
     }
   }
 }
+
+

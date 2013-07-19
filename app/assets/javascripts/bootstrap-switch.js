@@ -35,6 +35,12 @@
 
             if ($element.data('on') !== undefined)
               color = "switch-" + $element.data('on');
+           
+            
+            if ($element.find('input').is(':checked')) // GC: supports true/false values
+            	$element.find('input').val(true)
+            else
+            	$element.find('input').val(false)
 
             if ($element.data('on-label') !== undefined)
               onLabel = $element.data('on-label');
@@ -119,9 +125,14 @@
 
               if (state === thisState) {
 
-                if (thisState)
-                  $element.removeClass('switch-off').addClass('switch-on');
-                else $element.removeClass('switch-on').addClass('switch-off');
+                if (thisState) {
+                	$element.removeClass('switch-off').addClass('switch-on');
+                	$this.val(true); // GC: simplify support REST API
+                }
+                else {
+                	$element.removeClass('switch-on').addClass('switch-off');
+                	$this.val(false); // GC: simplify support REST API
+                }
 
                 if ($element.data('animated') !== false)
                   $element.addClass("switch-animate");

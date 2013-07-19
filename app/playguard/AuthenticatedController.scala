@@ -7,7 +7,7 @@ import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
 
-import models.ValidationException
+import patterns.models.ValidationException
 import models.json.seqValidationErrorJsonWriter
 
 /**
