@@ -8,7 +8,7 @@ import play.api.data._
 import play.api.data.Forms._
 import models.{ Devices, Device ⇒ DeviceModel, DevicePersisted, DeviceInfoPersisted }
 import org.joda.time.format.ISODateTimeFormat
-import models.ValidationException
+import patterns.models.ValidationException
 
 object Device extends Secured {
 

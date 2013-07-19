@@ -51,7 +51,7 @@
 	      <select class="selectpicker" id="vehicleId" name="vehicleId">
 	      	<option value="" <% if (null == vehicleId) {%> selected='selected' <%}%>>[None]</option>
 	         <% for(i in vehicles) {%>
-	          <option value="<%=vehicles[i].id%>" <% if (vehicles[i].id == vehicleId) {%> selected='selected' <%}%>><%=vehicles[i].display_name%></option>
+	          <option value="<%=vehicles[i].id%>" <% if (vehicles[i].id == vehicleId) {%> selected='selected' <%}%>><%=vehicles[i].displayName%></option>
 	         <% } %>
 			</select>
 	    </div>
@@ -63,7 +63,7 @@
 	      <select class="selectpicker" id="deviceTypeId" name="deviceTypeId">
 	         <% if (version == -1) {%><option value="">[None]</option><%}%>
 	         <% for(i in types) {%>
-	          <option value="<%=types[i].id%>" <% if (types[i].id == deviceTypeId) {%> selected='selected' <%}%>><%=types[i].display_name%></option>
+	          <option value="<%=types[i].id%>" <% if (types[i].id == deviceTypeId) {%> selected='selected' <%}%>><%=types[i].displayName%></option>
 	         <% } %>
 			</select>
 	    </div>
@@ -75,7 +75,7 @@
 	      <select class="selectpicker" id="deviceGroupId" name="deviceGroupId">
 	          <% if (version == -1) {%><option value="">[None]</option><%}%>
 			  <% for(i in groups) {%>
-	          <option value="<%=groups[i].id%>"  <% if (groups[i].id == deviceGroupId) {%> selected='selected' <%}%>><%=groups[i].display_name%></option>
+	          <option value="<%=groups[i].id%>"  <% if (groups[i].id == deviceGroupId) {%> selected='selected' <%}%>><%=groups[i].displayName%></option>
 	         <% } %>
 			</select>
 	    </div>
