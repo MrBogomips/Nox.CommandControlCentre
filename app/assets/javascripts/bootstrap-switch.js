@@ -119,9 +119,14 @@
 
               if (state === thisState) {
 
-                if (thisState)
-                  $element.removeClass('switch-off').addClass('switch-on');
-                else $element.removeClass('switch-on').addClass('switch-off');
+                if (thisState) {
+                	$element.removeClass('switch-off').addClass('switch-on');
+                	$this.val(true); // GC: simplify support REST API
+                }
+                else {
+                	$element.removeClass('switch-on').addClass('switch-off');
+                	$this.val(false); // GC: simplify support REST API
+                }
 
                 if ($element.data('animated') !== false)
                   $element.addClass("switch-animate");

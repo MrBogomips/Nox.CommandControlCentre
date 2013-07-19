@@ -127,10 +127,6 @@ steal(
 			'.btn.update click' : function(el, ev) {
 				var self = this;
 				self._update(self.options.serverController);
-			},
-			
-			'input[type=checkbox] change' : function (el, ev) {
-				el.val(el.val() == "on");
 			}
 		});
 
