@@ -44,7 +44,6 @@ ALTER TABLE "devices" RENAME "_mtime" TO "modificationTime";
 ALTER TABLE "devices" RENAME "device_type_id" TO "deviceTypeId";
 ALTER TABLE "devices" RENAME "device_group_id" TO "deviceGroupId";
 ALTER TABLE "devices" RENAME "vehicle_id" TO "vehicleId";
-ALTER TABLE "devices" RENAME "device_group_id" TO "deviceGroupId";
 ALTER TABLE "devices" RENAME "simcard_id" TO "simcardId";
 ALTER TABLE "devices" RENAME "_ver" TO "version";
 ALTER TABLE "devices" RENAME TO "Devices";
