@@ -14,15 +14,23 @@
 		</select>
   	</td>
   	<td>
-	  	<div class="input-append date beginAssignement" data-date="" data-date-format="yyyy-mm-dd">
-	  		<input name="beginAssignement" class="span2" size="10" type="text" value="" readonly>
-	  		<span class="add-on"><i class="icon-th"></i></span>
+  		<div class="control-group">
+  			<div class="controls">
+			  	<div class="input-append date beginAssignement" data-date="" data-date-format="yyyy-mm-dd">
+			  		<input name="beginAssignement" class="span2" size="10" type="text" value="" readonly>
+			  		<span class="add-on"><i class="icon-th"></i></span>
+				</div>
+			</div>
 		</div>
   	</td>
   	<td>
-  		<div class="input-append date endAssignement" data-date="" data-date-format="yyyy-mm-dd">
-	  		<input name="endAssignement" class="span2" size="10" type="text" value=""  readonly>
-	  		<span class="add-on"><i class="icon-th"></i></span>
+  		<div class="control-group">
+  			<div class="controls">
+		  		<div class="input-append date endAssignement" data-date="" data-date-format="yyyy-mm-dd">
+			  		<input name="endAssignement" class="span2" size="10" type="text" value=""  readonly>
+			  		<span class="add-on"><i class="icon-th"></i></span>
+				</div>
+			</div>
 		</div>
   	</td>
   	<td>
@@ -30,7 +38,7 @@
 	    <input name="enabled" type="checkbox" id="va-<%=Math.floor(Math.random()*9999999)%>" >
 	</div>
   	</td>
-  	<td>
+  	<td class="colbtn">
   	    <input type="hidden" name="id" value="<%=id%>">
   		<input type="hidden" id="version" name="version" value="0">
   		<nobr>
