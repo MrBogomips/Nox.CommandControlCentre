@@ -13,7 +13,7 @@ echo ==========================================
 git --no-pager log $1..$2 --oneline|grep -v "\bMerge branch"
 
 echo
-echo == Modules' changes statistics ============
+echo "== Modules' changes statistics ============"
 git --no-pager diff $1 $2 --dirstat --no-color
 
 echo
