@@ -1,0 +1,55 @@
+<div class="<%= cssclass %>">
+	<h1><%= header.title %></h1>
+
+	<div class="alert_placeholder"></div>
+
+	<% if (header.render != null) { %>
+		<%== header.render() %>
+	<% } %>
+
+	<% if (searching.show == true) { %>
+
+	<% } %>
+
+	<table class="table table-condensed table-bordered table-striped">
+		<thead>
+			<tr>
+				<% for(i in coloumns) { %>
+					<th><%= coloumns[i].title %></th>
+				<% } %>
+			</tr>
+		</thead>
+		<tbody>
+			<% for(x in rows) { %>
+				<tr>
+					<% for(y in coloumns) { %>
+						<td>
+							<% if (coloumns[y].renderAs == null) { %>
+								<%= rows[x][coloumns[y].map] %>
+							<% }
+							   else {
+							   	switch (coloumns[y].renderAs) {
+									case "switch" : %>
+										<%== $.View(jsRoutes.controllers.Assets.at("webapp/pager/views/switch.ejs").url, { "value" : rows[x][coloumns[y].map] }) %>
+									<% break;
+									case "html" : %>
+										<%== coloumns[y].renderHtml(rows[x]["id"]) %>
+									<% break;
+								}
+							} %>
+						</td>
+					<% } %>
+				</tr>
+			<% } %>
+		</tbody>
+	</table>
+
+	<% if (paging.show == true) { %>
+
+	<% } %>
+
+	<% if (footer.render != null) { %>
+		<%== footer.render() %>
+	<% } %>
+
+</div>
