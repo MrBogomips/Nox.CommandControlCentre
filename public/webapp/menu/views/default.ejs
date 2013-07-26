@@ -13,7 +13,7 @@
 			<% if ((menu[i].button.sub != null) && (menu[i].button.sub.length > 0)) { %>
 				<ul aria-labelledby="drop2" role="menu" class="dropdown-menu">
 					<% for(x in menu[i].button.sub) {
-						switch (coloumns[y].renderAs) {
+						switch (menu[i].button.sub[x].button.type) {
 							case "text" : %>
 								<li><a href="<%= menu[i].button.sub[x].button.uri %>" tabindex="-1"><%= menu[i].button.sub[x].button.label %></a></li>
 							<% break;
