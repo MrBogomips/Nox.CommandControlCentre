@@ -28,7 +28,7 @@ object Driver extends Secured {
     }
   }
 
-  def get(id: Int) = WithAuthentication { (user, request) ⇒
+  def get(id: Int) = WithAuthentication { (user, request) =>
     Drivers.findById(id).map { d ⇒
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
