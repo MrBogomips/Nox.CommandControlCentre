@@ -1,0 +1,19 @@
+<!-- Device Commands -->
+<div class="modal hide fade info" tabindex="-1" aria-hidden="true">
+	<div class="modal-header">
+	  	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	  	<h3>Webcam «<%=device%>»</h3>
+	</div>
+	<div class="modal-body">
+		<div class="containerWebcam containerWebcam<%= webcam.length %>">
+			<% for(i in webcam) { %>
+				<div class="webcam">
+					<iframe scrolling="no" frameborder="0" src="<%= webcam[i] %>"></iframe>
+				</div>
+		    <% } %>
+		</div>
+	</div>
+	<div class="modal-footer">
+	  	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>

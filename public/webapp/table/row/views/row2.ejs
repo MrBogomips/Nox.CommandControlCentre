@@ -16,8 +16,18 @@
 		%>	
 		<span class="label moving label-<%=cmov%>" ><%=tmov%></span>	
 	<td><span class="speed"><%=data.speed%>Km/h</span></td>
-	<td><a class="btn btn-mini more" type="button" href="#"><i class="icon-info-sign"></i></a>
+	<td>
+		<a class="btn btn-mini more" type="button" href="#"><i class="icon-info-sign"></i></a>
 		<a class="btn btn-mini settings" type="button" href="#"><i class="icon-wrench"></i></a>
+		<%
+			if (webcam != undefined) {
+				if (webcam.length > 0) {
+		%>
+					<a class="btn btn-mini webcam" type="button" href="#"><i class="icon-facetime-video"></i></a>
+		<%
+				}
+			}
+		%>
 		<a class="tool" data-original-title="" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Command queue">
 			<span class="label event-command-counter" style="visibility: hidden">0/0</span>
 		</a>				

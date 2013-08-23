@@ -2,15 +2,19 @@ package patterns.models
 
 import org.postgresql.util.PSQLException
 
+import play.api.libs.json._
+
 /**
  * Represents a validation exception
  */
 case class ValidationException(cause: Throwable, val validationErrors: Seq[ValidationError]) extends RuntimeException(cause) {
-  //def this(key: String, conditions: Set[String]) = this(Seq(ValidationError(key, conditions)))
   def this(cause: Throwable, key: String, conditions: String*) = this(cause, Seq(ValidationError(key, conditions.toSet)))
   def this(key: String, conditions: String*) = this(null, Seq(ValidationError(key, conditions.toSet)))
   def this( validationErrors: Seq[ValidationError]) = this(null, validationErrors)
   override def getMessage() = "ValidationException: "+validationErrors.mkString("; ")
+  def toJsError: JsError = { ???
+    //new JsError("ciccio", "ciccio")
+  }
 }
 
 /*

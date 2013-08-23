@@ -6,6 +6,7 @@
 <script type='text/javascript'>
 	steal('/assets/webapp/webapp_init.js')
 	.then('/assets/webapp/devicegroups/devicegroups.js')
+	.then('/assets/webapp/menu/menu.js')
 	.then(function() {
 		$("#create_device").click(function() {
 			var $el = $("<div></div>")
@@ -32,11 +33,92 @@
 				self.find(".alert_placeholder").html($alert);
 			});
 		});
+		
+		$(".btn.createmenu").click(function(el, ev) {
+			$("#containerProva").webapp_menu(
+				{
+					"menu" :	[
+								{ 
+									'type' : 'text' , 
+									'enable' : true , 
+									'button' : { 
+										'icon' : 'icon-globe' , 
+									  	'label' : 'Maps' , 
+									  	'uri' : '#' , 
+									  	'sub' : [ 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Realtime map' , 'uri' : 'map' } } , 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Hot zones' , 'uri' : '' } } , 
+										  			{ 'type' : 'divider' } , 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'icon' : 'icon-cog' , 'label' : 'Configure map services' , 'uri' : '' } } 
+									  		    ] 
+									}
+								} ,
+								{ 
+									'type' : 'text' , 
+									'enable' : true , 
+									'button' : { 
+										'icon' : 'icon-share' , 
+									  	'label' : 'Share' , 
+									  	'uri' : '#' , 
+									  	'sub' : [ 
+										  			{ 'type' : 'text' , 'enable' : false , 'button' : { 'label' : 'Current view' , 'uri' : '' } } , 
+										  			{ 'type' : 'text' , 'enable' : false , 'button' : { 'label' : 'PDF of current view' , 'uri' : '' } } , 
+										  			{ 'type' : 'divider' } , 
+										  			{ 'type' : 'text' , 'enable' : false , 'button' : { 'icon' : 'icon-cog' , 'label' : 'Configure sharing services' , 'uri' : '' } } 
+									  		    ] 
+									}
+								} ,
+								{ 
+									'type' : 'text' , 
+									'enable' : true , 
+									'button' : { 
+										'icon' : 'icon-hdd' , 
+									  	'label' : 'Devices' , 
+									  	'uri' : '#' , 
+									  	'sub' : [ 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Devices' , 'uri' : jsRoutes.controllers.Device.index().url } } , 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Device types' , 'uri' : jsRoutes.controllers.DeviceType.index().url } } , 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Device groups' , 'uri' : jsRoutes.controllers.DeviceGroup.index().url } }
+									  		    ] 
+									}
+								} ,
+								{ 
+									'type' : 'text' , 
+									'enable' : true , 
+									'button' : { 
+										'icon' : 'icon-road' , 
+									  	'label' : 'Vehicles' , 
+									  	'uri' : '#' , 
+									  	'sub' : [ 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Vehicles' , 'uri' : jsRoutes.controllers.Vehicle.index().url } } , 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Drivers' , 'uri' : jsRoutes.controllers.Driver.index().url } } , 
+										  			{ 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Vehicles assignements' , 'uri' : jsRoutes.controllers.Simcard.index().url } }
+									  		    ] 
+									}
+								}
+							]
+				}
+			);
+		});
 	});
 </script>
 }
 
 @aria.master.authenticated("Device groups", user, header_more = header_more, footer_more = footer_scripts) {
+
+<br/>
+<button class="btn createmenu" data-device-id="x">create</button>
+<br/>
+<div class="navbar">
+	<div class="navbar navbar-static">
+		<div class="navbar-inner">
+			<div class="container" style="width: auto;" id="containerProva">
+				<a class="brand" href="#">NoxST::CCC</a>
+			</div>
+		</div>
+	</div>
+</div>
+<br/>
 
 <div class="ana-devices groups">
 	<h1>Device groups</h1>

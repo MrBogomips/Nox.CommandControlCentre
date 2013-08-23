@@ -66,14 +66,56 @@ steal(
 				
 			},
 
-			destroy : function(){
+			destroy : function() {
 				var self = this;
 			    this._super();
 			},
+
+			_reportError : function(data, txtStatus, jqXHR) {
+				var self = this;
+				var errors = $.parseJSON(data.responseText);
+				self._enumerateErrors(errors);
+			},
+
+			_enumerateErrors : function(errors) {
+				var self = this;
+				if (errors == undefined) return;
+				var globalErrors = '';
+				var counter = 0;
+				var gerrors = 0;
+				$.each(errors, function(label, value) {
+					var obj = self.find('input[name="' + label + '"],select[name="' + label + '"]');
+					if (obj.length > 0) {
+						obj.closest('.control-group').addClass('error');
+						var errorsList = '';
+						for (var i = 0; i < value.length; i++) {
+							errorsList += '<li class="error-inline">' + value[i].replace('.', ' ') + '</li>';
+						}
+						if (errorsList != '') {
+							obj.closest('.controls').append('<div class="help-inline"><ul class="error-inline">' + errorsList + '</ul></div>');
+						}
+					}
+					else {
+						for (var i = 0; i < value.length; i++) {
+							globalErrors += value[i].replace('.', ' ') + '<br/>';
+							gerrors += 1;
+						}
+					}
+				});
+				if (globalErrors != '') {
+					var $alert= $('<a data-content="' + globalErrors + '" title="" data-toggle="popover" class="btn btn-danger errorcount" href="#" data-original-title="Errors">' + gerrors + '</a><div class="popover fade left"><div class="arrow"></div><div class="popover-content">' + globalErrors + 'ciao</div></div>');
+					self.find(".colbtn nobr .insert-section").append($alert);
+				}
+			},
+
+			_cancelErrors : function() {
+				var self = this;
+				self.find('.control-group').removeClass('error').find('.help-inline').remove();
+				self.find('.insert-section').find('a[data-toggle="popover"]').remove();
+			}, 
 			
 			'input[name="beginAssignement"] change' : function(el, ev) {
 				return;
-				alert("ciccio");
 				var self = this;
 				var $endAss = self.element.find('input[name="endAssignement"]')
 				if (el.date.valueOf() > $endAss.date.valueOf()) {
@@ -99,6 +141,7 @@ steal(
 					self.element.find("div.update-section").show();
 					self.container.parent().find("button.create").removeClass('disabled');
 					
+					self._cancelErrors();
 					//el.button('reset');
 					setTimeout(function() {
 					    self.element.find('button.update').addClass('disabled');
@@ -106,7 +149,8 @@ steal(
 				})
 				.fail(function(data, txtStatus, jqXHR) {
 					// FAILURE
-					console.log("ERRORE!!!")
+					// console.log("ERRORE!!!");
+					self.proxy(self._reportError(data, txtStatus, jqXHR));
 				})
 				.always(function(){
 					el.button('reset');
@@ -165,6 +209,12 @@ steal(
 					el.button('reset');
 					self.container.unblock();
 				});
+			},
+
+			'.errorcount click' : function (el, ev) {
+				var self = this;
+				
+				$(el).popover('toggle');
 			}
 		});
 

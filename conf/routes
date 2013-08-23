@@ -30,6 +30,9 @@ GET		/app/configuration			controllers.Application.clientConfiguration
 # Channels' management
 GET		/channel/index				controllers.Channel.index
 
+# User
+GET		/user/current				controllers.User.getCurrent
+
 # Device
 GET		/device/index				controllers.Device.index(all: Boolean ?= true)
 GET		/device/:id					controllers.Device.get(id: Int)
@@ -92,6 +95,20 @@ POST	/simcard					controllers.Simcard.create
 GET		/biz/device/index				controllers.biz.Device.index(all: Boolean ?= true)
 GET		/biz/device/:id					controllers.biz.Device.get(id: Int)
 GET		/biz/device/byName/:name		controllers.biz.Device.getByName(name: String)
+
+
+######################################################################################################
+###
+###   POC (For internal usage)
+GET		/poc/jsonapi/index				poc.controllers.JsonApi.index
+GET		/poc/jsonapi/:id				poc.controllers.JsonApi.get(id: Int)
+POST	/poc/jsonapi					poc.controllers.JsonApi.post
+#PUT		/poc/jsonapi					poc.controllers.JsonApi.put
+#DELETE	/poc/jsonapi/:id				poc.controllers.JsonApi.delete(id: Int)
+#HEAD	/poc/jsonapi					poc.controllers.JsonApi.head
+#PATCH	/poc/jsonapi					poc.controllers.JsonApi.patch
+
+
 
 
 

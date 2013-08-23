@@ -28,7 +28,7 @@ steal( '/assets/webapp/models/channels.js',
 				this.MapChannel = Aria.Page.getInstance().getChannelByName("map");
 				
 				this.TrackingChannel.subscribe('position info', this.proxy(self._updateInfo));
-				this.TrackingChannel.subscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus)); 
+				this.TrackingChannel.subscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus));
 				
 				// monitora gli eventi dei modelli
 				//webapp.models.device.bind('created', function(ev, device) {
@@ -41,7 +41,7 @@ steal( '/assets/webapp/models/channels.js',
 			destroy : function(){
 				var self = this;
 				this.TrackingChannel.unsubscribe('position info', this.proxy(self._updateInfo));
-				this.TrackingChannel.unsubscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus)); 
+				this.TrackingChannel.unsubscribe('commandRequest commandResponse', this.proxy(self._updateCommandStatus));
 			    this._super();
 			},
 			
@@ -50,15 +50,19 @@ steal( '/assets/webapp/models/channels.js',
 			} ,
 			
 			_updateInfo : function(event, data) {
-				var row = this.element.find("[data-device-id='" + data.device +"']")[0];
+				var row = this.element.find("[data-device-id='" + data.device + "']")[0];
 				var discard = false;
+				// Andre Ciardi - valore di default
+				data.webcam = ['https://www.youtube.com/watch?v=oObxNDYyZPs&feature=youtube_gdata_player'];
 				if (row) {
+
 					if (Aria.Page.getInstance().configuration.eventsOutOfSequencePolicy == "DISCARD") {
 						discard = $(row).controller().checkOldData(data);
 					}
 					if (!discard)
 						$(row).controller().updateData(data);
 				} else if (data.device){
+
 					$('<tr data-device-id="'+data.device+'"></tr>')
 						.appendTo(this.element.find('tbody'))
 						.webapp_row(data);

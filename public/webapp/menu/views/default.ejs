@@ -1,0 +1,121 @@
+<div class="navbar">
+	<div class="navbar navbar-static">
+		<div class="navbar-inner">
+			<div class="container" style="width: auto;">
+				<a class="brand" href="#">NoxST::CCC</a>
+
+				<ul class="nav" role="navigation">
+					<% for(i in menu) {%>
+						<li class="dropdown">
+							<% var dropdown = "";
+								var enable = "";
+								if ((menu[i].button.sub != null) && (menu[i].button.sub.length > 0)) {
+									dropdown = "dropdown-toggle";
+								}
+								if (menu[i].enable == false) {
+									enable = "workinprogress";
+								}
+							%>
+							<a data-toggle="dropdown" class="<%= dropdown %> <%= enable %>" role="button" id="drop<%= menu[i].button.label %>" href="#">
+								<% if ((menu[i].button.icon != null) && (menu[i].button.icon != "")) { %>
+									<i class="<%= menu[i].button.icon %> icon-white"></i>
+								<% } %>
+								<%= menu[i].button.label %>
+								<% if (menu[i].button.sub.length > 0) { %>
+									<b class="caret"></b>
+								<% } %>
+							</a>
+							<% if ((menu[i].button.sub != null) && (menu[i].button.sub.length > 0)) { %>
+								<ul aria-labelledby="drop2" role="menu" class="dropdown-menu">
+									<% for(x in menu[i].button.sub) {
+										switch (menu[i].button.sub[x].type) {
+											case "text" : %>
+												<li>
+													<a href="<%= menu[i].button.sub[x].button.uri %>" class="<%= menu[i].button.sub[x].enable == true ? '' : 'workinprogress' %>" tabindex="-1">
+														<% if ((menu[i].button.sub[x].button.icon != null) && (menu[i].button.sub[x].button.icon != "")) { %>
+															<i class="<%= menu[i].button.sub[x].button.icon %>"></i>
+														<% } %>
+														<%= menu[i].button.sub[x].button.label %>
+													</a>
+												</li>
+												<% break;
+											case "divider" : %>
+												<li class="divider"></li>
+												<% break;
+										}
+									} %>
+								</ul>
+							<% } %>
+						</li>
+					<% } %>
+				</ul>
+				
+				<ul class="nav pull-right">
+					<!--@{/***** MESSAGES *****/}-->
+					<li class="dropdown">
+						<a href="#" role="button"><span class="badge badge-inverse">123 <i class="icon-large icon-envelope icon-white"></i></span></a>
+					</li>
+					<!--@{/***** BADGE EVENTS *****/}-->
+					<li class="dropdown">
+						<a href="#" id="drop_events" role="button" class="dropdown-toggle" data-toggle="dropdown"><span class="badge badge-important">123</span> Events<b class="caret"></b></a>
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop_events">
+							<li><a tabindex="-1" href="#"><span class="badge badge-important">3</span> Important</a></li>
+							<li><a tabindex="-1" href="#"><span class="badge badge-warning">117</span> Warning</a></li>
+							<li><a tabindex="-1" href="#"><span class="badge badge-info">76</span> Informative</a></li>
+							<li class="divider"></li>
+							<li><a tabindex="-1" href="#"><i class="icon-large icon-trash"></i> Reset all counters</a></li>
+						</ul>
+					</li>
+					<!--@{/***** SYSTEM MANAGER MENU *****/}-->
+					<li class="dropdown">
+						<a href="#" id="drop_sys_menu" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-large icon-cog icon-white"></i> Manage<b class="caret"></b></a>
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop_sys_menu">
+							<li><a tabindex="-1" href="#" class="workinprogress" id="top-menu-organizations"><i class="icon-large icon-th"></i> Organizations</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress" id ="top-menu-security"><i class="icon-large icon-lock"></i> Security</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress" id ="top-menu-system"><i class="icon-large icon-wrench"></i> System</a></li>
+						</ul>
+					</li>
+					<!--@{/***** USER MENU *****/}-->
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<i class="icon-user icon-white"></i> <%= user.displayName %>
+							<b class="caret"></b>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<div style="width: 324px">
+									<div class="modal-header">
+										<div class="row-fluid">
+											<div class="span3">
+												<img src="<%= user.photo %>" alt="" class="thumbnail span12">
+											</div>
+											<div class="span9">
+												<h4><%= user.displayName %></h4>
+												<h5>Administrator</h5>
+											</div>
+										</div>
+									</div>
+									<div class="modal-body">
+										<div class="row-fluid">
+											<div class="span12">
+												<a href="#" class="workinprogress"><i class="icon-user"></i> Account settings</a>
+												<a href="#" class="workinprogress"><i class="icon-th-list"></i> Preferences</a>
+												<a href="#" class="workinprogress"><i class="icon-cog"></i> Special task #1</a>
+												<a href="#" class="workinprogress"><i class="icon-cog"></i> Special task #2</a>
+											</div>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button href="#" class="btn">Require assistance</button>
+										<button href="#" class="btn btn-primary" id="btnLogout"><i class="icon-off icon-white"></i> Log Out</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+
+			</div>
+		</div>
+	</div>
+</div>
