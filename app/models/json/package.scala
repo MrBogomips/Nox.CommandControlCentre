@@ -4,6 +4,9 @@ import patterns.models._
 import play.api.libs.json._
 
 package object json {
+  // User
+  implicit val userPersistedJsonWriter: Writes[UserPersisted] = UserPersistedSerializer.jsonWriter
+  
   // Device
   implicit val devicePersistedJsonWriter: Writes[DevicePersisted] = DevicePersistedSerializer.jsonWriter
   implicit val deviceInfoPersistedJsonWriter: Writes[DeviceInfoPersisted] = DeviceInfoPersistedSerializer.jsonWriter

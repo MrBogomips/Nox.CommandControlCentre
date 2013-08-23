@@ -28,6 +28,8 @@ object Application extends Secured {
         routes.javascript.Application.logout,
         
         Map.index,
+         
+        User.getCurrent,
           
         Device.index,
         Device.get,

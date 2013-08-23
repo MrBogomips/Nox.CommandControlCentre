@@ -1,6 +1,7 @@
 steal( '/assets/webapp/table/row/device_info/device_info.js',
 	   '/assets/webapp/table/row/device_settings/device_settings.js',
 	   '/assets/webapp/table/row/device_commandlog/device_commandlog.js',
+	   '/assets/webapp/table/row/device_webcam/device_webcam.js',
 	function($){
 
 		/**
@@ -41,6 +42,11 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 			'.btn.more click' : function(el, ev) {
 				var ai = this.element.find('.anchorInfo'); 
 				ai.webapp_device_info(this.data);
+			} ,
+
+			'.btn.webcam click' : function(el, ev) {
+				var ai = this.element.find('.anchorInfo'); 
+				ai.webapp_device_webcam(this.data);
 			} ,
 			
 			'.label.event-command-counter click' : function(el, ev) {

@@ -1,38 +1,37 @@
 <!DOCTYPE HTML>
 <html lang="en">
     <head>
-        <title>webapp</title>
-        <style type='text/css'>
-            body {font-family: verdana}
-            .error {border: solid 1px red;}
-            .error_text { color: red; font-size: 10px;}
-            td {padding: 3px;}
-        </style>
+        <title>NoxST::CCC</title>
+        <script type="text/javascript" src="../aria/steal/steal.js"></script>
     </head>
     <body>
-        <div class='container page'>
-            <div>
-                <div id='channels'></div>
-                <div id='settings'></div>
-            </div>
-            <div id='devices'></div>
+        <div id="header">
+            
         </div>
-
-        <script type='text/javascript' 
-                src='/assets/aria/steal/steal.js'>
-        </script>
-        <script type='text/javascript'>
-            steal('/assets/webapp/webapp_init.js')
-            .then('/assets/webapp/channels/channels.js',
-                  '/assets/webapp/settings/settings.js',
-                  '/assets/webapp/table/table.js',
-                  '/assets/webapp/fixtures/fixtures.js',
-                  '/assets/webapp/webapp.less',
-                  function() {
-                    //$('.popover').draggable();
-                    $('#channels').webapp_channels();
-                    $('#settings').webapp_settings();
-                    $('#devices').webapp_table({ 'id' : 'DevicesList' , 'model' : webapp.models.devices , 'labels' : [ '#' , '' , 'Device' , 'Events' , 'Ignition' , 'Moving' , 'Speed' , '' ] , 'types' : [ 'string' , 'alarm' , 'device' , 'events' , 'bool' , 'bool' , 'string' , 'more' ] , 'values' : [] });
+        <div id="body">
+            
+        </div>
+        
+        <script type="text/javascript">
+            steal("//../aria/jquery/jquery.js")
+            .then("//../javascripts/jquery-1.7.1.min.js")
+            .then("//../stylesheets/bootstrap-select.min.css", 
+                  "//../stylesheets/bootstrap/bootstrap-responsive.css",
+                  "//../stylesheets/bootstrap/bootstrap_nox.css",
+                  "/assets/css/bootstrap-modal.css",
+                  "//../stylesheets/global.css",
+                  "/assets/stylesheets/personal.css")
+            .then("//../webapp/webapp_init.js")
+            .then("//../webapp/menu/menu.js",
+                  function($) {
+                    $("#header").webapp_menu({
+                        "menu" :    [
+                                        { 'type' : 'text' , 'enable' : true , 'button' : { 'icon' : 'icon-globe' , 'label' : 'Maps' , 'uri' : '#' , 'sub' : [ { 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Realtime map' , 'uri' : 'map' } } ,  { 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Hot zones' , 'uri' : '' } } , { 'type' : 'divider' } , { 'type' : 'text' , 'enable' : true , 'button' : { 'icon' : 'icon-cog' , 'label' : 'Configure map services' , 'uri' : '' } } ] } } ,
+                                        { 'type' : 'text' , 'enable' : true , 'button' : { 'icon' : 'icon-share' , 'label' : 'Share' , 'uri' : '#' , 'sub' : [ { 'type' : 'text' , 'enable' : false , 'button' : { 'label' : 'Current view' , 'uri' : '' } } , { 'type' : 'text' , 'enable' : false , 'button' : { 'label' : 'PDF of current view' , 'uri' : '' } } , { 'type' : 'divider' } , { 'type' : 'text' , 'enable' : false , 'button' : { 'icon' : 'icon-cog' , 'label' : 'Configure sharing services' , 'uri' : '' } } ] } } ,
+                                        { 'type' : 'text' , 'enable' : true , 'button' : { 'icon' : 'icon-hdd' , 'label' : 'Devices' , 'uri' : '#' , 'sub' : [ { 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Devices' , 'uri' : jsRoutes.controllers.Device.index().url } } , { 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Device types' , 'uri' : jsRoutes.controllers.DeviceType.index().url } } , { 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Device groups' , 'uri' : jsRoutes.controllers.DeviceGroup.index().url } } ] } } ,
+                                        { 'type' : 'text' , 'enable' : true , 'button' : { 'icon' : 'icon-road' , 'label' : 'Vehicles' , 'uri' : '#' , 'sub' : [ { 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Vehicles' , 'uri' : jsRoutes.controllers.Vehicle.index().url } } , { 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Drivers' , 'uri' : jsRoutes.controllers.Driver.index().url } } , { 'type' : 'text' , 'enable' : true , 'button' : { 'label' : 'Vehicles assignements' , 'uri' : jsRoutes.controllers.Simcard.index().url } } ] } }
+                                    ]
+                    });
             })
         </script>
     </body>
