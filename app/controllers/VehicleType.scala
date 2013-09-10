@@ -6,36 +6,38 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
-import models.{ Vehicle => VehicleModel, VehiclePersisted, Vehicles }
+import models.{ VehicleType => VehicleTypeModel, VehicleTypePersisted, VehicleTypes }
 
-import utils.Converter._
+import java.sql.Timestamp
 
 import org.joda.time.format.ISODateTimeFormat
 
-import models.json.vehiclePersistedJsonWriter
+import models.json.vehicleTypePersistedJsonWriter
 
-object Vehicle extends Secured {
+object VehicleType extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     implicit val req = request
-    val vehicles = all match {
-      case false => Vehicles.find(Some(true))
-      case true  => Vehicles.find(None)
+    val objs = all match {
+      case false => VehicleTypes.find(Some(true))
+      case true  => VehicleTypes.find(None)
     }
     if (acceptsJson(request)) {
-      Ok(Json.toJson(vehicles))
+      Ok(Json.toJson(objs))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.vehicle.index(vehicles, user))
+      //Ok(views.html.aria.devicetype.index(objs, user))
+      ???
     } else {
       BadRequest
     }
   }
 
   def get(id: Int) = WithAuthentication { (user, request) ⇒
-    Vehicles.findById(id).map { v ⇒
+    VehicleTypes.findById(id).map { d ⇒
       if (acceptsJson(request)) {
-        Ok(Json.toJson(v))
+        Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.vehicle.item(v.id, user))
+        //Ok(views.html.aria.devicetype.item(d.id, user))
+        ???
       } else {
         BadRequest
       }
@@ -47,28 +49,22 @@ object Vehicle extends Secured {
       "name" -> nonEmptyText(minLength = 3),
       "displayName" -> optional(text),
       "description" -> optional(text),
-      "model" -> nonEmptyText(minLength = 3),
-      "licensePlate" -> nonEmptyText(minLength = 3),
-      "vehicleTypeId" -> optional(number),
-      "enabled" -> optional(text)))
+      "enabled" -> boolean))
   val updateForm = Form(
     tuple(
       "name" -> nonEmptyText(minLength = 3),
       "displayName" -> optional(text),
       "description" -> optional(text),
-      "model" -> nonEmptyText(minLength = 3),
-      "licensePlate" -> nonEmptyText(minLength = 3),
-      "vehicleTypeId" -> optional(number),
-      "enabled" -> optional(text),
+      "enabled" -> boolean,
       "version" -> number))
 
   def create = WithAuthentication { implicit request =>
     createForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, model, licensePlate, vehicleTypeId, enabled) =>
-          val v = VehicleModel(name, displayName, description, enabled, model, licensePlate, vehicleTypeId)
-          val id = Vehicles.insert(v)
+        case (name, displayName, description, enabled) =>
+          val dt = VehicleTypeModel(name, displayName, description, enabled)
+          val id = VehicleTypes.insert(dt)
           Ok(s"""{"id"=id}""")
       })
   }
@@ -77,10 +73,10 @@ object Vehicle extends Secured {
     updateForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, model, licensePlate, vehicleTypeId, enabled, version) =>
-          val vp = VehiclePersisted(id, name, displayName, description, enabled, model, licensePlate, vehicleTypeId, version = version)
+        case (name, displayName, description, enabled, version) =>
+          val dtp = VehicleTypePersisted(id, name, displayName, description, enabled, version = version)
           //Simcards.up
-          Vehicles.update(vp) match {
+          VehicleTypes.update(dtp) match {
             case true => Ok
             case _    => NotFound
           }
@@ -88,10 +84,11 @@ object Vehicle extends Secured {
   }
 
   def delete(id: Int) = WithAuthentication {
-    Vehicles.deleteById(id) match {
+    VehicleTypes.deleteById(id) match {
       case true ⇒ Ok
       case _    ⇒ NotFound
     }
   }
-
 }
+
+
