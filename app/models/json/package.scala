@@ -27,6 +27,9 @@ package object json {
   // Vehicle
   implicit val vehiclePersistedJsonWriter: Writes[VehiclePersisted] = VehiclePersistedSerializer.jsonWriter
   
+  // VehicleType
+  implicit val vehicleTypePersistedJsonWriter: Writes[VehicleTypePersisted] = VehicleTypePersistedSerializer.jsonWriter
+  
   // Vehicle Assignements
   implicit val vehicleAssignementPersistedJsonWriter: Writes[VehicleAssignementPersisted] = VehicleAssignementPersistedSerializer.jsonWriter
   
