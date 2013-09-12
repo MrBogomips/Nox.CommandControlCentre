@@ -1,27 +1,6 @@
 <div class="containerChannels">
 	<div class="inputChannels">
-		<input type="text" placeholder="channel" class="channel_name">
-		<ul class="ulChannels dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-			<li class="channelItem" id="noresults"><a tabindex="-1" href="javascript: void(0);">No results</a></li>
-			<%
-				for (i = 0; i < channels.length; i++) {
-					if (channels[0] == "error") {
-			%>
-						<li class="channelItem visible" id="error"><a tabindex="-1" href="javascript: void(0);">Error</a></li>
-			<%
-					}
-					else {
-			
-						
-			%>
-						<li class="channelItem webapp_items" id="<%=channels[i]%>">
-						<a class="webapp_items" tabindex="-1" href="javascript: void(0);" data-channel-id="<%=channels[i]%>"><%=channels[i]%></a>
-						</li>
-			<%
-					}
-				}
-			%>
-		</ul>
+		<input type="text" class="channel_name" data-provide="typeahead" data-source='<%= channelsarray %>' />
 	</div>
 	<div id="buttonChannels">
 		<div class="btn-group">

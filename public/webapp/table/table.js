@@ -90,7 +90,7 @@ steal( '/assets/webapp/models/channels.js',
 							$('<tr data-device-id="' + data.device + '"></tr>').appendTo(self.element.find('tbody')).webapp_row(data);
 							self._notDiscard(discard, data);
 						}
-					)
+					);
 
 				}
 			},
