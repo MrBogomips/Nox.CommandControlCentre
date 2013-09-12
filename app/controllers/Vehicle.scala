@@ -49,7 +49,6 @@ object Vehicle extends Secured {
       "description" -> optional(text),
       "model" -> nonEmptyText(minLength = 3),
       "licensePlate" -> nonEmptyText(minLength = 3),
-      "vehicleTypeId" -> optional(number),
       "enabled" -> optional(text)))
   val updateForm = Form(
     tuple(
@@ -58,7 +57,6 @@ object Vehicle extends Secured {
       "description" -> optional(text),
       "model" -> nonEmptyText(minLength = 3),
       "licensePlate" -> nonEmptyText(minLength = 3),
-      "vehicleTypeId" -> optional(number),
       "enabled" -> optional(text),
       "version" -> number))
 
@@ -66,8 +64,8 @@ object Vehicle extends Secured {
     createForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, model, licensePlate, vehicleTypeId, enabled) =>
-          val v = VehicleModel(name, displayName, description, enabled, model, licensePlate, vehicleTypeId)
+        case (name, displayName, description, model, licensePlate, enabled) =>
+          val v = VehicleModel(name, displayName, description, enabled, model, licensePlate)
           val id = Vehicles.insert(v)
           Ok(s"""{"id"=id}""")
       })
@@ -77,8 +75,8 @@ object Vehicle extends Secured {
     updateForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, model, licensePlate, vehicleTypeId, enabled, version) =>
-          val vp = VehiclePersisted(id, name, displayName, description, enabled, model, licensePlate, vehicleTypeId, version = version)
+        case (name, displayName, description, model, licensePlate, enabled, version) =>
+          val vp = VehiclePersisted(id, name, displayName, description, enabled, model, licensePlate, version = version)
           //Simcards.up
           Vehicles.update(vp) match {
             case true => Ok

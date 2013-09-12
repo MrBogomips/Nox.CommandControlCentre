@@ -34,7 +34,8 @@ steal(
 				var view = jsRoutes.controllers.Assets.at("webapp/device/views/default.ejs").url;
 				
 				if (parseInt(self.options["id"]) > 0) {
-					$.when(jsRoutes.controllers.DeviceType.index().ajax({
+					$.when(
+						jsRoutes.controllers.DeviceType.index().ajax({
 						headers: { 
 					        Accept : "application/json; charset=utf-8",
 					        "Content-Type": "application/json; charset=utf-8"

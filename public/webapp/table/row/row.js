@@ -35,13 +35,18 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 			} ,
 
 			'.btn.settings click' : function(el, ev) {
+				var self = this.data;
+				$.extend(self, { 'parent' : this });
 				var ai = this.element.find('.anchorInfo'); 
-				ai.webapp_device_settings(this.data);
+				ai.webapp_device_settings(self);
 			} ,
 			
 			'.btn.more click' : function(el, ev) {
-				var ai = this.element.find('.anchorInfo'); 
-				ai.webapp_device_info(this.data);
+				var self = this.options;
+				$.extend(self, { 'parent' : this });
+				var ai = this.element.find('.anchorInfo');
+				ai.webapp_device_info(self);
+			//	alert('stop');
 			} ,
 
 			'.btn.webcam click' : function(el, ev) {
@@ -76,7 +81,16 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 				var data_type = data.message_subtype
 				switch (data_type) {
 				case "info":
+					if (this.data.times == undefined) {
+						this.data.times = {  };
+					}
+					var times = this.data.times;
+					var info = this.data.info;
 					this.data = data;
+					this.data.times = times;
+					this.data.info = info;
+					now = new Date();
+					this.data.times = { 'lasttime' : { 'day' : now.getDate() , 'month' : now.getMonth() , 'year' : now.getYear() , 'hours' : now.getHours() , 'minutes' : now.getMinutes() , 'seconds' : now.getSeconds() } };
 					var e = $(this.element.find(".counter:eq(0)"));
 					e.html(parseInt(e.html()) + 1);
 					// ignition
@@ -128,6 +142,63 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					e.html(cs.join("/"));
 					break;
 				}
+			} ,
+
+			'.devicename click' : function(el, ev) {
+					var name = $(el).attr('name');
+					$(".leaflet-marker-icon[title='" + name + "']").click().mouseup();
+			} ,
+
+			_getDeviceInfo : function(options){
+				var self = this;
+				return $.Deferred(
+					function(deferred) {
+						if (options.info != undefined) {
+							$.when(
+								self._getDeviceInfoValues(options, options.info.deviceGroupId, jsRoutes.controllers.DeviceGroup, 'deviceGroup'),
+								self._getDeviceInfoValues(options, options.info.deviceTypeId, jsRoutes.controllers.DeviceType, 'deviceType'),
+								self._getDeviceInfoValues(options, options.info.vehicleId, jsRoutes.controllers.Vehicle, 'vehicle'),
+								self._getDeviceInfoValues(options, options.info.simcardId, jsRoutes.controllers.Simcard, 'simcard')
+							).always(
+								function() {
+							    	deferred.resolve();
+							    }
+							);
+						}
+						else {
+							deferred.resolve();
+						}
+					}).promise();
+			},
+
+			_getDeviceInfoValues : function(options, id, controllerClass, key) {
+				var self = this;
+				return $.Deferred(
+					function(deferred) {
+						if (id != null) {
+							controllerClass.get(id).ajax({
+								headers: { 
+								    Accept : "application/json; charset=utf-8",
+								    "Content-Type": "application/json; charset=utf-8"
+								}}
+							).done(
+								function(data) {
+							    	options.info[key] = data;
+							    }
+							).fail(
+								function (jqXHR, textStatus) {
+									
+								}
+							).always(
+								function() {
+							    	deferred.resolve();
+							    }
+							);
+						}
+						else {
+							deferred.resolve();
+						}
+					}).promise();
 			}
 
 		});

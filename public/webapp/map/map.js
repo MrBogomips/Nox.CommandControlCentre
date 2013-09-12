@@ -46,7 +46,6 @@ steal( '/assets/webapp/models/channels.js',
 					}).addTo(self.map);
 	            	
 	            	
-	            	
 	            	// DEMO MARKER
 	            	//var marker = L.marker([pos.coords.latitude, pos.coords.longitude], {draggable:true}).addTo(self.map)
 	            	
@@ -71,10 +70,17 @@ steal( '/assets/webapp/models/channels.js',
 			_updateMarker: function(event, data) {
 				var marker;
 				if ((marker = this.markers[data.marker]) === undefined) {
-					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title}).addTo(this.map);
+					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title}).addTo(this.map).bindPopup(data.title);
 				} else {
-					marker.setLatLng([data.lat, data.lng])
+					marker.setLatLng([data.lat, data.lng]);
 				}
+			},
+
+			'.leaflet-clickable mouseup' : function(el, ev) {
+					var name = $(el).attr('title');
+					var marker = this.markers[name];
+					this.map.setView([marker._latlng.lat, marker._latlng.lng], 13);
 			}
+			
 		});  // Aria-class
 }); // steal

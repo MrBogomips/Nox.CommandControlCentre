@@ -1,66 +1,114 @@
 <!-- Device Commands -->
 <div class="modal hide fade info" tabindex="-1" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3>Device «<%=device%>»</h3>
-  </div>
-  <div class="modal-body">
-    <div class="basic-info">
-	<h4>Basic Info</h4>
-	<div class="data">
-		<table class="table table-condensed table-bordered table-striped">
-			<tbody>
-				<tr>
-					<td class="tlabel"><b>Manufacturer</b></td>
-					<td>Texas Instruments</td>
-				</tr>
-				<tr>
-					<td class="tlabel"><b>Model</b></td>
-					<td>TI-KD234-L</td>
-				</tr>
-				<tr>
-					<td class="tlabel"><b>Serial Number</b></td>
-					<td>2398479238472-X</td>
-				</tr>
-				<tr>
-					<td class="tlabel"><b>Uptime</b></td>
-					<td>34 days and 23 hours</td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="modal-header">
+    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    	<h3>Device «<%=device%>»</h3>
 	</div>
-	<div class="mini-map">Mini map</div>
-</div>
 
-<div class="extended-info">
-	<table class="table table-condensed table-bordered table-striped">
-		<caption>Extended info</caption>
-		<thead>
-			<tr>
-				<th class="attribute">Attribute</th>
-				<th class="setting">Setting</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% 
-				var props = data.objs;
-				var keys = [];
-				for(var k in props) {
-					keys.push(k);
-				}
-				keys = keys.sort();
-				for(var k in keys) {
-			%>
-			<tr>
-				<td><em><%=keys[k]%></em></td>
-				<td><span class="<%=keys[k]%>"><%=props[keys[k]]%></span></td>
-			</tr>
-			<% } %>
-		</tbody>
-	</table>
-</div>    
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-  </div>
+	<div class="modal-body">
+		<%
+			if (info != null) {
+		%>
+			    <div class="basic-info">
+					<div class="data">
+						<table class="table table-condensed table-bordered table-striped">
+							<caption>Basic info</caption>
+							<thead>
+								<tr>
+									<th class="attribute">Attribute</th>
+									<th class="setting">Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<%
+									if (info.id != undefined) {
+								%>
+										<tr><td><em>Device ID</em></td>						<td><span title="<%= info.id %>"><%= info.id %></span></td></tr>
+								<%
+									}
+									if (info.displayName != undefined) {
+								%>
+										<tr><td><em>Display Name</em></td>					<td><span title="<%= info.displayName %>"><%= info.displayName %></span></td></tr>
+								<%
+									}
+									if (info.description != undefined) {
+								%>
+										<tr><td><em>Description</em></td>					<td><span title="<%= info.description %>"><%= info.description %></span></td></tr>
+								<%
+									}
+									if (info.simcard != undefined) {
+								%>
+										<tr><td><em>Simcard</em></td>						<td><span title="<%= info.simcard.displayName %>"><%= info.simcard.displayName %></span></td></tr>
+								<%
+									}
+									if (info.vehicle != undefined) {
+								%>
+										<tr><td><em>Vehicle</em></td>						<td><span title="<%= info.vehicle.displayName %>"><%= info.vehicle.displayName %></span></td></tr>
+								<%
+									}
+									if (info.deviceType != undefined) {
+								%>
+										<tr><td><em>Type</em></td>							<td><span title="<%= info.deviceType.displayName %>"><%= info.deviceType.displayName %></span></td></tr>
+								<%
+									}
+									if (info.deviceGroup != undefined) {
+								%>
+										<tr><td><em>Group</em></td>							<td><span title="<%= info.deviceGroup.displayName %>"><%= info.deviceGroup.displayName %></span></td></tr>
+								<%
+									}
+									if (info.enabled != undefined) {
+								%>
+										<tr><td><em>Enabled</em></td>						<td><span title="<%= info.enabled %>"><%= info.enabled %></span></td></tr>
+								<%
+									}
+								%>
+							</tbody>
+						</table>
+					</div>
+				</div>
+		<%
+			}
+		%>
+
+		<div class="mini-map">Mini map</div>
+
+		<div class="extended-info" id="devicemapinfo">
+			<table class="table table-condensed table-bordered table-striped">
+				<caption>Extended info</caption>
+				<thead>
+					<tr>
+						<th class="attribute">Attribute</th>
+						<th class="setting">Setting</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="2">
+							<div>
+								<table class="table table-condensed table-bordered table-striped">
+								<% 
+									var props = data.objs;
+									var keys = [];
+									for(var k in props) {
+										keys.push(k);
+									}
+									keys = keys.sort();
+									for(var k in keys) {
+								%>
+								<tr><td><em><%= keys[k] %></em></td>	<td><span class="<%= keys[k] %>"><%= props[keys[k]] %></span></td></tr>
+								<% 
+									}
+								%>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>    
+	</div>
+
+	<div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
 </div>

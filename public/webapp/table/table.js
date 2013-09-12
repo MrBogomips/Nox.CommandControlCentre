@@ -50,24 +50,52 @@ steal( '/assets/webapp/models/channels.js',
 			} ,
 			
 			_updateInfo : function(event, data) {
+				var self = this;
 				var row = this.element.find("[data-device-id='" + data.device + "']")[0];
 				var discard = false;
-				// Andre Ciardi - valore di default
-				data.webcam = ['https://www.youtube.com/watch?v=oObxNDYyZPs&feature=youtube_gdata_player'];
 				if (row) {
-
 					if (Aria.Page.getInstance().configuration.eventsOutOfSequencePolicy == "DISCARD") {
 						discard = $(row).controller().checkOldData(data);
 					}
-					if (!discard)
+					if (!discard) {
 						$(row).controller().updateData(data);
-				} else if (data.device){
+						self._notDiscard(discard, data);
+					}
+				} 
+				else if (data.device) {
+					var now = new Date();
+					if (data.times == undefined) {
+						data.times = { 'sessionstart' : now };
+					}
+					else {
+						$.extend(data.times, { 'sessionstart' : now });
+					}
+					// Andrea Ciardi - valore di default
+					data.webcam = ['http://youtu.be/9emjVH32Qjg'];
+					jsRoutes.controllers.Device.getByName(data.device).ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }}
+					).done(
+						function(di) {
+							$.extend(data, { 'info' : di });
+						}
+					).fail(
+						function (jqXHR, textStatus) {
 
-					$('<tr data-device-id="'+data.device+'"></tr>')
-						.appendTo(this.element.find('tbody'))
-						.webapp_row(data);
+						}
+					).always(
+						function() {
+							$('<tr data-device-id="' + data.device + '"></tr>').appendTo(self.element.find('tbody')).webapp_row(data);
+							self._notDiscard(discard, data);
+						}
+					)
+
 				}
-				
+			},
+
+			_notDiscard : function(discard, data) {
 				// prepare data for map {marker: "marker id", lat: <double>, lng: <double>, title: <text>}
 				if (!discard) {
 					var markerInfo = {
@@ -79,13 +107,13 @@ steal( '/assets/webapp/models/channels.js',
 					this.MapChannel.trigger("marker_position", markerInfo);
 				}
 			},
-			
+
 			_updateCommandStatus : function(event, data) {
 				var row = this.element.find("[data-device-id='" + data.device +"']")[0];
 				if (row) {
 					$(row).controller().updateData(data);
 				} else {
-					console.log("WARNING: I've received a command request/response message for an unmonitored device ["+data.device+"]")
+					console.log("WARNING: I've received a command request/response message for an unmonitored device [" + data.device + "]")
 				}
 			},
 

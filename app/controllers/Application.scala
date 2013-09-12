@@ -33,6 +33,7 @@ object Application extends Secured {
           
         Device.index,
         Device.get,
+        Device.getByName,
         Device.create,
         Device.update,
         Device.delete,

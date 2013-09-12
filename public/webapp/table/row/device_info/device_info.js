@@ -17,22 +17,31 @@ steal(
 				var self = this;
 				this._super();
 				this.element.addClass('device_info');
-				this.element.html('/assets/webapp/table/row/device_info/views/view.ejs', self.options, function(el) {
-					var el = self.element.find('.modal.info');
-					$el = $(el);
-					$el.modal();
-					$el.on('hidden', function(){
-						self.element.html('');
-						self.destroy();
-					});
-				});
-				
-				self.device = self.options.device;
-				
-				// ascolta sul canale degli eventi direttamente
-				this.TrackingChannel = Aria.Page.getInstance().getChannelByName("tracking");
-				
-				this.TrackingChannel.subscribe('position info', this.proxy(self._updateInfo));
+					$.when(
+						self.options.parent._getDeviceInfo(self.options)
+					).then(
+						function() {
+							if (self.options.info == undefined) {
+								self.options.info = null;
+							}
+							self.element.html('/assets/webapp/table/row/device_info/views/view.ejs', self.options, function(el) {
+								var el = self.element.find('.modal.info');
+								$el = $(el);
+								$el.modal();
+								$el.on('hidden', function(){
+									self.element.html('');
+									self.destroy();
+								});
+							});
+						
+							self.device = self.options.device;
+							
+							// ascolta sul canale degli eventi direttamente
+							self.TrackingChannel = Aria.Page.getInstance().getChannelByName("tracking");
+							
+							self.TrackingChannel.subscribe('position info', self.proxy(self._updateInfo));
+						}
+					)
 			},
 			
 			destroy : function(){

@@ -36,7 +36,7 @@ GET		/user/current				controllers.User.getCurrent
 # Device
 GET		/device/index				controllers.Device.index(all: Boolean ?= true)
 GET		/device/:id					controllers.Device.get(id: Int)
-GET		/device/byName/:name		controllers.biz.Device.getByName(name: String)
+GET		/device/byName/:name		controllers.Device.getByName(name: String)
 PUT		/device/:id					controllers.Device.update(id: Int)
 DELETE	/device/:id					controllers.Device.delete(id: Int)
 POST	/device						controllers.Device.create
@@ -64,13 +64,6 @@ PUT		/vehicle/:id				controllers.Vehicle.update(id: Int)
 DELETE	/vehicle/:id				controllers.Vehicle.delete(id: Int)
 POST	/vehicle					controllers.Vehicle.create
 
-# Vehicle types
-GET		/vehicle_type/index			controllers.VehicleType.index(all: Boolean ?= true)
-GET		/vehicle_type/:id			controllers.VehicleType.get(id: Int)
-PUT		/vehicle_type/:id			controllers.VehicleType.update(id: Int)
-DELETE	/vehicle_type/:id			controllers.VehicleType.delete(id: Int)
-POST	/vehicle_type				controllers.VehicleType.create
-
 # Driver
 GET		/driver/index				controllers.Driver.index(all: Boolean ?= true)
 GET		/driver/:id					controllers.Driver.get(id: Int)
@@ -91,6 +84,9 @@ GET		/simcard/:id				controllers.Simcard.get(id: Int)
 PUT		/simcard/:id				controllers.Simcard.update(id: Int)
 DELETE	/simcard/:id				controllers.Simcard.delete(id: Int)
 POST	/simcard					controllers.Simcard.create
+
+
+
 
 
 

@@ -58,6 +58,8 @@ object Device extends Secured {
       }
     }.getOrElse(NotFound);
   }
+  
+  def getByName(name: String) = controllers.biz.Device.getByName(name)
 
   val createForm = Form(
     tuple(

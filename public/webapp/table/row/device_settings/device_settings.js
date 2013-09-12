@@ -19,19 +19,31 @@ steal(
 				
 				this.element.attr("tabindex", "-1").attr("aria-hidden", "true");
 				
-				//tabindex="-1" aria-hidden="true"
+
+				$.when(
+						self.options.parent._getDeviceInfo(self.options)
+					).then(
+						function() {
+							if (self.options.info == undefined) {
+								self.options.info = null;
+							}
+							self.element.html('/assets/webapp/table/row/device_settings/views/view.ejs', self.options, function(el) {
+								//var el = self.element.find('.modal.commands');
+								var el = self.element;
+								$el = $(el);
+								$el.modal({remote: '/device/'+ self.options.device +'/configure'});
+								$el.on('hidden', function(){
+									self.element.html('');
+									self.destroy();
+								});
+							});
+						
+						//	self.device = self.options.device;
+						}
+					)
 				
 				
-				this.element.html('/assets/webapp/table/row/device_settings/views/view.ejs', self.options, function(el) {
-					//var el = self.element.find('.modal.commands');
-					var el = self.element;
-					$el = $(el);
-					$el.modal({remote: '/device/'+ self.options.device +'/configure'});
-					$el.on('hidden', function(){
-						self.element.html('');
-						self.destroy();
-					});
-				});
+				
 			}, 
 			
 			".btn.command click" : function (el, ev) {

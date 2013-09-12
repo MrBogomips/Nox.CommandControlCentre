@@ -19,7 +19,6 @@ object VehiclePersistedSerializer {
         "enabled" -> r.enabled,
         "model" -> r.model,
         "licensePlate" -> r.licensePlate,
-        "vehicleTypeId" -> r.vehicleTypeId,
         "creationTime" -> ISODateTimeFormat.dateTime.print(r.creationTime.getTime()),
         "modificationTime" -> ISODateTimeFormat.dateTime.print(r.modificationTime.getTime()),
         "version" -> r.version)

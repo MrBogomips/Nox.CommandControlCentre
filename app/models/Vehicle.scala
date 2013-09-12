@@ -15,7 +15,6 @@ import org.postgresql.util.PSQLException
 trait VehicleTrait extends NamedEntityTrait {
   val model: String
   val licensePlate: String
-  val vehicleTypeId: Option[Int]
 
   override def validate {
     super.validate
@@ -24,15 +23,15 @@ trait VehicleTrait extends NamedEntityTrait {
   }
 }
 
-case class Vehicle(name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, vehicleTypeId: Option[Int])
+case class Vehicle(name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String)
   extends VehicleTrait
   with Model[VehicleTrait] {
 
-  def this(name: String, model: String, licensePlate: String, vehicleTypeId: Option[Int] = None) =
-    this(name, Some(name), None, true, model, licensePlate, vehicleTypeId)
+  def this(name: String, model: String, licensePlate: String) =
+    this(name, Some(name), None, true, model, licensePlate)
 }
 
-case class VehiclePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, vehicleTypeId: Option[Int], creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
+case class VehiclePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends VehicleTrait
   with Persisted[Vehicle]
 
@@ -47,7 +46,6 @@ object Vehicles
   def enabled = column[Boolean]("enabled")
   def model = column[String]("model")
   def licensePlate = column[String]("licensePlate")
-  def vehicleTypeId = column[Int]("vehicleTypeId", O.Nullable)
   def creationTime = column[Timestamp]("creationTime")
   def modificationTime = column[Timestamp]("modificationTime")
   def version = column[Int]("version")
@@ -55,7 +53,7 @@ object Vehicles
   //def deviceTypeFk = foreignKey("defice_type_fk", deviceTypeId, DeviceTypes)(_.id)
   //def deviceGroupFk = foreignKey("defice_group_fk", deviceGroupId, DeviceGroups)(_.id)
 
-  def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ model ~ licensePlate ~ vehicleTypeId.? ~ creationTime ~ modificationTime ~ version <> (VehiclePersisted.apply _, VehiclePersisted.unapply _)
+  def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ model ~ licensePlate ~ creationTime ~ modificationTime ~ version <> (VehiclePersisted.apply _, VehiclePersisted.unapply _)
 
   /**
     * Exception mapper
@@ -96,7 +94,6 @@ object Vehicles
     		enabled, 
     		model,
     		"licensePlate",
-    		"vehicleTypeId",
     		"creationTime",
     		"modificationTime",
     		version
@@ -108,7 +105,6 @@ object Vehicles
     		${obj.enabled},
     		${obj.model},
     		${obj.licensePlate},
-    		${obj.vehicleTypeId},
     		NOW(),
     		NOW(),
     		0
@@ -130,7 +126,6 @@ object Vehicles
     	   enabled = ${obj.enabled},
     	   model = ${obj.model},
     	   "licensePlate" = ${obj.licensePlate}, 
-    	   "vehicleTypeId" = ${obj.vehicleTypeId}, 
            "modificationTime" = NOW(),
            version = version + 1 
 	 WHERE id = ${obj.id}
@@ -148,7 +143,6 @@ object Vehicles
     	   enabled = ${obj.enabled},
     	   model = ${obj.model},
     	   "licensePlate" = ${obj.licensePlate},
-    	   "vehicleTypeId" = ${obj.vehicleTypeId}, 
            "modificationTime" = NOW(),
            version = version + 1 
 	 WHERE id = ${obj.id}

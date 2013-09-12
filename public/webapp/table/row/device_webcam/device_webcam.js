@@ -27,19 +27,10 @@ steal('./css/device_webcam.css')
 						self.destroy();
 					});
 				});
-				
-			//	self.device = self.options.device;
-				
-				// ascolta sul canale degli eventi direttamente
-			//	this.TrackingChannel = Aria.Page.getInstance().getChannelByName("tracking");
-				
-			//	this.TrackingChannel.subscribe('position info', this.proxy(self._updateInfo));
 			},
 			
 			destroy : function(){
 				var self = this;
-			//	this.TrackingChannel.unsubscribe('info', this.proxy(self._updateInfo));
-			//	this.TrackingChannel.unsubscribe('position', this.proxy(self._updateInfo));
 			    this._super();
 			}
 			
