@@ -12,14 +12,14 @@ import utils.Converter._
 
 import org.joda.time.format.ISODateTimeFormat
 
-import models.json.vehiclePersistedJsonWriter
+import models.json.{vehiclePersistedJsonWriter, vehicleInfoPersistedJsonWriter} 
 
 object Vehicle extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     implicit val req = request
     val vehicles = all match {
-      case false => Vehicles.find(Some(true))
-      case true  => Vehicles.find(None)
+      case false => Vehicles.findWithInfo(Some(true))
+      case true  => Vehicles.findWithInfo(None)
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(vehicles))
@@ -49,6 +49,7 @@ object Vehicle extends Secured {
       "description" -> optional(text),
       "model" -> nonEmptyText(minLength = 3),
       "licensePlate" -> nonEmptyText(minLength = 3),
+      "vehicleId" -> optional(number),
       "enabled" -> optional(text)))
   val updateForm = Form(
     tuple(
@@ -57,6 +58,7 @@ object Vehicle extends Secured {
       "description" -> optional(text),
       "model" -> nonEmptyText(minLength = 3),
       "licensePlate" -> nonEmptyText(minLength = 3),
+      "vehicleId" -> optional(number),
       "enabled" -> optional(text),
       "version" -> number))
 
@@ -64,19 +66,19 @@ object Vehicle extends Secured {
     createForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, model, licensePlate, enabled) =>
-          val v = VehicleModel(name, displayName, description, enabled, model, licensePlate)
+        case (name, displayName, description, model, licensePlate, vehicleTypeId, enabled) =>
+          val v = VehicleModel(name, displayName, description, enabled, model, licensePlate, vehicleTypeId)
           val id = Vehicles.insert(v)
           Ok(s"""{"id"=id}""")
       })
   }
 
-  def update(id: Int) = WithAuthentication { implicit request =>
+  def update(id: Int) = WithAuthentication { implicit request => 
     updateForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, model, licensePlate, enabled, version) =>
-          val vp = VehiclePersisted(id, name, displayName, description, enabled, model, licensePlate, version = version)
+        case (name, displayName, description, model, licensePlate, vehicleTypeId, enabled, version) =>
+          val vp = VehiclePersisted(id, name, displayName, description, enabled, model, licensePlate, vehicleTypeId, version = version)
           //Simcards.up
           Vehicles.update(vp) match {
             case true => Ok

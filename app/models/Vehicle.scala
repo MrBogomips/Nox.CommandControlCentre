@@ -15,24 +15,35 @@ import org.postgresql.util.PSQLException
 trait VehicleTrait extends NamedEntityTrait {
   val model: String
   val licensePlate: String
+  val vehicleTypeId: Option[Int]
 
   override def validate {
     super.validate
     validateMinLength("model", model, 3)
     validateMinLength("licensePlate", licensePlate, 3)
+    vehicleTypeId.map(v => validateMinValue("vehicleTypeId", v, 1))
   }
 }
 
-case class Vehicle(name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String)
+trait VehicleInfoTrait extends VehicleTrait {
+  val vehicleTypeDisplayName: Option[String]
+}
+
+case class Vehicle(name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, vehicleTypeId: Option[Int] = None)
   extends VehicleTrait
   with Model[VehicleTrait] {
 
-  def this(name: String, model: String, licensePlate: String) =
-    this(name, Some(name), None, true, model, licensePlate)
+  def this(name: String, model: String, licensePlate: String, vehicleTypeId: Option[Int] = None) =
+    this(name, Some(name), None, true, model, licensePlate, vehicleTypeId)
 }
 
-case class VehiclePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
+case class VehiclePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, licensePlate: String, vehicleTypeId: Option[Int], creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends VehicleTrait
+  with Persisted[Vehicle]
+
+case class VehicleInfoPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, model: String, 
+    licensePlate: String, vehicleTypeId: Option[Int], vehicleTypeDisplayName: Option[String], creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
+  extends VehicleInfoTrait
   with Persisted[Vehicle]
 
 object Vehicles
@@ -46,6 +57,7 @@ object Vehicles
   def enabled = column[Boolean]("enabled")
   def model = column[String]("model")
   def licensePlate = column[String]("licensePlate")
+  def vehicleTypeId = column[Int]("vehicleTypeId")
   def creationTime = column[Timestamp]("creationTime")
   def modificationTime = column[Timestamp]("modificationTime")
   def version = column[Int]("version")
@@ -53,7 +65,7 @@ object Vehicles
   //def deviceTypeFk = foreignKey("defice_type_fk", deviceTypeId, DeviceTypes)(_.id)
   //def deviceGroupFk = foreignKey("defice_group_fk", deviceGroupId, DeviceGroups)(_.id)
 
-  def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ model ~ licensePlate ~ creationTime ~ modificationTime ~ version <> (VehiclePersisted.apply _, VehiclePersisted.unapply _)
+  def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ model ~ licensePlate ~ vehicleTypeId.? ~ creationTime ~ modificationTime ~ version <> (VehiclePersisted.apply _, VehiclePersisted.unapply _)
 
   /**
     * Exception mapper
@@ -67,6 +79,22 @@ object Vehicles
     else
       throw e;
   }
+  
+  implicit private def vehicleInfoGetResult = GetResult(r =>
+    VehicleInfoPersisted(
+      r.nextInt, // id 
+      r.nextString, // name,
+      r.nextStringOption, //displayName0
+      r.nextStringOption, // description
+      r.nextBoolean, // enabled
+      r.nextString, // model
+      r.nextString, // licensePlate
+      r.nextIntOption, // vehicleTypeId
+      r.nextStringOption, // vehicleType's displayName
+      r.nextTimestamp, // creationTime
+      r.nextTimestamp, // modificationTime
+      r.nextInt // version
+      ))
 
   def find(enabled: Option[Boolean] = None): Seq[VehiclePersisted] = db withSession {
     val qy = enabled match {
@@ -84,6 +112,30 @@ object Vehicles
     qy.firstOption
   }
 
+  
+  def findWithInfo(enabled: Option[Boolean] = None): Seq[VehicleInfoPersisted] = db withSession {
+    val sql = enabled.map(en =>
+      sql"""
+    SELECT 
+    	V."id", V."name", V."displayName", V."description", V."enabled", V."model", V."licensePlate", V."vehicleTypeId", 
+        VT."displayName",
+    	V."creationTime", V."modificationTime", V."version"
+    FROM "#$tableName" V
+      LEFT JOIN "VehicleTypes" VT ON V."vehicleTypeId" = VT."id"
+    WHERE V."enabled" = $en
+    """).getOrElse(
+      sql"""
+    SELECT 
+    	V."id", V."name", V."displayName", V."description", V."enabled", V."model", V."licensePlate", V."vehicleTypeId", 
+        VT."displayName",
+    	V."creationTime", V."modificationTime", V."version"
+    FROM "#$tableName" V
+      LEFT JOIN "VehicleTypes" VT ON V."vehicleTypeId" = VT."id"
+    """)
+
+    executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[VehicleInfoPersisted]) { _.list }
+  }
+
   def insert(uobj: Vehicle): Int = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sql"""
@@ -94,6 +146,7 @@ object Vehicles
     		enabled, 
     		model,
     		"licensePlate",
+    		"vehicleTypeId",
     		"creationTime",
     		"modificationTime",
     		version
@@ -105,6 +158,7 @@ object Vehicles
     		${obj.enabled},
     		${obj.model},
     		${obj.licensePlate},
+    		${obj.vehicleTypeId}
     		NOW(),
     		NOW(),
     		0
@@ -126,6 +180,7 @@ object Vehicles
     	   enabled = ${obj.enabled},
     	   model = ${obj.model},
     	   "licensePlate" = ${obj.licensePlate}, 
+    	   "vehicleTypeId" = ${obj.vehicleTypeId}, 
            "modificationTime" = NOW(),
            version = version + 1 
 	 WHERE id = ${obj.id}
@@ -143,6 +198,7 @@ object Vehicles
     	   enabled = ${obj.enabled},
     	   model = ${obj.model},
     	   "licensePlate" = ${obj.licensePlate},
+    	   "vehicleTypeId" = ${obj.vehicleTypeId},
            "modificationTime" = NOW(),
            version = version + 1 
 	 WHERE id = ${obj.id}

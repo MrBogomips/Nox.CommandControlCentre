@@ -23,7 +23,7 @@ object Device extends Secured {
       Logger.debug("HTTP RESPONSE: "+response.toString)
       Ok(response)
     }.recoverTotal {
-      e ⇒ BadRequest("Invalid Command:"+JsError.toFlatJson(e))
+      e => BadRequest("Invalid Command:"+JsError.toFlatJson(e))
     }
   }
 
@@ -34,8 +34,8 @@ object Device extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) =>
     implicit val req = request
     val devices = all match {
-      case false ⇒ Devices.findWithInfo(Some(true))
-      case true  ⇒ Devices.findWithInfo(None)
+      case false => Devices.findWithInfo(Some(true))
+      case true  => Devices.findWithInfo(None)
     }
     if (acceptsJson(request)) {
       Ok(Json.toJson(devices))
@@ -68,7 +68,7 @@ object Device extends Secured {
       "description" -> optional(text),
       "deviceTypeId" -> number, //number(min = 100),
       "deviceGroupId" -> number,
-      "vehicleId" -> optional(number(min = 1)),
+      "vehicleId" -> optional(number),
       "enabled" -> boolean,
       "simcardId" -> optional(number)))
 
