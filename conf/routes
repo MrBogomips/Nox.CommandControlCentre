@@ -65,6 +65,13 @@ PUT		/vehicle/:id				controllers.Vehicle.update(id: Int)
 DELETE	/vehicle/:id				controllers.Vehicle.delete(id: Int)
 POST	/vehicle					controllers.Vehicle.create
 
+# Vehicle Type
+GET		/vehicle_type/index			controllers.VehicleType.index(all: Boolean ?= true)
+GET		/vehicle_type/:id			controllers.VehicleType.get(id: Int)
+PUT		/vehicle_type/:id			controllers.VehicleType.update(id: Int)
+DELETE	/vehicle_type/:id			controllers.VehicleType.delete(id: Int)
+POST	/vehicle_type				controllers.VehicleType.create
+
 # Driver
 GET		/driver/index				controllers.Driver.index(all: Boolean ?= true)
 GET		/driver/:id					controllers.Driver.get(id: Int)
