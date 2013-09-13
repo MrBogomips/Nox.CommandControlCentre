@@ -2,13 +2,13 @@
 <div class="modal hide fade info" tabindex="-1" aria-hidden="true">
 	<div class="modal-header">
 	  	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	  	<h3>Webcam «<%=device%>»</h3>
+	  	<h3>Webcam «<%= deviceName %>»</h3>
 	</div>
 	<div class="modal-body">
-		<div class="containerWebcam containerWebcam<%= webcam.length %>">
-			<% for(i in webcam) { %>
-				<div class="webcam">
-					<iframe scrolling="no" frameborder="0" src="<%= webcam[i] %>"></iframe>
+		<div class="containerWebcam">
+			<% for(i in webcams) { %>
+				<div class="webcam" <%= plugin('webapp_webcam', { 'id' : webcams[i].id , 'width' : width , 'height' : height , 'file' : webcams[i].file }) %>>
+					
 				</div>
 		    <% } %>
 		</div>

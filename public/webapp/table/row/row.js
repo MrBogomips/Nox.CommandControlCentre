@@ -51,7 +51,7 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 
 			'.btn.webcam click' : function(el, ev) {
 				var ai = this.element.find('.anchorInfo'); 
-				ai.webapp_device_webcam(this.data);
+				ai.webapp_device_webcam({ 'deviceName' : this.options.device , 'webcams' : this.options.webcams });
 			} ,
 			
 			'.label.event-command-counter click' : function(el, ev) {

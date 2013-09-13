@@ -5,6 +5,7 @@
 # Map static resources from the /public folder to the /assets URL path
 GET 	/assets/js/routes.js		controllers.Application.javascriptRoutes
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /jwplayer.flash.swf                controllers.Assets.at(path="/public", file="jwplayer.flash.swf")
 #GET		/api/*file				    controllers.Assets.at(path="/target/scala-2.10/api", file)
 
 # Home page

@@ -9,6 +9,7 @@ steal(
 		{
 			defaults : {
 				id : '',
+				typeId : -1,
 				model : '',
 				name : '',
 				displayName : '',
@@ -31,6 +32,32 @@ steal(
 				var view = jsRoutes.controllers.Assets.at("webapp/vehicles/views/default.ejs").url;
 				
 				if (parseInt(self.options["id"]) > 0) {
+
+					$.when(
+						jsRoutes.controllers.Vehicle.get(self.options["id"]).ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }}),
+					    jsRoutes.controllers.DeviceGroup.index().ajax({
+						headers: { 
+					        Accept : "application/json; charset=utf-8",
+					        "Content-Type": "application/json; charset=utf-8"
+					    }})
+					).done(function(dd, dt) {
+						$.extend(self.options, dd[0]);
+						$.extend(self.options, {"vehicleTypes": dt[0]});
+						self.renderForm(view);
+					});
+
+
+
+
+
+
+
+
+
 					self.options.serverController.get(self.options["id"]).ajax({
 						headers: { 
 					        Accept : "application/json; charset=utf-8",
