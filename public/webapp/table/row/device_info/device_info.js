@@ -1,4 +1,6 @@
-steal(
+steal('/assets/leaflet/leaflet.js', 
+   	  '/assets/leaflet/leaflet.css')
+.then(
 	function($){
 
 		/**
@@ -24,7 +26,7 @@ steal(
 							if (self.options.info == undefined) {
 								self.options.info = null;
 							}
-							self.element.html('/assets/webapp/table/row/device_info/views/view.ejs', self.options, function(el) {
+							self.element.html('/assets/webapp/table/row/device_info/views/device_info.ejs', self.options, function(el) {
 								var el = self.element.find('.modal.info');
 								$el = $(el);
 								$el.modal();
@@ -32,6 +34,25 @@ steal(
 									self.element.html('');
 									self.destroy();
 								});
+
+
+								var initMap = function (pos) {
+					            	self.map = L.map('mini-map', {
+					            		attributionControl: $('#map').controller().options.attributionControl,
+					            		crs: L.CRS.EPSG3857
+					            		}
+					            	).setView([pos.coords.lat, pos.coords.lon], 13);
+					            	L.tileLayer('http://{s}.tile.cloudmade.com/' + $('#map').controller().options.cloudmadeAppKey + '/997/256/{z}/{x}/{y}.png', {
+					    				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
+									    maxZoom: 18
+									}).addTo(self.map);
+					            //	if (self.options.markerChannel !== undefined) {
+					            //		self.options.markerChannel.subscribe("marker_position", self.proxy(self._updateMarker));
+					            //	}
+								}
+								
+								initMap(self.options.data);
+
 							});
 						
 							self.device = self.options.device;

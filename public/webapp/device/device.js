@@ -69,7 +69,8 @@ steal(
 					    	self.renderForm(view);
 					    });
 				} else {
-					$.when(jsRoutes.controllers.DeviceType.index().ajax({
+					$.when(
+						jsRoutes.controllers.DeviceType.index().ajax({
 						headers: { 
 					        Accept : "application/json; charset=utf-8",
 					        "Content-Type": "application/json; charset=utf-8"

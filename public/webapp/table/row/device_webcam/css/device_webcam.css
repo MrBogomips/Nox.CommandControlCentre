@@ -1,5 +1,2 @@
 .containerWebcam { width:100%; text-align:center; display:inline-block; }
-.containerWebcam .webcam { display:inline-block; }
-.containerWebcam1 .webcam { width:530px; height:530px; overflow:hidden; }
-.containerWebcam2 .webcam, .containerWebcam3 .webcam, .containerWebcam4 .webcam { width:260px; height:260px; }
-.containerWebcam1 iframe { width:100%; height:100%; }
+.containerWebcam .webcam { display:inline-block; border:solid #FFFFFF 1px; float:left; }

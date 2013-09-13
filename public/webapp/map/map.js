@@ -18,7 +18,7 @@ steal( '/assets/webapp/models/channels.js',
 					latitude: null,
 					longitude: null			
 				},
-				cloudmadeAppKey: "",
+				cloudmadeAppKey: '',
 				markerChannel: undefined	// An aria channel where to monitor the event "marker_position"
 			}
 		},
@@ -40,7 +40,7 @@ steal( '/assets/webapp/models/channels.js',
 	            		crs: L.CRS.EPSG3857
 	            		}
 	            	).setView([pos.coords.latitude, pos.coords.longitude], 13);
-	            	L.tileLayer('http://{s}.tile.cloudmade.com/'+self.options.cloudmadeAppKey+'/997/256/{z}/{x}/{y}.png', {
+	            	L.tileLayer('http://{s}.tile.cloudmade.com/' + self.options.cloudmadeAppKey + '/997/256/{z}/{x}/{y}.png', {
 	    				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
 					    maxZoom: 18
 					}).addTo(self.map);

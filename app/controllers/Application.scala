@@ -30,6 +30,8 @@ object Application extends Secured {
         Map.index,
          
         User.getCurrent,
+        
+        Channel.index,
           
         Device.index,
         Device.get,
