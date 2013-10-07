@@ -93,7 +93,8 @@ PUT		/simcard/:id				controllers.Simcard.update(id: Int)
 DELETE	/simcard/:id				controllers.Simcard.delete(id: Int)
 POST	/simcard					controllers.Simcard.create
 
-
+# Maintenance
+GET		/maintenance_service/index	controllers.MaintenanceService.index(all: Boolean ?= true)
 
 
 

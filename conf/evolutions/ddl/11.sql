@@ -23,8 +23,8 @@ CREATE SEQUENCE "MaintenanceServicesSeq";
 CREATE TABLE "MaintenanceServices" (
 	"id"					INT NOT NULL DEFAULT(nextval('"MaintenanceServicesSeq"')),
 	"name"					text NOT NULL,
-	"surname"				text NOT NULL,
 	"displayName"			text NOT NULL,
+	"description"			text NULL,
 	"enabled"				BOOLEAN NOT NULL,
 	"creationTime"			TIMESTAMP NOT NULL DEFAULT(NOW()),
 	"modificationTime"		TIMESTAMP NOT NULL DEFAULT(NOW()),
@@ -32,6 +32,7 @@ CREATE TABLE "MaintenanceServices" (
 	"odometer"				INT NOT NULL,
 	"monthsPeriod"			INT NOT NULL,
 	CONSTRAINT				"MaintenanceServicesPK" PRIMARY KEY("id"),
+	CONSTRAINT				"MaintenanceServicesNameUQ" UNIQUE("name"),
 	CONSTRAINT 				"mtime_gte_ctime_chk" CHECK ("modificationTime" >= "creationTime"),
 	CONSTRAINT				"odometer_gt_zero" CHECK ("odometer" > 0),
 	CONSTRAINT				"monthsPeriod_gt_zero" CHECK ("monthsPeriod" > 0)
@@ -49,6 +50,7 @@ CREATE TABLE "MaintenanceDuties" (
 	"modificationTime"		TIMESTAMP NOT NULL DEFAULT(NOW()),
 	"version"				INT NOT NULL DEFAULT(0),
 	CONSTRAINT				"MaintenanceDutiesPK" PRIMARY KEY("id"),
+	CONSTRAINT				"MaintenanceDutiesAK" UNIQUE("idVehicle", "idService"),
 	CONSTRAINT 				"mtime_gte_ctime_chk" CHECK ("modificationTime" >= "creationTime"),
 	CONSTRAINT				"MaintenanceDutiesVehicleFK" FOREIGN KEY("idVehicle") REFERENCES "Vehicles",
 	CONSTRAINT				"MaintenanceDutiesServiceFK" FOREIGN KEY("idService") REFERENCES "MaintenanceServices"
@@ -90,6 +92,7 @@ CREATE TABLE "MaintenanceActivitiesOutcomes" (
 	"modificationTime"		TIMESTAMP NOT NULL DEFAULT(NOW()),
 	"version"				INT NOT NULL DEFAULT(0),
 	CONSTRAINT				"MaintenanceActivitiesOutcomesPK" PRIMARY KEY("id"),
+	CONSTRAINT				"MaintenanceActivitiesOutcomesNameUQ" UNIQUE("name"),
 	CONSTRAINT 				"mtime_gte_ctime_chk" CHECK ("modificationTime" >= "creationTime")
 );
 GRANT SELECT, INSERT,  UPDATE, DELETE, TRUNCATE ON TABLE "MaintenanceActivitiesOutcomes" TO PUBLIC;
@@ -107,9 +110,31 @@ CREATE TABLE "MaintenanceActivityLogs" (
 	"modificationTime"		TIMESTAMP NOT NULL DEFAULT(NOW()),
 	"version"				INT NOT NULL DEFAULT(0),
 	CONSTRAINT				"MaintenanceActivityLogsPK" PRIMARY KEY("id"),
+	CONSTRAINT				"MaintenanceActivityLogsAK" UNIQUE("idActivity", "idService"),
 	CONSTRAINT 				"mtime_gte_ctime_chk" CHECK ("modificationTime" >= "creationTime"),
 	CONSTRAINT				"MaintenanceActivityLogsActivityFK" FOREIGN KEY("idActivity") REFERENCES "MaintenanceActivities",
-	CONSTRAINT				"MaintenanceActivityLogsOutcomeFK" FOREIGN KEY("idActivity") REFERENCES "MaintenanceActivitiesOutcomes"
+	CONSTRAINT				"MaintenanceActivityLogsServiceFK" FOREIGN KEY("idService") REFERENCES "MaintenanceServices",
+	CONSTRAINT				"MaintenanceActivityLogsOutcomeFK" FOREIGN KEY("idOutcome") REFERENCES "MaintenanceActivitiesOutcomes"
 );
 GRANT SELECT, INSERT,  UPDATE, DELETE, TRUNCATE ON TABLE "MaintenanceActivityLogs" TO PUBLIC;
 GRANT ALL PRIVILEGES ON SEQUENCE "MaintenanceActivityLogsSeq" TO PUBLIC; 
+
+# --- !Downs
+DROP TABLE "MaintenanceActivityLogs";
+DROP SEQUENCE "MaintenanceActivityLogsSeq";
+
+DROP TABLE "MaintenanceActivitiesOutcomes";
+DROP SEQUENCE "MaintenanceActivitiesOutcomesSeq";
+
+DROP TABLE "MaintenanceActivities";
+DROP SEQUENCE "MaintenanceActivitiesSeq";
+
+DROP TABLE "MaintenanceDuties";
+DROP SEQUENCE "MaintenanceDutiesSeq";
+
+DROP TABLE "MaintenanceServices";
+DROP SEQUENCE "MaintenanceServicesSeq";
+
+DROP TABLE "Operators";
+DROP SEQUENCE "OperatorsSeq";
+

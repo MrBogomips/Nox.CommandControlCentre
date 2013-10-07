@@ -4,6 +4,10 @@ import patterns.models._
 import play.api.libs.json._
 
 package object json {
+  // Validation Errors
+  implicit val validationErrorJsonWriter: Writes[ValidationError] = ValidationErrorSerializer.jsonWriter
+  implicit val seqValidationErrorJsonWriter: Writes[Seq[ValidationError]] = SeqValidationErrorSerializer.jsonWriter
+
   // User
   implicit val userPersistedJsonWriter: Writes[UserPersisted] = UserPersistedSerializer.jsonWriter
   
@@ -33,9 +37,7 @@ package object json {
   
   // Vehicle Assignements
   implicit val vehicleAssignementPersistedJsonWriter: Writes[VehicleAssignementPersisted] = VehicleAssignementPersistedSerializer.jsonWriter
-  
-  // Validation Errors
-  implicit val validationErrorJsonWriter: Writes[ValidationError] = ValidationErrorSerializer.jsonWriter
-  implicit val seqValidationErrorJsonWriter: Writes[Seq[ValidationError]] = SeqValidationErrorSerializer.jsonWriter
-  
+    
+  // MaintenanceServices
+  implicit val maintenanceServicePersistedJsonWriter: Writes[MaintenanceServicePersisted] = MaintenanceServicePersistedSerializer.jsonWriter
 }
