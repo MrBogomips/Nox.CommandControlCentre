@@ -24,6 +24,7 @@ trait DeviceTrait extends Validatable {
   val deviceTypeId: Int
   val deviceGroupId: Int
   val vehicleId: Option[Int]
+  val deviceManagerId: Option[Int]
   val enabled: Boolean
   val simcardId: Option[Int]
 
@@ -46,20 +47,24 @@ trait DeviceInfoTrait extends DeviceTrait {
   val simcardDisplayName: Option[String]
 }
 
-case class Device(name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int])
+case class Device(name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], deviceManagerId: Option[Int])
   extends DeviceTrait 
   with Model[DeviceTrait]
 
-case class DevicePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int)
+case class DevicePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], deviceManagerId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int)
   extends DeviceTrait
   with Persisted[Device] {
-  def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int]) =
-    this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, new Timestamp(0), new Timestamp(0), 0)
-  def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], version: Int) =
-    this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, new Timestamp(0), new Timestamp(0), version)
+  def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], deviceManagerId: Option[Int]) =
+    this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, deviceManagerId, new Timestamp(0), new Timestamp(0), 0)
+  def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], deviceManagerId: Option[Int], version: Int) =
+    this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, deviceManagerId, new Timestamp(0), new Timestamp(0), version)
 }
 
-case class DeviceInfoPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int, deviceTypeDisplayName: String, deviceGroupDisplayName: String, vehicleDisplayName: Option[String], vehicleLicensePlate: Option[String], simcardImei: Option[String], simcardDisplayName: Option[String])
+case class DeviceInfoPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], 
+    deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], 
+    deviceManagerId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int, deviceTypeDisplayName: String, deviceGroupDisplayName: String, 
+    vehicleDisplayName: Option[String], vehicleLicensePlate: Option[String], simcardImei: Option[String], simcardDisplayName: Option[String], 
+    deviceManagerName: Option[String], deviceManagerDisplayName: Option[String])
   extends DeviceInfoTrait
   with Persisted[Device]
 
@@ -75,6 +80,7 @@ object Devices
   def description = column[String]("description", O.Nullable)
   def enabled = column[Boolean]("enabled")
   def simcardId = column[Int]("simcardId", O.Nullable)
+  def deviceManagerId = column[Int]("deviceManagerId", O.Nullable)
   def deviceTypeId = column[Int]("deviceTypeId")
   def deviceGroupId = column[Int]("deviceGroupId")
   def vehicleId = column[Int]("vehicleId", O.Nullable)
@@ -86,7 +92,7 @@ object Devices
   def deviceGroupFk = foreignKey("device_group_fk", deviceGroupId, DeviceGroups)(_.id)
   def vehicleFk = foreignKey("vehicle_fk", vehicleId, Vehicles)(_.id)
 
-  def * = id ~ name ~ displayName.? ~ description.? ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ enabled ~ simcardId.? ~ creationTime ~ modificationTime ~ version <> (DevicePersisted, DevicePersisted.unapply _)
+  def * = id ~ name ~ displayName.? ~ description.? ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ enabled ~ simcardId.? ~ deviceManagerId.? ~ creationTime ~ modificationTime ~ version <> (DevicePersisted, DevicePersisted.unapply _)
 
   /**
     * Exception mapper
@@ -114,11 +120,14 @@ object Devices
   implicit private def deviceInfoGetResult = GetResult(r =>
     DeviceInfoPersisted(r.nextInt, r.nextString, r.nextStringOption, r.nextStringOption, r.nextInt, r.nextInt, r.nextIntOption, r.nextBoolean,
       r.nextIntOption, //simcardId 
+      r.nextIntOption, //deviceManagerId 
       r.nextTimestamp,
       r.nextTimestamp, r.nextInt, r.nextString, r.nextString, r.nextStringOption,
       r.nextStringOption,
       r.nextStringOption, // simcardImei
-      r.nextStringOption // simcardDisplayName
+      r.nextStringOption, // simcardDisplayName
+      r.nextStringOption, // deviceManagerName
+      r.nextStringOption // deviceManagerDisplayName
       ))
 
   def find(enabled: Option[Boolean] = None): Seq[DevicePersisted] = db withSession {
@@ -134,24 +143,26 @@ object Devices
     val sql = enabled.map(en =>
       sql"""
     SELECT 
-    	D."id", D."name", D."displayName", D."description", D."deviceTypeId", D."deviceGroupId", D."vehicleId", D."enabled", D."simcardId", D."creationTime", D."modificationTime", D."version",
-    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC."imei", SC."displayName"
+    	D."id", D."name", D."displayName", D."description", D."deviceTypeId", D."deviceGroupId", D."vehicleId", D."enabled", D."simcardId", D."deviceManagerId", D."creationTime", D."modificationTime", D."version",
+    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC."imei", SC."displayName", DM."name", DM."displayName"
     FROM "#$tableName" D
       INNER JOIN "DeviceTypes" DT ON D."deviceTypeId" = DT."id"
       INNER JOIN "DeviceGroups" DG ON D."deviceGroupId" = DG."id"
       LEFT JOIN "Vehicles" V ON D."vehicleId" = V."id"
       LEFT JOIN "Simcards" SC ON D."simcardId" = SC."id"
+      LEFT JOIN "DeviceManagers" DM ON D."deviceManagerId" = DM.id
     WHERE D."enabled" = $en
     """).getOrElse(
       sql"""
     SELECT 
-    	D."id", D."name", D."displayName", D."description", D."deviceTypeId", D."deviceGroupId", D."vehicleId", D."enabled", D."simcardId", D."creationTime", D."modificationTime", D."version",
-    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC."imei", SC."displayName"
+    	D."id", D."name", D."displayName", D."description", D."deviceTypeId", D."deviceGroupId", D."vehicleId", D."enabled", D."simcardId", D."deviceManagerId", D."creationTime", D."modificationTime", D."version",
+    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC."imei", SC."displayName", DM."name", DM."displayName"
     FROM "#$tableName" D
       INNER JOIN "DeviceTypes" DT ON D."deviceTypeId" = DT."id"
       INNER JOIN "DeviceGroups" DG ON D."deviceGroupId" = DG."id"
       LEFT JOIN "Vehicles" V ON D."vehicleId" = V."id"
       LEFT JOIN "Simcards" SC ON D."simcardId" = SC."id"
+      LEFT JOIN "DeviceManagers" DM ON D."deviceManagerId" = DM.id
     """)
 
     executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[DeviceInfoPersisted]) { _.list }
@@ -166,13 +177,14 @@ object Devices
   def findWithInfoById(id: Int): Option[DeviceInfoPersisted] = db withSession {
     val sql = sql"""
     SELECT 
-    	D.id, D.name, D."displayName", D.description, D."deviceTypeId", D."deviceGroupId", D."vehicleId", D.enabled, D."simcardId", D."creationTime", D."modificationTime", D.version,
-    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC.imei, SC."displayName"
+    	D.id, D.name, D."displayName", D.description, D."deviceTypeId", D."deviceGroupId", D."vehicleId", D.enabled, D."simcardId", D."deviceManagerId", D."creationTime", D."modificationTime", D.version,
+    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC.imei, SC."displayName", DM."name", DM."displayName"
     FROM "#$tableName" D
       INNER JOIN "DeviceTypes" DT ON D."deviceTypeId" = DT.id
       INNER JOIN "DeviceGroups" DG ON D."deviceGroupId" = DG.id
       LEFT JOIN "Vehicles" V ON D."vehicleId" = V.id
       LEFT JOIN "Simcards" SC ON D."simcardId" = SC.id
+      LEFT JOIN "DeviceManagers" DM ON D."deviceManagerId" = DM.id
     WHERE D.id = $id
     """
 
@@ -188,13 +200,14 @@ object Devices
   def findWithInfoByName(name: String): Option[DeviceInfoPersisted] = db withSession {
     val sql = sql"""
     SELECT 
-    	D.id, D.name, D."displayName", D.description, D."deviceTypeId", D."deviceGroupId", D."vehicleId", D.enabled, D."simcardId", D."creationTime", D."modificationTime", D.version,
-    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC.imei, SC."displayName"
+    	D.id, D.name, D."displayName", D.description, D."deviceTypeId", D."deviceGroupId", D."vehicleId", D.enabled, D."simcardId", D."deviceManagerId", D."creationTime", D."modificationTime", D.version,
+    	DT."displayName", DG."displayName", V."displayName", V."licensePlate", SC.imei, SC."displayName", DM."name", DM."displayName"
     FROM "#$tableName" D
       INNER JOIN "DeviceTypes" DT ON D."deviceTypeId" = DT.id
       INNER JOIN "DeviceGroups" DG ON D."deviceGroupId" = DG.id
       LEFT JOIN "Vehicles" V ON D."vehicleId" = V.id
       LEFT JOIN "Simcards" SC ON D."simcardId" = SC.id
+      LEFT JOIN "DeviceManagers" DM ON D."deviceManagerId" = DM.id
     WHERE D.name = $name
     """
 
@@ -210,6 +223,7 @@ object Devices
     		description,
     		enabled,
     		"simcardId",
+    		"deviceManagerId",
     		"deviceTypeId", 
     		"deviceGroupId",
     		"vehicleId",
@@ -223,6 +237,7 @@ object Devices
     		${obj.description},
     		${obj.enabled},
     		${obj.simcardId},
+    		${obj.deviceManagerId},
     		${obj.deviceTypeId},
     		${obj.deviceGroupId},
     		${obj.vehicleId},
@@ -244,6 +259,7 @@ object Devices
 	    	   description = ${obj.description},
 	    	   enabled = ${obj.enabled},
 	    	   "simcardId" = ${obj.simcardId},
+	    	   "deviceManagerId" = ${obj.deviceManagerId},
 	           "deviceTypeId" = ${obj.deviceTypeId},
 	           "deviceGroupId" = ${obj.deviceGroupId},
 	           "vehicleId" = ${obj.vehicleId},
@@ -262,7 +278,8 @@ object Devices
 	           "displayName" = ${obj.displayName},
 	    	   description = ${obj.description},
 	    	   enabled = ${obj.enabled},
-	    	   "simcardId" = ${obj.simcardId},	    	   
+	    	   "simcardId" = ${obj.simcardId},
+	    	   "deviceManagerId" = ${obj.deviceManagerId},
 	           "deviceTypeId" = ${obj.deviceTypeId},
 	           "deviceGroupId" = ${obj.deviceGroupId},
 	           "vehicleId" = ${obj.vehicleId},
