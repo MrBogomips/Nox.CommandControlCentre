@@ -70,7 +70,8 @@ object Device extends Secured {
       "deviceGroupId" -> number,
       "vehicleId" -> optional(number),
       "enabled" -> boolean,
-      "simcardId" -> optional(number)))
+      "simcardId" -> optional(number),
+      "deviceManagerId" -> optional(number)))
 
   val updateForm = Form(
     tuple(
@@ -82,14 +83,15 @@ object Device extends Secured {
       "vehicleId" -> optional(number),
       "enabled" -> boolean,
       "simcardId" -> optional(number),
+      "deviceManagerId" -> optional(number),
       "version" -> number))
 
   def create = WithAuthentication { implicit request ⇒
     createForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId) ⇒
-          val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId)
+        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId, deviceManagerId) =>
+          val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId, deviceManagerId)
           val id = Devices.insert(d)
           Ok(s"""{"id"=id}""")
       })
@@ -99,8 +101,8 @@ object Device extends Secured {
     updateForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, version) ⇒
-          val dp = new DevicePersisted(id, name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, version)
+        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, deviceManagerId, version) ⇒
+          val dp = new DevicePersisted(id, name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, deviceManagerId, version)
           Devices.update(dp) match {
             case true ⇒ {
               notifications.notifyDeviceChangeConfiguration(dp.name)
