@@ -53,7 +53,7 @@ case class DeviceCommandRequest(val device: String, /*val tranId: String, */ val
           
         for (mqtt <- managed(new SimpleClient(mqBrokerURI))) {
           mqtt.connect
-          mqtt.publish(mqRequestTopic, Json.toJson(cmdReqEnh))
+          mqtt.publish(commandTopic, Json.toJson(cmdReqEnh))
         }
 
         DeviceCommandResponseOK(cmdReqEnh.tranId, "Command sent successfully")
