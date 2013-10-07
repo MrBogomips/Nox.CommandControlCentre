@@ -16,6 +16,7 @@ steal(
 				deviceTypeId: '',
 				deviceGroupId: '',
 				simcardId: '',
+				deviceManagerId: '',
 				vehicleId: null,
 				creationTime: '',
 				modificationTime: '',

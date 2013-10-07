@@ -32,13 +32,25 @@ case class DeviceCommandRequest(val device: String, /*val tranId: String, */ val
     val cmdReqEnh = new DeviceCommandRequestEnhanced(this, Application.applicationId, Demo.userId, Demo.sessionId, List(replyTopic));
     implicit val fmt = DeviceCommandRequestEnhanced.jsonFormat
 
-    def publishOnMqttBus: DeviceCommandResponse = {
+    def publishOnMqttBus(d: DeviceInfoPersisted): DeviceCommandResponse = {
       /** Call a MQTT Client to publish the message command */
       try {
 
+        // 2013-10-08: introduced the concept of «device manager». Topics are forged
+        // to provide routing information
+        // Topic should be: <DEVICE_MANAGER_NAME>/<COMMAND_TOPIC>/<DEVICE_NAME> if a Device Manager is configured
+        // or <DEVICE_NAME>/<COMMAND_TOPIC>/<DEVICE_NAME> in all other cases
+
         val mqRequestTopic = conf.getString("nox.mqtt.Command.RequestTopic")
         val mqBrokerURI = conf.getString("nox.mqtt.BrokerURI")
+        val commandTopic = d.deviceManagerName.map { dmn =>
+          	s"$dmn/$mqRequestTopic/${this.device}"
+          }.getOrElse{
+            s"${this.device}/$mqRequestTopic/${this.device}"
+          }
 
+        Logger.debug(s"""Topic used is $commandTopic""")
+          
         for (mqtt <- managed(new SimpleClient(mqBrokerURI))) {
           mqtt.connect
           mqtt.publish(mqRequestTopic, Json.toJson(cmdReqEnh))
@@ -52,7 +64,14 @@ case class DeviceCommandRequest(val device: String, /*val tranId: String, */ val
       }
     }
 
-    publishOnMqttBus
+    // Todo: fetch the device manager
+    Devices.findWithInfoByName(this.device).map { d =>
+      publishOnMqttBus(d)
+    }.getOrElse {
+      val msg = s"""device identified by "${this.device}" not found."""
+      Logger.error(msg)
+      DeviceCommandResponseERR(cmdReqEnh.tranId, msg)
+    }
   }
 
   private def replyTopic = globals.Demo.mqttSessionTopic
