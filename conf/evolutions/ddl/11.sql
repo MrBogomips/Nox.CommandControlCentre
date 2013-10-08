@@ -1,6 +1,7 @@
+# --- !Ups
 -- Device Manager clustering
 
-# --- !Ups
+
 CREATE SEQUENCE "DeviceManagersSeq";
 
 CREATE  TABLE "DeviceManagers" (
