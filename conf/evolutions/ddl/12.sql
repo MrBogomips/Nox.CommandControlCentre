@@ -18,6 +18,11 @@ CREATE TABLE "Operators" (
 GRANT SELECT, INSERT,  UPDATE, DELETE, TRUNCATE ON TABLE "Operators" TO PUBLIC;
 GRANT ALL PRIVILEGES ON SEQUENCE "OperatorsSeq" TO PUBLIC; 
 
+INSERT INTO "Operators" VALUES
+	(nextval('"OperatorsSeq"'), 'Pedro', 'Almodovar', 'Almodovar Pedro', true, NOW(), NOW(), 0),
+	(nextval('"OperatorsSeq"'), 'Stanley', 'Kubrick', 'Kubrick Stanley', true, NOW(), NOW(), 0),
+	(nextval('"OperatorsSeq"'), 'Federico', 'Fellini', 'Fellini Federico', true, NOW(), NOW(), 0);
+
 -- MaintenanceServices
 CREATE SEQUENCE "MaintenanceServicesSeq";
 CREATE TABLE "MaintenanceServices" (
@@ -39,6 +44,11 @@ CREATE TABLE "MaintenanceServices" (
 );
 GRANT SELECT, INSERT,  UPDATE, DELETE, TRUNCATE ON TABLE "MaintenanceServices" TO PUBLIC;
 GRANT ALL PRIVILEGES ON SEQUENCE "MaintenanceServicesSeq" TO PUBLIC; 
+
+INSERT INTO "MaintenanceServices" VALUES --("id", "name", "displayName", "description", "enabled", "creationTime", "modificationTime", "version", "odometer", "monthsPeriod") VALUES
+	(nextval('"MaintenanceServicesSeq"'), 'AIRBAG', 'Air bag', NULL, true, NOW(), NOW(), 0, 1000, 12),
+	(nextval('"MaintenanceServicesSeq"'), 'ENGINEOIL', 'Engine oil', NULL, true, NOW(), NOW(), 0, 1000, 12),
+	(nextval('"MaintenanceServicesSeq"'), 'BRAKEOIL', 'Brake oil', NULL, true, NOW(), NOW(), 0, 1000, 12);
 
 -- MaintenanceDuties
 CREATE SEQUENCE "MaintenanceDutiesSeq";

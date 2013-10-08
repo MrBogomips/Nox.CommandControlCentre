@@ -89,12 +89,16 @@ object Operators
     }
   }
   def update(uobj: models.OperatorPersisted): Boolean = WithValidation(uobj) { obj =>
-    val qy = for { d <- Operators if (d.id === id) } yield d
-    qy.update(obj) == 1
+    db withSession {
+      val qy = for { d <- Operators if (d.id === obj.id) } yield d
+      qy.update(obj) == 1
+    }
   }
   def updateWithVersion(uobj: models.OperatorPersisted): Boolean = WithValidation(uobj) { obj =>
-    val qy = for { d <- Operators if (d.id === id && d.version === version) } yield d
-    qy.update(obj) == 1
+    db withSession {
+      val qy = for { d <- Operators if (d.id === id && d.version === obj.version) } yield d
+      qy.update(obj) == 1
+    }
   }
 }
 

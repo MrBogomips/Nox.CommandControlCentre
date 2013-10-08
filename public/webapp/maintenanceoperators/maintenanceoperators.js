@@ -15,7 +15,8 @@ steal(
 				enabled : true,
 				creationTime : '',
 				modificationTime : '',
-				version: -1
+				version: -1,
+				serverController: jsRoutes.controllers.Operator
 			}
 		},
 		/** @Prototype */
@@ -27,7 +28,7 @@ steal(
 				var view = jsRoutes.controllers.Assets.at("webapp/maintenanceoperators/views/maintenanceoperators.ejs").url;
 				
 				if (parseInt(self.options["id"]) > 0) {
-					jsRoutes.controllers.MaintenanceOperator.get(self.options["id"]).ajax({
+					jsRoutes.controllers.Operator.get(self.options["id"]).ajax({
 						headers : {
 							Accept : "application/json; charset=utf-8",
 							"Content-Type" : "application/json; charset=utf-8"

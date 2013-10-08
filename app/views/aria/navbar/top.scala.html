@@ -179,6 +179,10 @@
 					window.location.pathname = jsRoutes.controllers.DeviceGroup.index().url;
 				});
 				
+				$("#btnSimcards").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.Simcard.index().url;
+				});
+				
 				$("#btnMenuVehicle").click(function(el, ev) {
 					window.location.pathname = jsRoutes.controllers.Vehicle.index().url;
 				});
@@ -192,12 +196,14 @@
 				});
 				
 				$("#btnMenuMaintenanceServices").click(function(el, ev) {
-					window.location.pathname = jsRoutes.controllers.VehicleAssignement.index().url;
+					window.location.pathname = jsRoutes.controllers.MaintenanceService.index().url;
 				});
 				
-				$("#btnSimcards").click(function(el, ev) {
-					window.location.pathname = jsRoutes.controllers.Simcard.index().url;
+				$("#btnMenuMaintenanceOperators").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.Operator.index().url;
 				});
+				
+				
 			});
 		});
 </script>

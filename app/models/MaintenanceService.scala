@@ -63,7 +63,7 @@ object MaintenanceServices
         Some((o.name, Some(o.displayName), o.description, o.odometer, o.monthsPeriod, o.enabled, now, now, 0))
       }
     })
-  
+
   private implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
     val errMessage = e.getMessage()
     if (errMessage.contains("MaintenanceServicesNameUQ"))
@@ -71,12 +71,12 @@ object MaintenanceServices
     else
       throw e;
   }
-  
+
   // POC Pagination and Sorting
-  def paginate[A, B](query: Query[A,B], pageSize: Int, pageIndex: Int) = query.drop(pageSize*pageIndex).take(pageSize)
-  
+  def paginate[A, B](query: Query[A, B], pageSize: Int, pageIndex: Int) = query.drop(pageSize * pageIndex).take(pageSize)
+
   // QUERY - BEGIN
-  def qyFindByName(name: String) = (for{m <- MaintenanceServices if m.name like s"%$name%"} yield m)
+  def qyFindByName(name: String) = (for { m <- MaintenanceServices if m.name like s"%$name%" } yield m)
   def qyFindByName2(name: String) = paginate(qyFindByName(name), 10, 0)
   def qyFindByNameAndSort(name: String) = qyFindByName(name).sortBy(_.creationTime).sortBy(_.modificationTime.desc)
   def qyFindByNameAndSort2(name: String) = qyFindByName(name).sortBy(r => (r.creationTime, r.modificationTime.desc))
@@ -96,10 +96,10 @@ object MaintenanceServices
     val qy = for { d <- MaintenanceServices if (d.name === name) } yield d
     qy.firstOption
   }
-  
+
   def findEx: Seq[models.MaintenanceServicePersisted] = db withSession {
     val qy = {
-      for { m <- MaintenanceServices} yield m
+      for { m <- MaintenanceServices } yield m
     }.sortBy(r => (r.displayName.asc, r.enabled.desc))
     qy.list
   }
@@ -107,7 +107,7 @@ object MaintenanceServices
     val qy = for { d <- MaintenanceServices if (d.id === id) } yield d
     qy.firstOption
   }
-  def deleteById(id: Int): Boolean =  db withSession {
+  def deleteById(id: Int): Boolean = db withSession {
     val qy = for { d <- MaintenanceServices if (d.id === id) } yield d
     qy.delete == 1
   }
@@ -117,14 +117,18 @@ object MaintenanceServices
     }
   }
   def update(uobj: models.MaintenanceServicePersisted): Boolean = WithValidation(uobj) { obj =>
-    val qy =  for { d <- MaintenanceServices if (d.id === id) } yield d
-    qy.update(obj) == 1
+    db withSession {
+      val qy = for { d <- MaintenanceServices if (d.id === obj.id) } yield d
+      qy.update(obj) == 1
+    }
   }
   def updateWithVersion(uobj: models.MaintenanceServicePersisted): Boolean = WithValidation(uobj) { obj =>
-    val qy =  for { d <- MaintenanceServices if (d.id === id && d.version === version)} yield d
+    db withSession {
+    val qy = for { d <- MaintenanceServices if (d.id === obj.id && d.version === obj.version) } yield d
     qy.update(obj) == 1
+    }
   }
-  def findByName2(name:String): Seq[models.MaintenanceServicePersisted] = db withSession {
+  def findByName2(name: String): Seq[models.MaintenanceServicePersisted] = db withSession {
     paginate(qyFindByNameAndSort2(name), 10, 7).list
   }
 }

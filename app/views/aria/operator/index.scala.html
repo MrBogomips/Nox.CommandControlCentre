@@ -1,4 +1,4 @@
-@(operators: Seq[MantenanceOperatorPersisted], user: UserTrait)
+@(operators: Seq[OperatorPersisted], user: UserTrait)
 
 
 @header_more = {}
@@ -24,7 +24,7 @@
 			
 		$(".btn-delete").click(function(el, ev) {
 			var id = $(this).attr("maintenance-operator-id");
-			jsRoutes.controllers.MaintenanceOperator.delete(id).ajax()
+			jsRoutes.controllers.Operator.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
 				location.reload(true);
 			})
@@ -37,9 +37,9 @@
 </script>
 }
 
-@aria.master.authenticated("MaintenanceOperator", user, footer_more = footer_scripts) {
+@aria.master.authenticated("Operator", user, footer_more = footer_scripts) {
 	<div class="ana-maintenance-operators">
-	<h1>Maintenance Services</h1>
+	<h1>Operators</h1>
 	
 	<div class="alert_placeholder"></div>
 
@@ -76,7 +76,7 @@
 						    	Actions
 						    	<span class="caret"></span>
 						    </a>
-						    <ul class="dropdown-menu">
+						    <ul class="dropdown-menu pull-right">
 						    	<li><a tabindex="-1" href="#" class="btn-edit" maintenance-operator-id="@d.id">Edit</a></li>
 						    	<li><a tabindex="-1" href="#" class="btn-delete" maintenance-operator-id="@d.id">Delete</a></li>
 						    </ul>

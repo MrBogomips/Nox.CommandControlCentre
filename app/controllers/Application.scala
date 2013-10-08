@@ -75,7 +75,19 @@ object Application extends Secured {
         Simcard.get,
         Simcard.create,
         Simcard.update,
-        Simcard.delete
+        Simcard.delete,
+        
+        MaintenanceService.index,
+        MaintenanceService.get,
+        MaintenanceService.create,
+        MaintenanceService.update,
+        MaintenanceService.delete,
+        
+        Operator.index,
+        Operator.get,
+        Operator.create,
+        Operator.update,
+        Operator.delete
       )
      ).as("text/javascript")
   }

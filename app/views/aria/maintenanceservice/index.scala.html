@@ -1,4 +1,4 @@
-@(services: Seq[MantenanceServicePersisted], user: UserTrait)
+@(services: Seq[MaintenanceServicePersisted], user: UserTrait)
 
 
 @header_more = {}
@@ -80,7 +80,7 @@
 						    	Actions
 						    	<span class="caret"></span>
 						    </a>
-						    <ul class="dropdown-menu">
+						    <ul class="dropdown-menu pull-right">
 						    	<li><a tabindex="-1" href="#" class="btn-edit" maintenance-service-id="@d.id">Edit</a></li>
 						    	<li><a tabindex="-1" href="#" class="btn-delete" maintenance-service-id="@d.id">Delete</a></li>
 						    </ul>

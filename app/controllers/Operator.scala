@@ -6,22 +6,22 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
-import models.{ MaintenanceServices, MaintenanceService ⇒ MaintenanceServiceModel, MaintenanceServicePersisted }
+import models.{ Operators, Operator => OperatorModel, OperatorPersisted }
 import org.joda.time.format.ISODateTimeFormat
 import patterns.models.ValidationException
 
-object MaintenanceService extends Secured {
+object Operator extends Secured {
 
-  import models.json.{ maintenanceServicePersistedJsonWriter }
+  import models.json.{ operatorPersistedJsonWriter }
 
   def index2(all: Boolean = false) = WithAuthentication { (user, request) =>
     implicit val req = request
-    val services = all match {
-      case false => MaintenanceServices.find(Some(true))
-      case true  => MaintenanceServices.find(None)
+    val operators = all match {
+      case false => Operators.find(Some(true))
+      case true  => Operators.find(None)
     }
     if (acceptsJson(request)) {
-      Ok(Json.toJson(services))
+      Ok(Json.toJson(operators))
     } else if (acceptsHtml(request)) {
       ??? // Ok(views.html.aria.device.index(devices, user))
     } else {
@@ -39,14 +39,14 @@ object MaintenanceService extends Secured {
     }
     * */
 
-    val services = all match {
-      case false => MaintenanceServices.find(Some(true))
-      case true  => MaintenanceServices.find(None)
+    val operators = all match {
+      case false => Operators.find(Some(true))
+      case true  => Operators.find(None)
     }
     if (acceptsJson(request)) {
-      Ok(Json.toJson(services))
+      Ok(Json.toJson(operators))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.maintenanceservice.index(services, user))
+      Ok(views.html.aria.operator.index(operators, user))
     } else {
       BadRequest
     }
@@ -54,7 +54,7 @@ object MaintenanceService extends Secured {
 
   def get(id: Int) = WithAuthentication { (user, request) =>
     implicit val req = request
-    MaintenanceServices.findById(id).map { d =>
+    Operators.findById(id).map { d =>
       if (acceptsJson(request)) {
         Ok(Json.toJson(d))
       } else if (acceptsHtml(request)) {
@@ -67,20 +67,15 @@ object MaintenanceService extends Secured {
 
   val createForm = Form(
     tuple(
-      "name" -> text, //nonEmptyText(minLength = 3),
+      "name" -> nonEmptyText(minLength = 3),
+      "surname" -> nonEmptyText(minLength = 3),
       "displayName" -> optional(text),
-      "description" -> optional(text),
-      "odometer" -> number,
-      "monthsPeriod" -> number,
       "enabled" -> boolean))
-
   val updateForm = Form(
     tuple(
-      "name" -> text,
+      "name" -> nonEmptyText(minLength = 3),
+      "surname" -> nonEmptyText(minLength = 3),
       "displayName" -> optional(text),
-      "description" -> optional(text),
-      "odometer" -> number,
-      "monthsPeriod" -> number,
       "enabled" -> boolean,
       "version" -> number))
 
@@ -88,9 +83,9 @@ object MaintenanceService extends Secured {
     createForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, odometer, monthsPeriod, enabled) =>
-          val d = MaintenanceServiceModel(name, displayName, description, odometer, monthsPeriod, enabled)
-          val id = MaintenanceServices.insert(d)
+        case (name, surname, displayName, enabled) =>
+          val d = OperatorModel(name, surname, displayName, enabled)
+          val id = Operators.insert(d)
           Ok(s"""{"id"=id}""")
       })
   }
@@ -99,11 +94,11 @@ object MaintenanceService extends Secured {
     updateForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, odometer, monthsPeriod, enabled, version) =>
-          val dp = new MaintenanceServicePersisted(id, name, displayName, description, odometer, monthsPeriod, enabled, version = version)
-          MaintenanceServices.update(dp) match {
+        case (name, surname, displayName, enabled, version) =>
+          val dp = new OperatorPersisted(id, name, surname, displayName, enabled, version = version)
+          Operators.update(dp) match {
             case true => {
-              Ok(s"MaintenanceService $id updated successfully")
+              Ok(s"Operator $id updated successfully")
             }
             case _ => NotFound
           }
@@ -111,9 +106,9 @@ object MaintenanceService extends Secured {
   }
 
   def delete(id: Int) = WithAuthentication {
-    MaintenanceServices.deleteById(id) match {
+    Operators.deleteById(id) match {
       case true => {
-        Ok(s"MaintenanceService $id deleted successfully")
+        Ok(s"Operator $id deleted successfully")
       }
       case _ => NotFound("")
     }
