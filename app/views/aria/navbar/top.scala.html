@@ -57,6 +57,15 @@
 							<li><a tabindex="-1" href="#" id="btnMenuVehicle">Vehicles</a></li>
 							<li><a tabindex="-1" href="#" id="btnMenuDrivers">Drivers</a></li>
 							<li><a tabindex="-1" href="#" id="btnMenuVehicleAssignements">Vechicles assignment</a></li>
+							<li class="dropdown-submenu">
+								<a tabindex="-1" href="#" id="btnMenuMaintenance">Maintenance</a>
+								<ul class="dropdown-menu">
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceServices">Services</a></li>
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceOperators">Operators</a></li>
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceHistory">History</a></li>
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceNextDue">Next Due</a></li>
+								</ul>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -179,6 +188,10 @@
 				});
 				
 				$("#btnMenuVehicleAssignements").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.VehicleAssignement.index().url;
+				});
+				
+				$("#btnMenuMaintenanceServices").click(function(el, ev) {
 					window.location.pathname = jsRoutes.controllers.VehicleAssignement.index().url;
 				});
 				

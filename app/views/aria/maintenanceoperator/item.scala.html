@@ -1,0 +1,19 @@
+@(id: Int, user: UserTrait)
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+            steal('/assets/webapp/webapp_init.js')
+            .then('/assets/webapp/maintenanceoperators/maintenanceoperators.js')
+            .then(function() {
+            	$('#item').webapp_maintenanceoperators({id: @id});
+            });
+</script>
+}
+
+@aria.master.authenticated("MaintenanceOperators", user, footer_more = footer_scripts) {
+
+	<div id="item"></item>	
+
+}

@@ -100,7 +100,12 @@ PUT		/maintenance_service/:id	controllers.MaintenanceService.update(id: Int)
 DELETE	/maintenance_service/:id	controllers.MaintenanceService.delete(id: Int)
 POST	/maintenance_service		controllers.MaintenanceService.create
 
-
+# Maintenance operator
+GET		/maintenance_operator/index	controllers.MaintenanceOperator.index(all: Boolean ?= true)
+GET		/maintenance_operator/:id	controllers.MaintenanceOperator.get(id: Int)
+PUT		/maintenance_operator/:id	controllers.MaintenanceOperator.update(id: Int)
+DELETE	/maintenance_operator/:id	controllers.MaintenanceOperator.delete(id: Int)
+POST	/maintenance_operator		controllers.MaintenanceOperator.create
 
 
 ######################################################################################################

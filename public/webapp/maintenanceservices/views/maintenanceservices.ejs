@@ -1,0 +1,101 @@
+
+	<div class="modal-header">
+    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<% 
+		if (name != "") { 
+%>
+    		<h3>Service «<%=name%>»</h3>
+<%
+		} 
+    	else {
+%>
+    	<h3>New service</h3>
+<%
+		}
+%>
+  	</div>
+  	<div class="modal-body">
+
+		<div class="alert_placeholder"></div>
+
+    	<form class="form-horizontal">
+	  		<div class="control-group">
+	    		<label class="control-label" for="name">Name</label>
+	    		<div class="controls">
+	      			<input type="text" name="name" id="name" placeholder="name" value="<%=name%>">
+	    		</div>
+	  		</div>
+	  
+	  		<div class="control-group">
+	    		<label class="control-label" for="display_name">Display name</label>
+	    		<div class="controls">
+	      			<input type="text" name="displayName" id="displayName" placeholder="display name" value="<%=displayName%>">
+	    		</div>
+	  		</div>
+	  
+	  		<div class="control-group">
+	    		<label class="control-label" for="description">Description</label>
+	    		<div class="controls">
+	      			<input type="text" name="description" id="description" placeholder="description" value="<%=description%>">
+	    		</div>
+	  		</div>
+	  
+	  		<div class="control-group">
+	    		<label class="control-label" for="odometer">Odometer</label>
+	    		<div class="controls">
+	      			<input type="text" name="odometer" id="odometer" placeholder="odometer" value="<%=odometer%>">
+	    		</div>
+	  		</div>
+	  
+	  		<div class="control-group">
+	    		<label class="control-label" for="period">Period</label>
+	    		<div class="controls">
+	      			<input type="text" name="period" id="period" placeholder="period" value="<%=period%>">
+	    		</div>
+	  		</div>
+
+	  		<div class="control-group">
+		  		<label class="control-label" for="enabled">Enabled</label>
+		    	<div class="controls">
+		    		<div class="switch">
+		      			<input type="checkbox" id="enabled" placeholder="enabled" name="enabled" <% if (enabled){%>checked value="true"<%}%> >
+		      		</div>
+		    	</div>
+	   		</div>	  		
+<%
+			if (version > -1) {
+%>
+	   			<div class="control-group">
+		  			<label class="control-label" for="enabled">Creation time</label>
+		    		<div class="controls">
+		    			<span class="uneditable-input"><%=creationTime%></span>
+		    		</div>
+	   			</div>
+	   			<div class="control-group">
+		  			<label class="control-label" for="enabled">Last modification time</label>
+		    		<div class="controls">
+		    			<span class="uneditable-input"><%=modificationTime%></span>
+		    		</div>
+	   			</div>
+	   			<input type="hidden" id="version" name="version" value="<%=version%>">
+<%
+			}
+%>
+		</form>
+
+  	</div>
+  	<div class="modal-footer">
+    	<a href="javascript: void(0);" class="btn btn-cancel">Cancel</a>
+<%
+		if (id > 0) {
+%> 
+    		<a href="javascript: void(0);" class="btn btn-primary update">Update</a>
+<%
+		}
+		else {
+%>
+    		<a href="javascript: void(0);" class="btn btn-primary create">Create</a>
+<%
+		}
+%>
+  	</div>

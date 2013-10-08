@@ -50,14 +50,6 @@ steal(
 						self.renderForm(view);
 					});
 
-
-
-
-
-
-
-
-
 					self.options.serverController.get(self.options["id"]).ajax({
 						headers: { 
 					        Accept : "application/json; charset=utf-8",

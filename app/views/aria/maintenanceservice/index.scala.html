@@ -1,0 +1,96 @@
+@(services: Seq[MantenanceServicePersisted], user: UserTrait)
+
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+	steal('/assets/webapp/webapp_init.js')
+	.then('/assets/webapp/maintenanceservices/maintenanceservices.js')
+	.then(function() {
+		$("#create_maintenance_service").click(function() {            	
+			var $el = $("<div></div>")
+			$('body').append($el);
+			$el.webapp_maintenanceservices();
+		});
+            		
+		$(".btn-edit").click(function(el, ev) {
+			var options = {};
+			options["id"] = $(this).attr("maintenance-service-id");
+			var $el = $("<div></div>");
+			$('body').append($el);
+			$el.webapp_maintenanceservices(options);
+		});
+			
+		$(".btn-delete").click(function(el, ev) {
+			var id = $(this).attr("maintenance-service-id");
+			jsRoutes.controllers.MaintenanceService.delete(id).ajax()
+			.done(function(data, txtStatus, jqXHR) {
+				location.reload(true);
+			})
+			.fail(function(data, txtStatus, jqXHR) {
+				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>x</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+				self.find(".alert_placeholder").html($alert);
+			});
+		});
+	});
+</script>
+}
+
+@aria.master.authenticated("MaintenanceService", user, footer_more = footer_scripts) {
+	<div class="ana-maintenance-services">
+	<h1>Maintenance Services</h1>
+	
+	<div class="alert_placeholder"></div>
+
+	<table class="table table-condensed table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Display Name</th>
+				<th>Description</th>
+				<th>Odometer (Km)</th>
+				<th>Period (Mths)</th>
+				<th>Enabled</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+		@services.map { d =>
+			<tr>
+				<td>@d.name
+					@if(!d.validationErrors.isEmpty){
+						<i class="icon-exclamation-sign"></i>
+					}
+				</td>
+				<td>@d.displayName</td>
+				<td>@d.description</td>
+				<td>@d.odometer</td>
+				<td>@d.monthsPeriod</td>
+				<td><div class="switch">
+					<input type="checkbox" @if(d.enabled){
+						checked
+					} disabled >
+					</div>
+					</td>
+				<td>
+					<nobr>					
+					    <div class="btn-group">
+						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+						    	Actions
+						    	<span class="caret"></span>
+						    </a>
+						    <ul class="dropdown-menu">
+						    	<li><a tabindex="-1" href="#" class="btn-edit" maintenance-service-id="@d.id">Edit</a></li>
+						    	<li><a tabindex="-1" href="#" class="btn-delete" maintenance-service-id="@d.id">Delete</a></li>
+						    </ul>
+					    </div>
+					</nobr>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<button class="btn btn-primary" id="create_maintenance_service">Create new service</button>
+	</div>
+}
