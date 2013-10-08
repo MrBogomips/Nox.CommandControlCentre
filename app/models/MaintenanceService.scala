@@ -63,7 +63,6 @@ object MaintenanceServices
         Some((o.name, Some(o.displayName), o.description, o.odometer, o.monthsPeriod, o.enabled, now, now, 0))
       }
     })
-  def forUpdate = *
   
   private implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
     val errMessage = e.getMessage()
@@ -85,13 +84,17 @@ object MaintenanceServices
   // QUERY - END
 
   // Members declared in patterns.models.CrudOperations
-  def deleteById(id: Int): Boolean = ???
   def find(enabled: Option[Boolean]): Seq[models.MaintenanceServicePersisted] = db withSession {
     val qy = enabled match {
       case None     => for { d <- MaintenanceServices } yield d
       case Some(en) => for { d <- MaintenanceServices if (d.enabled === en) } yield d
     }
     qy.sortBy(r => r.displayName.desc).list
+  }
+  // Members declared in patterns.models.NameEntityCrudOperations
+  def findByName(name: String): Option[models.MaintenanceServicePersisted] = db withSession {
+    val qy = for { d <- MaintenanceServices if (d.name === name) } yield d
+    qy.firstOption
   }
   
   def findEx: Seq[models.MaintenanceServicePersisted] = db withSession {
@@ -100,25 +103,27 @@ object MaintenanceServices
     }.sortBy(r => (r.displayName.asc, r.enabled.desc))
     qy.list
   }
-  
   def findById(id: Int): Option[models.MaintenanceServicePersisted] = db withSession {
     val qy = for { d <- MaintenanceServices if (d.id === id) } yield d
     qy.firstOption
+  }
+  def deleteById(id: Int): Boolean =  db withSession {
+    val qy = for { d <- MaintenanceServices if (d.id === id) } yield d
+    qy.delete == 1
   }
   def insert(uobj: models.MaintenanceService): Int = WithValidation(uobj) { obj =>
     db withSession {
       MaintenanceServices.forInsert returning MaintenanceServices.id insert obj
     }
   }
-  def update(uobj: models.MaintenanceServicePersisted): Boolean = ???
-  def updateWithVersion(uobj: models.MaintenanceServicePersisted): Boolean = ???
-
-  // Members declared in patterns.models.NameEntityCrudOperations
-  def findByName(name: String): Option[models.MaintenanceServicePersisted] = db withSession {
-    val qy = for { d <- MaintenanceServices if (d.name === name) } yield d
-    qy.firstOption
+  def update(uobj: models.MaintenanceServicePersisted): Boolean = WithValidation(uobj) { obj =>
+    val qy =  for { d <- MaintenanceServices if (d.id === id) } yield d
+    qy.update(obj) == 1
   }
-  
+  def updateWithVersion(uobj: models.MaintenanceServicePersisted): Boolean = WithValidation(uobj) { obj =>
+    val qy =  for { d <- MaintenanceServices if (d.id === id && d.version === version)} yield d
+    qy.update(obj) == 1
+  }
   def findByName2(name:String): Seq[models.MaintenanceServicePersisted] = db withSession {
     paginate(qyFindByNameAndSort2(name), 10, 7).list
   }
