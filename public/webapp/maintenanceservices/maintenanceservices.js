@@ -8,7 +8,7 @@ steal(
 		/** @Static */
 		{
 			defaults : {
-				id : '',
+				id : -1,
 				name : '',
 				displayName : '',
 				description: '',
@@ -17,7 +17,8 @@ steal(
 				enabled: true,
 				creationTime : '',
 				modificationTime : '',
-				varsion : -1
+				version : -1,
+				serverController: jsRoutes.controllers.MaintenanceService
 			}
 		},
 		/** @Prototype */
@@ -35,7 +36,7 @@ steal(
 					        "Content-Type": "application/json; charset=utf-8"
 					    }})
 					).done(function(dd) {
-						$.extend(self.options, dd[0]);
+						$.extend(self.options, dd);
 						self.renderForm(view);
 					});
 				} else {
