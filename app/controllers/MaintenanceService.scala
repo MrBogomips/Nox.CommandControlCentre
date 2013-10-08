@@ -12,7 +12,7 @@ import patterns.models.ValidationException
 
 object MaintenanceService extends Secured {
 
-  import models.json.{  maintenanceServicePersistedJsonWriter }
+  import models.json.{ maintenanceServicePersistedJsonWriter }
 
   def index2(all: Boolean = false) = WithAuthentication { (user, request) =>
     implicit val req = request
@@ -28,16 +28,17 @@ object MaintenanceService extends Secured {
       BadRequest
     }
   }
-  
+
   def index(all: Boolean = false) = WithAuthentication { (user, request) =>
     implicit val req = request
-    
+
+    /*
     MaintenanceServices.db withSession {
       val out = MaintenanceServices.findByName2("ciccio")
       Ok(Json.toJson(out))
     }
-    
-    /*
+    * */
+
     val services = all match {
       case false => MaintenanceServices.find(Some(true))
       case true  => MaintenanceServices.find(None)
@@ -49,7 +50,6 @@ object MaintenanceService extends Secured {
     } else {
       BadRequest
     }
-    */
   }
 
   def get(id: Int) = WithAuthentication { (user, request) =>
@@ -65,67 +65,57 @@ object MaintenanceService extends Secured {
     }.getOrElse(NotFound);
   }
 
-  /*
   val createForm = Form(
     tuple(
       "name" -> text, //nonEmptyText(minLength = 3),
       "displayName" -> optional(text),
       "description" -> optional(text),
-      "deviceTypeId" -> number, //number(min = 100),
-      "deviceGroupId" -> number,
-      "vehicleId" -> optional(number),
-      "enabled" -> boolean,
-      "simcardId" -> optional(number)))
+      "odometer" -> number,
+      "monthsPeriod" -> number,
+      "enabled" -> boolean))
 
   val updateForm = Form(
     tuple(
       "name" -> text,
       "displayName" -> optional(text),
       "description" -> optional(text),
-      "deviceTypeId" -> number,
-      "deviceGroupId" -> number,
-      "vehicleId" -> optional(number),
+      "odometer" -> number,
+      "monthsPeriod" -> number,
       "enabled" -> boolean,
-      "simcardId" -> optional(number),
       "version" -> number))
 
-  def create = WithAuthentication { implicit request ⇒
+  def create = WithAuthentication { implicit request =>
     createForm.bindFromRequest.fold(
       errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId) ⇒
-          val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId)
-          val id = Devices.insert(d)
+        case (name, displayName, description, odometer, monthsPeriod, enabled) =>
+          val d = MaintenanceServiceModel(name, displayName, description, odometer, monthsPeriod, enabled)
+          val id = MaintenanceServices.insert(d)
           Ok(s"""{"id"=id}""")
       })
   }
 
-  def update(id: Int) = WithAuthentication { implicit request ⇒
+  def update(id: Int) = WithAuthentication { implicit request =>
     updateForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
+      errors => BadRequest(errors.errorsAsJson).as("application/json"),
       {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, version) ⇒
-          val dp = new DevicePersisted(id, name, displayName, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, version)
-          Devices.update(dp) match {
-            case true ⇒ {
-              notifications.notifyDeviceChangeConfiguration(dp.name)
-              Ok(s"Device $id updated successfully")
+        case (name, displayName, description, odometer, monthsPeriod, enabled, version) =>
+          val dp = new MaintenanceServicePersisted(id, name, displayName, description, odometer, monthsPeriod, enabled, version = version)
+          MaintenanceServices.update(dp) match {
+            case true => {
+              Ok(s"MaintenanceService $id updated successfully")
             }
-            case _ ⇒ NotFound
+            case _ => NotFound
           }
       })
   }
 
   def delete(id: Int) = WithAuthentication {
-    Devices.findById(id).fold(NotFound("")) { dp =>
-      notifications.notifyDeviceChangeConfiguration(dp.name)
-      Devices.deleteById(id) match {
-        case true ⇒ {
-          Ok(s"Device $id deleted successfully")
-        }
-        case _ ⇒ NotFound("")
+    MaintenanceServices.deleteById(id) match {
+      case true => {
+        Ok(s"MaintenanceService $id deleted successfully")
       }
+      case _ => NotFound("")
     }
   }
-  * */
 }

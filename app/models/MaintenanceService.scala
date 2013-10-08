@@ -64,8 +64,6 @@ object MaintenanceServices
       }
     })
   def forUpdate = *
-
-  
   
   private implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
     val errMessage = e.getMessage()
@@ -75,6 +73,7 @@ object MaintenanceServices
       throw e;
   }
   
+  // POC Pagination and Sorting
   def paginate[A, B](query: Query[A,B], pageSize: Int, pageIndex: Int) = query.drop(pageSize*pageIndex).take(pageSize)
   
   // QUERY - BEGIN
