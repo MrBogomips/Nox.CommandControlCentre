@@ -57,6 +57,15 @@
 							<li><a tabindex="-1" href="#" id="btnMenuVehicle">Vehicles</a></li>
 							<li><a tabindex="-1" href="#" id="btnMenuDrivers">Drivers</a></li>
 							<li><a tabindex="-1" href="#" id="btnMenuVehicleAssignements">Vechicles assignment</a></li>
+							<li class="dropdown-submenu">
+								<a tabindex="-1" href="#" id="btnMenuMaintenance">Maintenance</a>
+								<ul class="dropdown-menu">
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceServices">Services</a></li>
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceOperators">Operators</a></li>
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceHistory">History</a></li>
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceNextDue">Next Due</a></li>
+								</ul>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -170,6 +179,10 @@
 					window.location.pathname = jsRoutes.controllers.DeviceGroup.index().url;
 				});
 				
+				$("#btnSimcards").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.Simcard.index().url;
+				});
+				
 				$("#btnMenuVehicle").click(function(el, ev) {
 					window.location.pathname = jsRoutes.controllers.Vehicle.index().url;
 				});
@@ -182,9 +195,15 @@
 					window.location.pathname = jsRoutes.controllers.VehicleAssignement.index().url;
 				});
 				
-				$("#btnSimcards").click(function(el, ev) {
-					window.location.pathname = jsRoutes.controllers.Simcard.index().url;
+				$("#btnMenuMaintenanceServices").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.MaintenanceService.index().url;
 				});
+				
+				$("#btnMenuMaintenanceOperators").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.Operator.index().url;
+				});
+				
+				
 			});
 		});
 </script>

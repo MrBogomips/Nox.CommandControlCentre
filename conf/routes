@@ -93,9 +93,19 @@ PUT		/simcard/:id				controllers.Simcard.update(id: Int)
 DELETE	/simcard/:id				controllers.Simcard.delete(id: Int)
 POST	/simcard					controllers.Simcard.create
 
+# Maintenance service
+GET		/maintenance_service/index	controllers.MaintenanceService.index(all: Boolean ?= true)
+GET		/maintenance_service/:id	controllers.MaintenanceService.get(id: Int)
+PUT		/maintenance_service/:id	controllers.MaintenanceService.update(id: Int)
+DELETE	/maintenance_service/:id	controllers.MaintenanceService.delete(id: Int)
+POST	/maintenance_service		controllers.MaintenanceService.create
 
-
-
+# Operator
+GET		/operator/index				controllers.Operator.index(all: Boolean ?= true)
+GET		/operator/:id				controllers.Operator.get(id: Int)
+PUT		/operator/:id				controllers.Operator.update(id: Int)
+DELETE	/operator/:id				controllers.Operator.delete(id: Int)
+POST	/operator					controllers.Operator.create
 
 
 ######################################################################################################

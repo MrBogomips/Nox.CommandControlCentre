@@ -12,7 +12,7 @@ import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 import org.postgresql.util.PSQLException
 
-trait DriverTrait extends Validatable {
+trait DriverTrait extends PersonTrait /*{
   val name: String
   val surname: String
   val displayName0: Option[String]
@@ -24,7 +24,7 @@ trait DriverTrait extends Validatable {
     validateMinLength("surname", surname, 3)
     validateMinLength("displayName", displayName, 3)
   }
-}
+} */
 
 case class Driver(name: String, surname: String, displayName0: Option[String], enabled: Boolean)
   extends DriverTrait

@@ -1,10 +1,9 @@
-
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <% if (version > -1) {%>
-    <h3>Modify simcard «<%=imei%>» (<%=id%>)</h3>
+    <% if (name != "") {%>
+    <h3>Modify vehicle «<%=name%>» (<%=id%>)</h3>
     <% } else {%>
-    <h3>New simcard</h3>
+    <h3>New vehicle</h3>
     <% } %>
   </div>
   <div class="modal-body">
@@ -13,14 +12,14 @@
 
     <form class="form-horizontal">
 	  <div class="control-group">
-	    <label class="control-label" for="imei">IMEI</label>
+	    <label class="control-label" for="name">Name</label>
 	    <div class="controls">
-	      <input type="text" name="imei" id="imei" placeholder="imei" value="<%=imei%>">
+	      <input type="text" name="name" id="name" placeholder="name" value="<%= name %>">
 	    </div>
 	  </div>
 	  
 	  <div class="control-group">
-	    <label class="control-label" for="display_name">Display name</label>
+	    <label class="control-label" for="displayName">Display name</label>
 	    <div class="controls">
 	      <input type="text" name="displayName" id="displayName" placeholder="display name" value="<%=displayName%>">
 	    </div>
@@ -32,31 +31,45 @@
 	      <input type="text" name="description" id="description" placeholder="description" value="<%=description%>">
 	    </div>
 	  </div>
-	  
+
 	  <div class="control-group">
-	    <label class="control-label" for="mobileNumber">Mobile Number</label>
+	    <label class="control-label" for="vehicleTypes">Vehicle Types</label>
 	    <div class="controls">
-	      <input type="text" name="mobileNumber" id="mobileNumber" placeholder="mobile number" value="<%=mobileNumber%>">
+	      <select class="selectpicker" id="vehicleTypes" name="vehicleId">
+	      	<option value="" <% if (null == vehicleTypeId) {%> selected='selected' <%}%>>[None]</option>
+	         <% if ((vehicleTypes != null) && (vehicleTypes != undefined) && (vehicleTypes.length > 0)) {
+	         		for(i in vehicleTypes) {%>
+	          			<option value="<%=vehicleTypes[i].id%>" <% if (vehicleTypes[i].id == vehicleTypeId) {%> selected='selected' <%}%>><%=vehicleTypes[i].displayName%></option>
+	         <% 	} 
+	            }%>
+			</select>
 	    </div>
 	  </div>
-	  
+
 	  <div class="control-group">
-	    <label class="control-label" for="carrierId">Carrier</label>
-	    <div class="controls">
-	      <input type="text" name="carrierId" id="carrierId" placeholder="carrier" value="<%=carrierId%>">
-	    </div>
-	  </div>
-	  	  
+		  <label class="control-label" for="enabled">Model</label>
+		    <div class="controls">
+		      <input type="text" name="model" id="model" placeholder="model" value="<%=model%>">
+		    </div>
+	   </div>
+	   
+	   <div class="control-group">
+		  <label class="control-label" for="licensePlate">License Plate</label>
+		    <div class="controls">
+		      <input type="text" name="licensePlate" id="model" placeholder="License plate" value="<%=licensePlate%>">
+		    </div>
+	   </div>
+	  
 	  <div class="control-group">
 		  <label class="control-label" for="enabled">Enabled</label>
 		    <div class="controls">
-		    <div class="switch">
+		      <div class="switch">
 		      <input type="checkbox" id="enabled" placeholder="enabled" name="enabled" <% if (enabled){%>checked<%}%> >
 		      </div>
 		    </div>
 	   </div>
 	   
-	 <% if (version > -1) {%>
+	 <% if (creationTime != "") { %>
 	   <div class="control-group">
 		  <label class="control-label" for="enabled">Creation time</label>
 		    <div class="controls"><span class="uneditable-input"><%=creationTime%></span></div>
@@ -65,8 +78,9 @@
 		  <label class="control-label" for="enabled">Last modification time</label>
 		    <div class="controls"><span class="uneditable-input"><%=modificationTime%></span></div>
 	   </div>
-	 <%}%>
-	 <input type="hidden" name="version" value="<%=version%>">
+	   
+	 <% } %>
+	 <input type="hidden" id="version" name="version" value="<%=version%>">
 	</form>
 
   </div>
