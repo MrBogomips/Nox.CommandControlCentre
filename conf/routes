@@ -61,6 +61,7 @@ POST	/device_group				controllers.DeviceGroup.create
 # Vehicle
 GET		/vehicle/index				controllers.Vehicle.index(all: Boolean ?= true)
 GET		/vehicle/:id				controllers.Vehicle.get(id: Int)
+GET		/vehicle/:id/maintenance_duties			controllers.MaintenanceDuty.findByVehicleId(id: Int)
 PUT		/vehicle/:id				controllers.Vehicle.update(id: Int)
 DELETE	/vehicle/:id				controllers.Vehicle.delete(id: Int)
 POST	/vehicle					controllers.Vehicle.create
@@ -99,6 +100,13 @@ GET		/maintenance_service/:id	controllers.MaintenanceService.get(id: Int)
 PUT		/maintenance_service/:id	controllers.MaintenanceService.update(id: Int)
 DELETE	/maintenance_service/:id	controllers.MaintenanceService.delete(id: Int)
 POST	/maintenance_service		controllers.MaintenanceService.create
+
+# Maintenance duty
+GET		/maintenance_duty/index		controllers.MaintenanceDuty.index(all: Boolean ?= true)
+GET		/maintenance_duty/:id		controllers.MaintenanceDuty.get(id: Int)
+PUT		/maintenance_duty/:id		controllers.MaintenanceDuty.update(id: Int)
+DELETE	/maintenance_duty/:id		controllers.MaintenanceDuty.delete(id: Int)
+POST	/maintenance_duty			controllers.MaintenanceDuty.create
 
 # Operator
 GET		/operator/index				controllers.Operator.index(all: Boolean ?= true)
