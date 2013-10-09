@@ -65,7 +65,7 @@ object Operators
       case None     => for { d <- Operators } yield d
       case Some(en) => for { d <- Operators if (d.enabled === en) } yield d
     }
-    qy.list
+    qy.list 
   }
 
   def findById(id: Int): Option[OperatorPersisted] = db withSession {
