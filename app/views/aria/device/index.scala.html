@@ -14,7 +14,7 @@
 			$el.webapp_device();
 		});
             		
-		$(".btn.modify").click(function(el, ev) {
+		$(".btn-edit").click(function(el, ev) {
 			var options = {};
 			options["id"] = $(this).attr("data-device-id");
 			var $el = $("<div></div>");
@@ -22,7 +22,7 @@
 			$el.webapp_device(options);
 		});
 			
-		$(".btn.delete").click(function(el, ev) {
+		$(".btn-delete").click(function(el, ev) {
 			var id = $(this).attr("data-device-id");
 			jsRoutes.controllers.Device.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
@@ -70,17 +70,24 @@
 				<td>@d.simcardDisplayName</td>
 				<td>@d.vehicleDisplayName (@d.vehicleLicensePlate.getOrElse("none"))
 				</td>
-				<td><div class="switch">
-					<input type="checkbox" @if(d.enabled){
-						checked
-					} disabled >
-					</div>
-					</td>
 				<td>
-				<nobr>
-					<button class="btn modify" data-device-id="@d.id">Modify</button>
-					<button class="btn btn-danger delete" data-device-id="@d.id">Delete</button>
-				</nobr>
+					<div class="switch">
+						<input type="checkbox" @if(d.enabled){ checked } disabled >
+					</div>
+				</td>
+				<td>
+					<nobr>					
+					    <div class="btn-group">
+						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+						    	Actions
+						    	<span class="caret"></span>
+						    </a>
+						    <ul class="dropdown-menu pull-right">
+						    	<li><a tabindex="-1" href="#" class="btn-edit" data-device-id="@d.id">Edit</a></li>
+						    	<li><a tabindex="-1" href="#" class="btn-delete" data-device-id="@d.id">Delete</a></li>
+						    </ul>
+					    </div>
+					</nobr>
 				</td>
 			</tr>
 		}

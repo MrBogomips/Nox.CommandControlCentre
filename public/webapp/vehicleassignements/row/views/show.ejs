@@ -33,10 +33,16 @@
   	<td>
   		<input type="hidden" name="id" value="<%=id%>">
   		<input type="hidden" id="version" name="version" value="<%=version%>">
-  		<nobr>
-  		<div class="update-section">
-  		<button class="btn update disabled" data-loading-text="wait ...">Update</button>
-		<button class="btn btn-danger delete" data-loading-text="wait ...">Delete</button>
-		</div>
-  		</nobr>
+  		<nobr>					
+		    <div class="btn-group">
+			    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+			    	Actions
+			    	<span class="caret"></span>
+			    </a>
+			    <ul class="dropdown-menu pull-right">
+			    	<li><a tabindex="-1" href="#" class="btn-edit">Edit</a></li>
+			    	<li><a tabindex="-1" href="#" class="btn-delete">Delete</a></li>
+			    </ul>
+		    </div>
+		</nobr>
   	</td>
