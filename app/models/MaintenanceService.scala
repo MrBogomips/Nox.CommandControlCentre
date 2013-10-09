@@ -116,17 +116,25 @@ object MaintenanceServices
       MaintenanceServices.forInsert returning MaintenanceServices.id insert obj
     }
   }
+
   def update(uobj: models.MaintenanceServicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
+      /* really nice but will reset the creation time
       val qy = for { d <- MaintenanceServices if (d.id === obj.id) } yield d
-      qy.update(obj) == 1
+      qy.update(prepareForUpdate(obj)) == 1
+      */
+      val qy = for { d <- MaintenanceServices if (d.id === obj.id) } 
+      	yield d.name ~ d.displayName ~ d.description.? ~ d.enabled ~ d.odometer ~ d.monthsPeriod ~ d.modificationTime ~ d.version
+      val now = new Timestamp(new Date().getTime())
+      qy.update((obj.name, obj.displayName, obj.description, obj.enabled, obj.odometer, obj.monthsPeriod, now, obj.version + 1)) == 1
     }
   }
   def updateWithVersion(uobj: models.MaintenanceServicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
-    val qy = for { d <- MaintenanceServices if (d.id === obj.id && d.version === obj.version) } yield d
-    qy.update(obj) == 1
-    }
+      val qy = for { d <- MaintenanceServices if (d.id === obj.id && d.version === obj.version) }   
+        yield d.name ~ d.displayName ~ d.description.? ~ d.enabled ~ d.odometer ~ d.monthsPeriod ~ d.modificationTime ~ d.version
+      val now = new Timestamp(new Date().getTime())
+      qy.update((obj.name, obj.displayName, obj.description, obj.enabled, obj.odometer, obj.monthsPeriod, now, obj.version + 1)) == 1    }
   }
   def findByName2(name: String): Seq[models.MaintenanceServicePersisted] = db withSession {
     paginate(qyFindByNameAndSort2(name), 10, 7).list
