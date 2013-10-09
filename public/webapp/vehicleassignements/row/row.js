@@ -162,7 +162,7 @@ steal(
 				this.element.find('button.update').removeClass('disabled');
 			},
 			
-			'.btn.update click' : function (el, ev) {
+			'.btn-edit click' : function (el, ev) {
 				if (el.hasClass('disabled')) return;
 				var self = this;
 				
@@ -190,7 +190,7 @@ steal(
 				});
 			},
 			
-			'.btn.delete click' : function (el, ev) {
+			'.btn-delete click' : function (el, ev) {
 				var self = this;
 				
 				el.button('loading');

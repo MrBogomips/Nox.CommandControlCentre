@@ -13,7 +13,7 @@
 			$el.webapp_simcard();
 		});
             		
-		$(".btn.modify").click(function(el, ev) {
+		$(".btn-edit").click(function(el, ev) {
 			var options = {};
 			options["id"] = $(this).attr("data-simcard-id");
 			var $el = $("<div></div>");
@@ -21,7 +21,7 @@
 			$el.webapp_simcard(options);
 		});
 			
-		$(".btn.delete").click(function(el, ev) {
+		$(".btn-delete").click(function(el, ev) {
 			var id = $(this).attr("data-simcard-id");
 			jsRoutes.controllers.Simcard.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
@@ -75,10 +75,18 @@
 					</div>
 				</td>
 				<td>
-				<nobr>
-					<button class="btn modify" data-simcard-id="@s.id">Modify</button>
-					<button class="btn btn-danger delete" data-simcard-id="@s.id">Delete</button>
-				</nobr>
+					<nobr>					
+					    <div class="btn-group">
+						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+						    	Actions
+						    	<span class="caret"></span>
+						    </a>
+						    <ul class="dropdown-menu pull-right">
+						    	<li><a tabindex="-1" href="#" class="btn-edit" data-simcard-id="@s.id">Edit</a></li>
+						    	<li><a tabindex="-1" href="#" class="btn-delete" data-simcard-id="@s.id">Delete</a></li>
+						    </ul>
+					    </div>
+					</nobr>
 				</td>
 			</tr>
 		}

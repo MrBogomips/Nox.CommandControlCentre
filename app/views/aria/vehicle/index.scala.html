@@ -14,7 +14,7 @@
 			$el.webapp_vehicles();
 		});
 
-		$(".btn.modify").click(function(el, ev) {
+		$(".btn-edit").click(function(el, ev) {
 			var options = {};
 			options["id"] = $(this).attr("data-vehicle-id");
 			var $el = $("<div></div>");
@@ -22,7 +22,7 @@
 			$el.webapp_vehicles(options);
 		});
 
-		$(".btn.delete").click(function(el, ev) {
+		$(".btn-delete").click(function(el, ev) {
 			var id = $(this).attr("data-vehicle-id");
 			jsRoutes.controllers.Vehicle.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
@@ -73,10 +73,18 @@
 					</div>
 				</td>
 				<td>
-				<nobr>
-					<button class="btn modify" data-vehicle-id="@v.id">Modify</button>
-					<button class="btn btn-danger delete" data-vehicle-id="@v.id">Delete</button>
-				</nobr>
+					<nobr>					
+					    <div class="btn-group">
+						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+						    	Actions
+						    	<span class="caret"></span>
+						    </a>
+						    <ul class="dropdown-menu pull-right">
+						    	<li><a tabindex="-1" href="#" class="btn-edit" data-vehicle-id="@v.id">Edit</a></li>
+						    	<li><a tabindex="-1" href="#" class="btn-delete" data-vehicle-id="@v.id">Delete</a></li>
+						    </ul>
+					    </div>
+					</nobr>
 				</td>
 			</tr>
 		}

@@ -14,7 +14,7 @@
 			$el.webapp_devicegroups();
 		});
 
-		$(".btn.modify").click(function(el, ev) {
+		$(".btn-edit").click(function(el, ev) {
 			var options = {};
 			options["id"] = $(this).attr("data-device-id");
 			var $el = $("<div></div>");
@@ -22,7 +22,7 @@
 			$el.webapp_devicegroups(options);
 		});
 		
-		$(".btn.delete").click(function(el, ev) {
+		$(".btn-delete").click(function(el, ev) {
 			var id = $(this).attr("data-device-id");
 			jsRoutes.controllers.DeviceGroup.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
@@ -106,19 +106,21 @@
 
 @aria.master.authenticated("Device groups", user, header_more = header_more, footer_more = footer_scripts) {
 
-<br/>
-<button class="btn createmenu" data-device-id="x">create</button>
-<br/>
-<div class="navbar">
-	<div class="navbar navbar-static">
-		<div class="navbar-inner">
-			<div class="container" style="width: auto;" id="containerProva">
-				<a class="brand" href="#">NoxST::CCC</a>
+<div style="display: none;"
+	<br/>
+	<button class="btn createmenu" data-device-id="x">create</button>
+	<br/>
+	<div class="navbar">
+		<div class="navbar navbar-static">
+			<div class="navbar-inner">
+				<div class="container" style="width: auto;" id="containerProva">
+					<a class="brand" href="#">NoxST::CCC</a>
+				</div>
 			</div>
 		</div>
 	</div>
+	<br/>
 </div>
-<br/>
 
 <div class="ana-devices groups">
 	<h1>Device groups</h1>
@@ -150,10 +152,18 @@
 					</div>
 					</td>
 				<td>
-				<nobr>
-					<button class="btn modify" data-device-id="@g.id">Modify</button>
-					<button class="btn btn-danger delete" data-device-id="@g.id">Delete</button>
-				</nobr>
+					<nobr>					
+					    <div class="btn-group">
+						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+						    	Actions
+						    	<span class="caret"></span>
+						    </a>
+						    <ul class="dropdown-menu pull-right">
+						    	<li><a tabindex="-1" href="#" class="btn-edit" data-device-id="@g.id">Edit</a></li>
+						    	<li><a tabindex="-1" href="#" class="btn-delete" data-device-id="@g.id">Delete</a></li>
+						    </ul>
+					    </div>
+					</nobr>
 				</td>
 			</tr>
 		}
