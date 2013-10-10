@@ -72,12 +72,9 @@ object MaintenanceServices
       throw e;
   }
 
-  // POC Pagination and Sorting
-  def paginate[A, B](query: Query[A, B], pageSize: Int, pageIndex: Int) = query.drop(pageSize * pageIndex).take(pageSize)
-
   // QUERY - BEGIN
   def qyFindByName(name: String) = (for { m <- MaintenanceServices if m.name like s"%$name%" } yield m)
-  def qyFindByName2(name: String) = paginate(qyFindByName(name), 10, 0)
+  def qyFindByName2(name: String) = FinitePagination(10,0).paginate(qyFindByName(name))  // just an example of pagination
   def qyFindByNameAndSort(name: String) = qyFindByName(name).sortBy(_.creationTime).sortBy(_.modificationTime.desc)
   def qyFindByNameAndSort2(name: String) = qyFindByName(name).sortBy(r => (r.creationTime, r.modificationTime.desc))
   def qyFindByNameAndSort3(name: String) = qyFindByName(name).sortBy(r => (r.column[Int]("creationTime").asc, r.column[Int]("creationTime").asc))
@@ -89,7 +86,7 @@ object MaintenanceServices
       case None     => for { d <- MaintenanceServices } yield d
       case Some(en) => for { d <- MaintenanceServices if (d.enabled === en) } yield d
     }
-    qy.sortBy(r => r.displayName.desc).list
+    qy.sortBy(r => r.displayName.asc).list
   }
   // Members declared in patterns.models.NameEntityCrudOperations
   def findByName(name: String): Option[models.MaintenanceServicePersisted] = db withSession {
@@ -137,7 +134,7 @@ object MaintenanceServices
       qy.update((obj.name, obj.displayName, obj.description, obj.enabled, obj.odometer, obj.monthsPeriod, now, obj.version + 1)) == 1    }
   }
   def findByName2(name: String): Seq[models.MaintenanceServicePersisted] = db withSession {
-    paginate(qyFindByNameAndSort2(name), 10, 7).list
+    FinitePagination(10,7).paginate(qyFindByNameAndSort2(name)).list
   }
 }
 
