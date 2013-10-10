@@ -1,9 +1,9 @@
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <% if (name != '') {%>
-    <h3>Modify device group «<%=name%>» (<%=id%>)</h3>
+    <h3>Modify <%=formTitle%> «<%=name%>» (<%=id%>)</h3>
     <% } else {%>
-    <h3>New device group</h3>
+    <h3>New <%=formTitle%></h3>
     <% } %>
   </div>
   <div class="modal-body">

@@ -1,0 +1,108 @@
+@(entities: Seq[NamedEntityPersisted[_]], user: UserTrait,  ariaController: String, pageTitle: String, playController: String)
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+	steal('/assets/webapp/webapp_init.js')
+	.then('/assets/webapp/@ariaController/@{ariaController}.js')
+	.then('/assets/webapp/menu/menu.js')
+	.then(function() {
+		$("#create_device").click(function() {
+			var $el = $("<div></div>")
+			$('body').append($el);
+			$el.webapp_@{ariaController}();
+		});
+
+		$(".btn-edit").click(function(el, ev) {
+			var options = {};
+			options["id"] = $(this).attr("data-@{ariaController}-id");
+			var $el = $("<div></div>");
+			$('body').append($el);
+			$el.webapp_@{ariaController}(options);
+		});
+		
+		$(".btn-delete").click(function(el, ev) {
+			var id = $(this).attr("data-@{ariaController}-id");
+			jsRoutes.controllers.@{playController}.delete(id).ajax()
+			.done(function(data, txtStatus, jqXHR) {
+				location.reload(true);
+			})
+			.fail(function(data, txtStatus, jqXHR) {
+				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+				self.find(".alert_placeholder").html($alert);
+			});
+		});
+	});
+</script>
+}
+
+@aria.master.authenticated(pageTitle, user, header_more = header_more, footer_more = footer_scripts) {
+
+<div style="display: none;"
+	<br/>
+	<button class="btn createmenu" data-@{ariaController}-id="x">create</button>
+	<br/>
+	<div class="navbar">
+		<div class="navbar navbar-static">
+			<div class="navbar-inner">
+				<div class="container" style="width: auto;" id="containerProva">
+					<a class="brand" href="#">NoxST::CCC</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br/>
+</div>
+
+<div class="ana-devices entities">
+	<h1>@pageTitle</h1>
+	
+	<div class="alert_placeholder"></div>
+
+	<table class="table table-condensed table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Display Name</th>
+				<th>Description</th>
+				<th>Enabled</th>
+				<th width="1%"></th>
+			</tr>
+		</thead>
+		<tbody>
+		@entities.map { g =>
+			<tr>
+				<td>@g.id</td>
+				<td>@g.name</td>
+				<td>@g.displayName</td>
+				<td>@g.description</td>
+				<td><div class="switch">
+					<input type="checkbox" @if(g.enabled){
+						checked
+					} disabled >
+					</div>
+					</td>
+				<td>
+					<nobr>					
+					    <div class="btn-group">
+						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
+						    	Actions
+						    	<span class="caret"></span>
+						    </a>
+						    <ul class="dropdown-menu pull-right">
+						    	<li><a tabindex="-1" href="#" class="btn-edit" data-@{ariaController}-id="@g.id">Edit</a></li>
+						    	<li><a tabindex="-1" href="#" class="btn-delete" data-@{ariaController}-id="@g.id">Delete</a></li>
+						    </ul>
+					    </div>
+					</nobr>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	<button class="btn btn-primary" id="create_device">Create new @pageTitle.toLowerCase()</button>
+	</div>
+
+}

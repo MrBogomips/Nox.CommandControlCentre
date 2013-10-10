@@ -15,6 +15,7 @@ import org.joda.time.format.ISODateTimeFormat
 import models.json.deviceTypePersistedJsonWriter
 
 object DeviceType extends Secured {
+  
   def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
     implicit val req = request
     val deviceTypes = all match {
