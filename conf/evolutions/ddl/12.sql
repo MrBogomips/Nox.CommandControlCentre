@@ -45,7 +45,7 @@ CREATE TABLE "MaintenanceServices" (
 GRANT SELECT, INSERT,  UPDATE, DELETE, TRUNCATE ON TABLE "MaintenanceServices" TO PUBLIC;
 GRANT ALL PRIVILEGES ON SEQUENCE "MaintenanceServicesSeq" TO PUBLIC; 
 
-INSERT INTO "MaintenanceServices" VALUES --("id", "name", "displayName", "description", "enabled", "creationTime", "modificationTime", "version", "odometer", "monthsPeriod") VALUES
+INSERT INTO "MaintenanceServices" VALUES
 	(nextval('"MaintenanceServicesSeq"'), 'AIRBAG', 'Air bag', NULL, true, NOW(), NOW(), 0, 1000, 12),
 	(nextval('"MaintenanceServicesSeq"'), 'ENGINEOIL', 'Engine oil', NULL, true, NOW(), NOW(), 0, 1000, 12),
 	(nextval('"MaintenanceServicesSeq"'), 'BRAKEOIL', 'Brake oil', NULL, true, NOW(), NOW(), 0, 1000, 12);
@@ -67,6 +67,12 @@ CREATE TABLE "MaintenanceDuties" (
 );
 GRANT SELECT, INSERT,  UPDATE, DELETE, TRUNCATE ON TABLE "MaintenanceDuties" TO PUBLIC;
 GRANT ALL PRIVILEGES ON SEQUENCE "MaintenanceDutiesSeq" TO PUBLIC; 
+
+-- Populate with some data
+INSERT INTO "MaintenanceDuties"
+	SELECT nextval('"MaintenanceDutiesSeq"'), v.id, s.id, NOW(), NOW(), 0
+		FROM "Vehicles" v
+		CROSS JOIN "MaintenanceServices" s;
 
 -- MaintenanceActivities
 CREATE SEQUENCE "MaintenanceActivitiesSeq";
