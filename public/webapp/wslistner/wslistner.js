@@ -50,7 +50,8 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 			},
 			
 			_onNewSubscription: function(event, data) {
-				this.socket.emit('subscribe',{topic: data.topic});
+				// TODO: manage logistic channels. For the moment we just subscribe to the POSITION
+				this.socket.emit('subscribe',{topic: 'POSITION/'+data.topic});
 			}
 		});
 });

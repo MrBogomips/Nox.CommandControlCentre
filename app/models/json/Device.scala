@@ -83,7 +83,7 @@ object DeviceInfoChannelPersistedSerializer {
         "creationTime" -> ISODateTimeFormat.dateTime.print(d.creationTime.getTime()),
         "modificationTime" -> ISODateTimeFormat.dateTime.print(d.modificationTime.getTime()),
         "version" -> d.version,
-        "channels" -> List("NOXT1", "NOXT2"),
+        "channels" -> List("POSITION/NOXT1", "POSITION/NOXT2"),
         "validationErrors" -> d.validationErrors)
     }
   }
