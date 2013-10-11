@@ -1,11 +1,43 @@
-steal(
+steal('/assets/webapp/namedentity/namedentity.js',
 	function($){
 
 		/**
 		 * @class Webapp.devicetypes
 		 */
-		Webapp.ModalForm('Webapp.devicetypes',
+		Webapp.NamedEntity('Webapp.devicetypes',
 		/** @Static */
+		{
+			defaults : {
+				id : '',
+				model : '',
+				name : '',
+				displayName : '',
+				description: '',
+				creationTime: '',
+				enabled: true,
+				modificationTime: '',
+				version: -1,
+				serverController: jsRoutes.controllers.DeviceType,
+				className: 'devicetypes',
+				formTitle: 'device types'
+			}
+		},
+		/** @Prototype */
+		{
+			init : function() {
+				this._super();
+			}
+		});
+
+});
+
+/*
+steal(
+	function($){
+
+		
+		Webapp.ModalForm('Webapp.devicetypes',
+		/ ** @Static * /
 		{
 			defaults : {
 				id : '',
@@ -20,7 +52,7 @@ steal(
 				serverController: jsRoutes.controllers.DeviceType
 			}
 		},
-		/** @Prototype */
+		/ ** @Prototype * /
 		{
 			init : function() {
 				var self = this;
@@ -46,3 +78,4 @@ steal(
 		});
 
 });
+*/

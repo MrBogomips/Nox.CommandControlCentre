@@ -61,6 +61,7 @@
 								<a tabindex="-1" href="#" id="btnMenuMaintenance">Maintenance</a>
 								<ul class="dropdown-menu">
 									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceServices">Services</a></li>
+									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceOutcomes">Outcomes</a></li>
 									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceOperators">Operators</a></li>
 									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceHistory">History</a></li>
 									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceNextDue">Next Due</a></li>
@@ -203,7 +204,9 @@
 					window.location.pathname = jsRoutes.controllers.Operator.index().url;
 				});
 				
-				
+				$("#btnMenuMaintenanceOutcomes").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.MaintenanceActivityOutcome.index().url;
+				});
 			});
 		});
 </script>

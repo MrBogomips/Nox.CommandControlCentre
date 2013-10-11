@@ -1,11 +1,11 @@
-@(id: Int, user: UserTrait, ariaController: String, pageTitle: String)
+@(id: Int, user: UserTrait, ariaController: String, ariaControllerFile: String, pageTitle: String)
 
 @header_more = {}
 
 @footer_scripts = {
 <script type='text/javascript'>
             steal('/assets/webapp/webapp_init.js')
-            .then('/assets/webapp/@ariaController/@{ariaController}.js')
+            .then('/assets/webapp/@ariaControllerFile/@{ariaControllerFile}.js')
             .then(function() {
             	$('#item').webapp_@{ariaController}({id: @id});
             });

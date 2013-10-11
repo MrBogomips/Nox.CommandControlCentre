@@ -12,13 +12,16 @@ import java.sql.Timestamp
 import org.joda.time.format.ISODateTimeFormat
 
 /**
- * Common control to manage NamedEntity objects
- */
+  * Common control to manage NamedEntity objects
+  */
 trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel[TRAIT], PERSISTED <: NamedEntityPersisted[MODEL]] extends Secured {
-  //trait NamedEntityController[TRAIT, MODEL , PERSISTED ] extends Secured {
-  val ariaController: String // = "devicegroups"
   val pageTitle: String // = "Device Group"
-  val playController: String // = "DeviceGroup" // match the object name
+  val playController: String = {
+    val s = this.getClass.getName()
+    s.substring(0, s.length() - 1)
+  }
+  val ariaController: String = playController
+  val ariaControllerFile: String = ariaController.toLowerCase()
 
   val dataAccessObject: NamedEntities[TRAIT, MODEL, PERSISTED]
   implicit val jsonSerializer: NamedEntityPersistedSerializer[PERSISTED]
@@ -36,13 +39,10 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
       case true  => dataAccessObject.find(None)
     }
     if (acceptsJson(request)) {
-      //Ok(Json.toJson( jsonSerializer.jsonWriter.writes(entities.seq) ))
-      //Ok(Json.toJson( entities )(jsonSerializer.jsonWriter))
-      //Ok( entities.map(Json.toJson(_)(jsonSerializer.jsonWriter)) )
       import scala.language.reflectiveCalls
       Ok(jsonSerializer.jsonWriter.writesSeq(entities))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.namedentity.index(entities, user, ariaController, pageTitle, playController))
+      Ok(views.html.aria.namedentity.index(entities, user, ariaController, ariaControllerFile, pageTitle, playController))
     } else {
       BadRequest
     }
@@ -53,7 +53,7 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
       if (acceptsJson(request)) {
         Ok(Json.toJson(d)(jsonSerializer.jsonWriter))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.namedentity.item(d.id, user, ariaController, pageTitle))
+        Ok(views.html.aria.namedentity.item(d.id, user, ariaController, ariaControllerFile, pageTitle))
       } else {
         BadRequest
       }

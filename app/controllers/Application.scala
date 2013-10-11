@@ -83,6 +83,12 @@ object Application extends Secured {
         MaintenanceService.update,
         MaintenanceService.delete,
         
+        MaintenanceActivityOutcome.index,
+        MaintenanceActivityOutcome.get,
+        MaintenanceActivityOutcome.create,
+        MaintenanceActivityOutcome.update,
+        MaintenanceActivityOutcome.delete,
+        
         MaintenanceDuty.index,
         MaintenanceDuty.get,
         MaintenanceDuty.create,
