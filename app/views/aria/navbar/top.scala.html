@@ -26,20 +26,17 @@
 							<li><a tabindex="-1" href="@routes.Map.index">Realtime map</a></li>
 							<li><a tabindex="-1" href="#">Hot zones</a></li>
 							<li class="divider"></li>
-							<li><a tabindex="-1" href="#"><i class="icon-cog"></i> Configure map services</a></li>
+							<li  class="dropdown-submenu">
+								<a tabindex="-1" href="#"><i class="icon-cog"></i> Configure map services</a>
+								<ul class="dropdown-menu">
+									<li><a tabindex="-1" href="#" id="btnMenuMqttLogisticChannels">Logistic Channels</a></li>
+									<li><a tabindex="-1" href="#" id="btnMenuMqttFunctionalChannels">Functional Channels</a></li>
+								</ul>
+							</li>
 						</ul>
 					</li>
 
-					@{/***** SHARE *****/}
-					<li class="dropdown">
-						<a href="#" id="dropShare" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share icon-white"></i> Share<b class="caret"></b></a>
-						<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
-							<li><a tabindex="-1" href="#" class="workinprogress">Current view</a></li>
-							<li><a tabindex="-1" href="#" class="workinprogress">PDF of current view</a></li>
-							<li class="divider"></li>
-							<li><a tabindex="-1" href="#" class="workinprogress"><i class="icon-cog"></i> Configure sharing services</a></li>
-						</ul>
-					</li>
+					
 					@{/***** DEVICES *****/}
 					<li class="dropdown">
 						<a href="#" id="dropDevices" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-hdd icon-white"></i> Devices<b class="caret"></b></a>
@@ -67,6 +64,17 @@
 									<li><a tabindex="-1" href="#" id="btnMenuMaintenanceNextDue">Next Due</a></li>
 								</ul>
 							</li>
+						</ul>
+					</li>
+					
+					@{/***** SHARE *****/}
+					<li class="dropdown">
+						<a href="#" id="dropShare" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share icon-white"></i> Share<b class="caret"></b></a>
+						<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+							<li><a tabindex="-1" href="#" class="workinprogress">Current view</a></li>
+							<li><a tabindex="-1" href="#" class="workinprogress">PDF of current view</a></li>
+							<li class="divider"></li>
+							<li><a tabindex="-1" href="#" class="workinprogress"><i class="icon-cog"></i> Configure sharing services</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -206,6 +214,14 @@
 				
 				$("#btnMenuMaintenanceOutcomes").click(function(el, ev) {
 					window.location.pathname = jsRoutes.controllers.MaintenanceActivityOutcome.index().url;
+				});
+				
+				$("#btnMenuMqttLogisticChannels").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.MqttLogisticChannel.index().url;
+				});
+				
+				$("#btnMenuMqttFunctionalChannels").click(function(el, ev) {
+					window.location.pathname = jsRoutes.controllers.MqttFunctionalChannel.index().url;
 				});
 			});
 		});

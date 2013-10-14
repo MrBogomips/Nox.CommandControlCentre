@@ -99,7 +99,19 @@ object Application extends Secured {
         Operator.get,
         Operator.create,
         Operator.update,
-        Operator.delete
+        Operator.delete,
+        
+        MqttLogisticChannel.index,
+        MqttLogisticChannel.get,
+        MqttLogisticChannel.create,
+        MqttLogisticChannel.update,
+        MqttLogisticChannel.delete,
+        
+        MqttFunctionalChannel.index,
+        MqttFunctionalChannel.get,
+        MqttFunctionalChannel.create,
+        MqttFunctionalChannel.update,
+        MqttFunctionalChannel.delete
       )
      ).as("text/javascript")
   }

@@ -16,12 +16,20 @@ import org.joda.time.format.ISODateTimeFormat
   */
 trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel[TRAIT], PERSISTED <: NamedEntityPersisted[MODEL]] extends Secured {
   val pageTitle: String // = "Device Group"
-  val playController: String = {
+  lazy val formTitle: String = pageTitle.toLowerCase
+  lazy val playController: String = getThisClassSimpleName
+  lazy val ariaController: String = playController
+  lazy val ariaControllerFile: String = ariaController.toLowerCase()
+
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
+  }
+
+  private def getThisClassName: String = {
     val s = this.getClass.getName()
     s.substring(0, s.length() - 1)
   }
-  val ariaController: String = playController
-  val ariaControllerFile: String = ariaController.toLowerCase()
 
   val dataAccessObject: NamedEntities[TRAIT, MODEL, PERSISTED]
   implicit val jsonSerializer: NamedEntityPersistedSerializer[PERSISTED]
@@ -105,4 +113,5 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
       case _    ⇒ NotFound
     }
   }
+
 }

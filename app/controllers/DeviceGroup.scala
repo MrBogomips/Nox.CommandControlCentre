@@ -4,9 +4,9 @@ import models.{ DeviceGroupTrait, DeviceGroup => DeviceGroupModel, DeviceGroupPe
 import models.json.DeviceGroupPersistedSerializer
 
 object DeviceGroup extends NamedEntityController[DeviceGroupTrait, DeviceGroupModel, DeviceGroupPersisted] {
-  override val ariaController = "devicegroups"
+  override lazy val ariaController = "devicegroups"
   val pageTitle = "Device Group"
-  //val playController = "DeviceGroup" // match the object name
+  override lazy val playController = "DeviceGroup" // match the object name
 
   val dataAccessObject = DeviceGroups
   implicit val jsonSerializer = DeviceGroupPersistedSerializer

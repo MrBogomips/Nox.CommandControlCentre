@@ -1,5 +1,6 @@
 @(entities: Seq[NamedEntityPersisted[_]], user: UserTrait, ariaController: String, ariaControllerFile: String, pageTitle: String, playController: String)
 
+
 @header_more = {}
 
 @footer_scripts = {
@@ -11,7 +12,8 @@
 		$("#create_device").click(function() {
 			var $el = $("<div></div>")
 			$('body').append($el);
-			$el.webapp_@{ariaController}();
+			//$el.webapp_@{ariaController.toLowerCase}();
+			new Webapp.@{ariaController}($el)
 		});
 
 		$(".btn-edit").click(function(el, ev) {
@@ -19,7 +21,8 @@
 			options["id"] = $(this).attr("data-@{ariaController}-id");
 			var $el = $("<div></div>");
 			$('body').append($el);
-			$el.webapp_@{ariaController}(options);
+			//$el.webapp_@{ariaController.toLowerCase}(options);
+			new Webapp.@{ariaController}($el, options)
 		});
 		
 		$(".btn-delete").click(function(el, ev) {
