@@ -19,10 +19,10 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 				self.socket = io.connect(Aria.Page.getInstance().configuration.eventsWebSocket);  // events_ws_uri
 				
 				var initializeClientChannels = function () {
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttClientTopic});
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttApplicationTopic});
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttUserTopic});
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttSessionTopic});
+					self._onNewSubscription(null, {topic: self.app.configuration.mqttClientTopic}, true);
+					self._onNewSubscription(null, {topic: self.app.configuration.mqttApplicationTopic}, true);
+					self._onNewSubscription(null, {topic: self.app.configuration.mqttUserTopic}, true);
+					self._onNewSubscription(null, {topic: self.app.configuration.mqttSessionTopic}, true);
 				}
 			  
 				self.socket.on('connect', function () {
@@ -49,9 +49,31 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 		        //console.log(jData);
 			},
 			
-			_onNewSubscription: function(event, data) {
+			_onNewSubscription: function(event, data, noFunctionalChannels) {
 				// TODO: manage logistic channels. For the moment we just subscribe to the POSITION
-				this.socket.emit('subscribe',{topic: 'POSITION/'+data.topic});
+				var self = this
+				if (noFunctionalChannels) {
+					self.socket.emit('subscribe',{topic: data.topic});
+				} 
+				else
+				{
+					jsRoutes.controllers.Channel.functionalIndex().ajax({
+						headers: { 
+					        "Accept" : "application/json; charset=utf-8",
+					        "Content-Type" : "application/json; charset=utf-8"
+					    }}
+					).done(
+						function(result) {
+							for (var i = 0; i < result.channels.length; i++) {
+								var t = result.channels[i] +'/'+data.topic;
+								self.socket.emit('subscribe',{topic: t});
+								console.log("Subscribed to the topic [" + t + "]")
+							}
+						}
+					).fail(
+						console.log("Error retrieving the list of the functional channels enabled")
+					);
+				}	
 			}
 		});
 });

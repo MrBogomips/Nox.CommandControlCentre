@@ -18,7 +18,8 @@ object ApplicationBuild extends Build {
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
       // Add your own project settings here
-      templatesImport += "views.utils.Helper._",
+      templatesImport ++= Seq("views.utils.Helper._", "patterns.models.Persisted"),
       scalacOptions ++= Seq("-deprecation", "-feature")
     )
 }
+ 

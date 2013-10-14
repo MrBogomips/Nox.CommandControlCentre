@@ -1,57 +1,56 @@
 package controllers
 
-import models.{ DeviceGroupTrait, DeviceGroup => DeviceGroupModel, DeviceGroupPersisted, DeviceGroups }
-import models.json.DeviceGroupPersistedSerializer
+import play.api._
+import play.api.mvc._
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import play.api.data._
+import play.api.data.Forms._
+import models.{ NamedEntityTrait, NamedEntity => NamedEntityModel, NamedEntityPersisted, NamedEntities }
+import models.json.NamedEntityPersistedSerializer
+import java.sql.Timestamp
+import org.joda.time.format.ISODateTimeFormat
 
-object DeviceGroup extends NamedEntityController[DeviceGroupTrait, DeviceGroupModel, DeviceGroupPersisted] {
-  override lazy val ariaController = "devicegroups"
-  val pageTitle = "Device Group"
-  override lazy val playController = "DeviceGroup" // match the object name
+/**
+  * Common control to manage NamedEntity objects
+  */
+trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel[TRAIT], PERSISTED <: NamedEntityPersisted[MODEL]] extends Secured {
+  val pageTitle: String // = "Device Group"
+  lazy val formTitle: String = pageTitle.toLowerCase
+  lazy val playController: String = getThisClassSimpleName
+  lazy val ariaController: String = playController
+  lazy val ariaControllerFile: String = ariaController.toLowerCase()
 
-  val dataAccessObject = DeviceGroups
-  implicit val jsonSerializer = DeviceGroupPersistedSerializer
-
-  def modelBuilder(name: String, displayName: Option[String], description: Option[String], enabled: Boolean) = {
-    DeviceGroupModel(name, displayName, description, enabled)
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
   }
 
-  def persistedBuilder(id: Int, name: String, displayName: Option[String], description: Option[String], enabled: Boolean, version: Int) = {
-    DeviceGroupPersisted(id, name, displayName, description, enabled, version = version)
-  }
-}
- 
-/*
-object DeviceGroupOLD extends Secured {
-  val ariaController = "devicegroups"
-  val pageTitle = "Device Group"
-  val playController = "DeviceGroup" // match the object name
-
-  type TRAIT = DeviceGroupTrait
-  type MODEL = DeviceGroupModel
-  type PERSISTED = DeviceGroupPersisted
-
-  val dataAccessObject: NamedEntities[TRAIT, MODEL, PERSISTED] = DeviceGroups
-  implicit val jsonSerializer: NamedEntityPersistedSerializer[PERSISTED] = DeviceGroupPersistedSerializer
-
-  def modelBuilder(name: String, displayName: Option[String], description: Option[String], enabled: Boolean): MODEL = {
-    DeviceGroupModel(name, displayName, description, enabled)
+  private def getThisClassName: String = {
+    val s = this.getClass.getName()
+    s.substring(0, s.length() - 1)
   }
 
-  def persistedBuilder(id: Int, name: String, displayName: Option[String], description: Option[String], enabled: Boolean, version: Int): PERSISTED = {
-    DeviceGroupPersisted(id, name, displayName, description, enabled, version = version)
-  }
+  val dataAccessObject: NamedEntities[TRAIT, MODEL, PERSISTED]
+  implicit val jsonSerializer: NamedEntityPersistedSerializer[PERSISTED]
 
-  /// BEGIN COMMON METHODS
+  def modelBuilder(name: String, displayName: Option[String], description: Option[String], enabled: Boolean): MODEL
+
+  def persistedBuilder(id: Int, name: String, displayName: Option[String], description: Option[String], enabled: Boolean, version: Int): PERSISTED
+
+  // COMMON METHODS
   def index(all: Boolean = false) = WithAuthentication { (user, request) =>
     implicit val req = request
+
     val entities: Seq[PERSISTED] = all match {
       case false => dataAccessObject.find(Some(true))
       case true  => dataAccessObject.find(None)
     }
     if (acceptsJson(request)) {
-      Ok(Json.toJson(entities))
+      import scala.language.reflectiveCalls
+      Ok(jsonSerializer.jsonWriter.writesSeq(entities))
     } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.namedentity.index(entities, user, ariaController, pageTitle, playController))
+      Ok(views.html.aria.namedentity.index(entities, user, ariaController, ariaControllerFile, pageTitle, playController))
     } else {
       BadRequest
     }
@@ -60,9 +59,9 @@ object DeviceGroupOLD extends Secured {
   def get(id: Int) = WithAuthentication { (user, request) =>
     dataAccessObject.findById(id).map { d ⇒
       if (acceptsJson(request)) {
-        Ok(Json.toJson(d))
+        Ok(Json.toJson(d)(jsonSerializer.jsonWriter))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.namedentity.item(d.id, user, ariaController, pageTitle))
+        Ok(views.html.aria.namedentity.item(d.id, user, ariaController, ariaControllerFile, pageTitle))
       } else {
         BadRequest
       }
@@ -114,6 +113,5 @@ object DeviceGroupOLD extends Secured {
       case _    ⇒ NotFound
     }
   }
-}
-*/
 
+}

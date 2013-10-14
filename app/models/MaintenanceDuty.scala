@@ -75,6 +75,7 @@ object MaintenanceDuties
     qy.firstOption
   }
 
+  // NOT USED
   implicit private def maintenanceDutyInfoGetResult = GetResult(r =>
     MaintenanceDutyInfoPersisted(
       r.nextInt, // id 
@@ -90,6 +91,9 @@ object MaintenanceDuties
       r.nextString // vehicle's licensePlate
       ))
 
+  /**
+    * Returns the duties defined for a specific vehicle
+    */
   def findByVehicleId(idVehicle: Int, page: Pagination): Seq[MaintenanceDutyInfoPersisted] =
     db withSession {
       page.paginate {

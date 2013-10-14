@@ -31,7 +31,8 @@ object Application extends Secured {
          
         User.getCurrent,
         
-        Channel.index,
+        Channel.logisticIndex,
+        Channel.functionalIndex,
           
         Device.index,
         Device.get,
@@ -83,6 +84,12 @@ object Application extends Secured {
         MaintenanceService.update,
         MaintenanceService.delete,
         
+        MaintenanceActivityOutcome.index,
+        MaintenanceActivityOutcome.get,
+        MaintenanceActivityOutcome.create,
+        MaintenanceActivityOutcome.update,
+        MaintenanceActivityOutcome.delete,
+        
         MaintenanceDuty.index,
         MaintenanceDuty.get,
         MaintenanceDuty.create,
@@ -93,7 +100,19 @@ object Application extends Secured {
         Operator.get,
         Operator.create,
         Operator.update,
-        Operator.delete
+        Operator.delete,
+        
+        MqttLogisticChannel.index,
+        MqttLogisticChannel.get,
+        MqttLogisticChannel.create,
+        MqttLogisticChannel.update,
+        MqttLogisticChannel.delete,
+        
+        MqttFunctionalChannel.index,
+        MqttFunctionalChannel.get,
+        MqttFunctionalChannel.create,
+        MqttFunctionalChannel.update,
+        MqttFunctionalChannel.delete
       )
      ).as("text/javascript")
   }

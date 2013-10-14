@@ -23,7 +23,7 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 				this.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_MQTT");
 
 				that.channelsList = '';
-				jsRoutes.controllers.Channel.index().ajax({
+				jsRoutes.controllers.Channel.logisticIndex().ajax({
 					headers: { 
 				        "Accept" : "application/json; charset=utf-8",
 				        "Content-Type" : "application/json; charset=utf-8"

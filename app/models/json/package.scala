@@ -45,6 +45,9 @@ package object json {
   implicit val maintenanceDutyPersistedJsonWriter: Writes[MaintenanceDutyPersisted] = MaintenanceDutyPersistedSerializer.jsonWriter
   implicit val maintenanceDutyInfoPersistedJsonWriter: Writes[MaintenanceDutyInfoPersisted] = MaintenanceDutyInfoPersistedSerializer.jsonWriter
   
+  // MaintenanceActivityOutcomePersisted
+  implicit val maintenanceActivityOutcomePersistedJsonWriter: Writes[MaintenanceActivityOutcomePersisted] = MaintenanceActivityOutcomePersistedSerializer.jsonWriter
+  
   // Operator
   implicit val operatorPersistedJsonWriter: Writes[OperatorPersisted] = OperatorPersistedSerializer.jsonWriter
 }

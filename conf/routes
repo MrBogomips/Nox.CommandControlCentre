@@ -29,7 +29,8 @@ GET		/map						controllers.Map.index
 GET		/app/configuration			controllers.Application.clientConfiguration
 
 # Channels' management
-GET		/channel/index				controllers.Channel.index
+GET		/map/channel/logistic/index		controllers.Channel.logisticIndex
+GET		/map/channel/functional/index	controllers.Channel.functionalIndex
 
 # User
 GET		/user/current				controllers.User.getCurrent
@@ -101,6 +102,13 @@ PUT		/maintenance_service/:id	controllers.MaintenanceService.update(id: Int)
 DELETE	/maintenance_service/:id	controllers.MaintenanceService.delete(id: Int)
 POST	/maintenance_service		controllers.MaintenanceService.create
 
+# Maintenance activity outcomes
+GET		/maintenance_activity/outcome/index			controllers.MaintenanceActivityOutcome.index(all: Boolean ?= true)
+GET		/maintenance_activity/outcome/:id			controllers.MaintenanceActivityOutcome.get(id: Int)
+PUT		/maintenance_activity/outcome/:id			controllers.MaintenanceActivityOutcome.update(id: Int)
+DELETE	/maintenance_activity/outcome/:id			controllers.MaintenanceActivityOutcome.delete(id: Int)
+POST	/maintenance_activity/outcome				controllers.MaintenanceActivityOutcome.create
+ 
 # Maintenance duty
 GET		/maintenance_duty/index		controllers.MaintenanceDuty.index(all: Boolean ?= true)
 GET		/maintenance_duty/:id		controllers.MaintenanceDuty.get(id: Int)
@@ -114,6 +122,20 @@ GET		/operator/:id				controllers.Operator.get(id: Int)
 PUT		/operator/:id				controllers.Operator.update(id: Int)
 DELETE	/operator/:id				controllers.Operator.delete(id: Int)
 POST	/operator					controllers.Operator.create
+
+# Mqtt logistic channel
+GET		/mqtt/logistic_channel/index			controllers.MqttLogisticChannel.index(all: Boolean ?= true)
+GET		/mqtt/logistic_channel/:id				controllers.MqttLogisticChannel.get(id: Int)
+PUT		/mqtt/logistic_channel/:id				controllers.MqttLogisticChannel.update(id: Int)
+DELETE	/mqtt/logistic_channel/:id				controllers.MqttLogisticChannel.delete(id: Int)
+POST	/mqtt/logistic_channel					controllers.MqttLogisticChannel.create
+
+# Mqtt functional channel
+GET		/mqtt/functional_channel/index				controllers.MqttFunctionalChannel.index(all: Boolean ?= true)
+GET		/mqtt/functional_channel/:id				controllers.MqttFunctionalChannel.get(id: Int)
+PUT		/mqtt/functional_channel/:id				controllers.MqttFunctionalChannel.update(id: Int)
+DELETE	/mqtt/functional_channel/:id				controllers.MqttFunctionalChannel.delete(id: Int)
+POST	/mqtt/functional_channel					controllers.MqttFunctionalChannel.create
 
 
 ######################################################################################################
