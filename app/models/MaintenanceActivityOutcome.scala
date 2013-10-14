@@ -25,7 +25,7 @@ case class MaintenanceActivityOutcome(name: String, displayName0: Option[String]
 case class MaintenanceActivityOutcomePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends NamedEntityPersisted[MaintenanceActivityOutcome]
 
-object MaintenanceActivityOutcomes extends NamedEntities[MaintenanceActivityOutcomeTrait, MaintenanceActivityOutcome, MaintenanceActivityOutcomePersisted]("MaintenanceActivityOutcomes", "MaintenanceActivityOutcomesNamesUQ") {
+object MaintenanceActivityOutcomes extends NamedEntities[MaintenanceActivityOutcomeTrait, MaintenanceActivityOutcome, MaintenanceActivityOutcomePersisted]("MaintenanceActivityOutcomes", "MaintenanceActivityOutcomesNameUQ") {
   def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (MaintenanceActivityOutcomePersisted, MaintenanceActivityOutcomePersisted.unapply _)
   def forInsert = name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (
     { t => MaintenanceActivityOutcome(t._1, t._2, t._3, t._4) },
