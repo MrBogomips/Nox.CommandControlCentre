@@ -78,7 +78,7 @@ abstract class NamedEntities[TRAIT <: NamedEntityTrait, MODEL <: NamedEntity[TRA
       case None     => for { dt <- this } yield dt
       case Some(en) => for { dt <- this if (dt.enabled === en) } yield dt
     }
-    qy.list
+    qy.sortBy(_.name).list
   }
   def findById(id: Int): Option[PERSISTED] = db withSession {
     val qy = for { dt <- this if (dt.id === id) } yield dt
