@@ -4,7 +4,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 		/**
 		 * @class Webapp.devicegroups
 		 */
-		Webapp.NamedEntity('Webapp.devicegroups',
+		Webapp.NamedEntity('Webapp.MaintenanceActivityOutcome',
 		/** @Static */
 		{
 			defaults : {
@@ -17,9 +17,9 @@ steal('/assets/webapp/namedentity/namedentity.js',
 				enabled: true,
 				modificationTime: '',
 				version: -1,
-				serverController: jsRoutes.controllers.DeviceGroup,
-				className: 'devicegroup',
-				formTitle: 'device group'
+				serverController: jsRoutes.controllers.MaintenanceActivityOutcome,
+				className: 'MaintenanceActivityOutcome',
+				formTitle: 'maintenance activity outcome'
 			}
 		},
 		/** @Prototype */
@@ -28,5 +28,4 @@ steal('/assets/webapp/namedentity/namedentity.js',
 				this._super();
 			}
 		});
-
 });

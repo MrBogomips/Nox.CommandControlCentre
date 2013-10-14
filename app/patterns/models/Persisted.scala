@@ -6,7 +6,7 @@ import scala.slick.driver.PostgresDriver.simple._
 /**
  * Represents a model
  */
-trait Model[+A] extends Validatable with ValidationRequired
+trait Model[+A <: Validatable] extends Validatable with ValidationRequired
 
 
 /**
