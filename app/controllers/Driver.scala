@@ -13,7 +13,7 @@ import org.joda.time.format.ISODateTimeFormat
 import models.json.driverPersistedJsonWriter
 
 object Driver extends Secured {
-  def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
+  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
     implicit val req = request
     val drivers = all match {
       case false => Drivers.find(Some(true))
@@ -81,8 +81,8 @@ object Driver extends Secured {
 
   def delete(id: Int) = WithAuthentication {
     Drivers.deleteById(id) match {
-      case true ⇒ Ok
-      case _    ⇒ NotFound
+      case true => Ok
+      case _    => NotFound
     }
   }
 }

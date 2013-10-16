@@ -38,7 +38,7 @@ case class MaintenanceActivity(idVehicle: Int, idOperator: Int, odometer: Int, n
   extends MaintenanceActivityTrait
   with Model[MaintenanceActivityTrait]
 
-case class MaintenanceActivityPersisted(id: Int, idVehicle: Int, idOperator: Int, odometer: Int, note: Option[String], activityStart: DateTime, activityEnd: DateTime, creationTime: Timestamp, modificationTime: Timestamp, version: Int)
+case class MaintenanceActivityPersisted(id: Int, idVehicle: Int, idOperator: Int, odometer: Int, note: Option[String], activityStart: DateTime, activityEnd: DateTime, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends MaintenanceActivityTrait
   with Persisted[MaintenanceActivity]
 
