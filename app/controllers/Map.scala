@@ -6,6 +6,7 @@ import controllers._
 import models._
 import security._
 import playguard._
+import playguard.Import._
 
 object Map extends Secured {
   

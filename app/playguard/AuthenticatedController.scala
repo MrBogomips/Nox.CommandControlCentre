@@ -111,7 +111,7 @@ trait AuthenticatedController[User] extends PolicyBasedController {
     *
     * Mixed class must provide its implementation
     */
-  protected def onUnauthenticated(request: RequestHeader): Result
+  protected def onUnauthenticated(request: RequestHeader): SimpleResult
 
   /**
     * Default handler for unauthorized requests. Default implementation simply returns an HTTP status 443 (FORBIDDEN).

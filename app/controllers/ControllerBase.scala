@@ -1,7 +1,9 @@
 package controllers
 
 import play.api._
+import play.api.mvc
 import play.api.mvc._
+import play.api.http.MimeTypes
 
 /**
  * Base controller
@@ -29,7 +31,8 @@ trait ControllerBase extends Controller {
    * parameter
    */
   def acceptsJson(implicit request: RequestHeader) = {
-    if (request.accept.exists(_ == "application/json") || request.queryString.exists(_._1 == "json"))
+    if (request.acceptedTypes.exists(_.mediaSubType == "json") || request.queryString.exists(_._1 == "json"))
+    //if (request.acceptedTypes.exists(_.accepts(MimeTypes.JSON)) || request.queryString.exists(_._1 == "json"))
       true
     else
       false
@@ -42,8 +45,10 @@ trait ControllerBase extends Controller {
    * parameter
    */
   def acceptsHtml(implicit request: RequestHeader) = {
-    if (request.accept.exists(_ == "text/html")  || request.queryString.exists(_._1 == "html"))
+    //if (request.acceptedTypes.exists(_.accepts(MimeTypes.HTML))  || request.queryString.exists(_._1 == "html")) {
+    if (request.acceptedTypes.exists(_.mediaSubType == "html")  || request.queryString.exists(_._1 == "html")) {
       true
+    }
     else
       false
   }

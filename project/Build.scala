@@ -8,7 +8,7 @@ object ApplicationBuild extends Build {
     val appVersion      = "1.0-SNAPSHOT"
       
     val appDependencies = Seq(
-      javaCore, javaJdbc, jdbc, anorm, javaEbean,
+      javaCore, javaJdbc, jdbc, anorm, javaEbean, cache,
       //"mysql" % "mysql-connector-java" % "5.1.21"
       "postgresql" % "postgresql" % "9.1-901.jdbc4",
       //"com.typesafe.slick" % "slick_2.10.1" % "2.0.0-M1",
