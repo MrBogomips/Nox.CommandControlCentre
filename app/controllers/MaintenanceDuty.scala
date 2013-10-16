@@ -17,10 +17,7 @@ object MaintenanceDuty extends Secured {
   def index(all: Boolean = false) = WithAuthentication { (user, request) =>
     implicit val req = request
 
-    val duties = all match {
-      case false => MaintenanceDuties.find(Some(true))
-      case true  => MaintenanceDuties.find(None)
-    }
+    val duties = MaintenanceDuties.index
     if (acceptsJson(request)) {
       Ok(Json.toJson(duties))
     } else if (acceptsHtml(request)) {

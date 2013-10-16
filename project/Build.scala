@@ -13,7 +13,9 @@ object ApplicationBuild extends Build {
       "postgresql" % "postgresql" % "9.1-901.jdbc4",
       //"com.typesafe.slick" % "slick_2.10.1" % "2.0.0-M1",
       "com.typesafe.slick" % "slick_2.10" % "1.0.1",
-      "org.slf4j" % "slf4j-nop" % "1.6.4"
+      "org.slf4j" % "slf4j-nop" % "1.6.4",
+      "com.github.nscala-time" %% "nscala-time" % "0.6.0",
+      "com.github.tototoshi" %% "slick-joda-mapper" % "0.4.0"
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(

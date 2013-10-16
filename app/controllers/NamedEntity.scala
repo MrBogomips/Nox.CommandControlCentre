@@ -6,7 +6,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
-import models.{ NamedEntityTrait, NamedEntity => NamedEntityModel, NamedEntityPersisted, NamedEntities }
+import models.{ NamedEntityTrait, NamedEntity => NamedEntityModel, NamedEntityPersisted, NamedEntityCrudTable }
 import models.json.NamedEntityPersistedSerializer
 import java.sql.Timestamp
 import org.joda.time.format.ISODateTimeFormat
@@ -31,7 +31,7 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
     s.substring(0, s.length() - 1)
   }
 
-  val dataAccessObject: NamedEntities[TRAIT, MODEL, PERSISTED]
+  val dataAccessObject: NamedEntityCrudTable[TRAIT, MODEL, PERSISTED]
   implicit val jsonSerializer: NamedEntityPersistedSerializer[PERSISTED]
 
   def modelBuilder(name: String, displayName: Option[String], description: Option[String], enabled: Boolean): MODEL

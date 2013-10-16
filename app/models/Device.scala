@@ -13,13 +13,12 @@ import scala.slick.jdbc.{ GetResult, StaticQuery => Q }
 import Q.interpolation
 import org.postgresql.util.PSQLException
 import org.joda.time.DateTime
+import java.util.Date
 import utils.Converter._
 
-
-trait DeviceTrait extends Validatable {
+trait DeviceTrait extends NamedEntityTrait {
   val name: String
   val displayName0: Option[String]
-  val displayName: String = displayName0.map(v => v).getOrElse(name)
   val description: Option[String]
   val deviceTypeId: Int
   val deviceGroupId: Int
@@ -28,9 +27,8 @@ trait DeviceTrait extends Validatable {
   val enabled: Boolean
   val simcardId: Option[Int]
 
-  def validate {
-    validateMinLength("name", name, 3)
-    validateMinLength("displayName", displayName, 3)
+  override def validate {
+    super.validate
     validateMinValue("deviceTypeId", deviceTypeId, 1)
     validateMinValue("deviceGroupId", deviceGroupId, 1)
     vehicleId.map(v => validateMinValue("vehicleId", v, 1))
@@ -48,58 +46,53 @@ trait DeviceInfoTrait extends DeviceTrait {
 }
 
 case class Device(name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], deviceManagerId: Option[Int])
-  extends DeviceTrait 
-  with Model[DeviceTrait]
+  extends NamedEntity[DeviceTrait]
 
 case class DevicePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], deviceManagerId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int)
-  extends DeviceTrait
-  with Persisted[Device] {
+  extends NamedEntityPersisted[Device] {
   def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], deviceManagerId: Option[Int]) =
     this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, deviceManagerId, new Timestamp(0), new Timestamp(0), 0)
   def this(id: Int, name: String, displayName0: Option[String], description: Option[String], deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], deviceManagerId: Option[Int], version: Int) =
     this(id, name, displayName0, description, deviceTypeId, deviceGroupId, vehicleId, enabled, simcardId, deviceManagerId, new Timestamp(0), new Timestamp(0), version)
 }
 
-case class DeviceInfoPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], 
-    deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int], 
-    deviceManagerId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int, deviceTypeDisplayName: String, deviceGroupDisplayName: String, 
-    vehicleDisplayName: Option[String], vehicleLicensePlate: Option[String], simcardImei: Option[String], simcardDisplayName: Option[String], 
-    deviceManagerName: Option[String], deviceManagerDisplayName: Option[String])
+case class DeviceInfoPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String],
+                               deviceTypeId: Int, deviceGroupId: Int, vehicleId: Option[Int], enabled: Boolean, simcardId: Option[Int],
+                               deviceManagerId: Option[Int], creationTime: Timestamp, modificationTime: Timestamp, version: Int, deviceTypeDisplayName: String, deviceGroupDisplayName: String,
+                               vehicleDisplayName: Option[String], vehicleLicensePlate: Option[String], simcardImei: Option[String], simcardDisplayName: Option[String],
+                               deviceManagerName: Option[String], deviceManagerDisplayName: Option[String])
   extends DeviceInfoTrait
-  with Persisted[Device]
+  with Persisted[Device] // TODO
 
 object Devices
-  extends Table[DevicePersisted]("Devices")
-  with Backend 
-  with NameEntityCrudOperations[DeviceTrait, Device, DevicePersisted]
-  {
+  extends NamedEntityCrudTable[DeviceTrait, Device, DevicePersisted]("Devices", "") {
 
-  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-  def name = column[String]("name")
-  def displayName = column[String]("displayName")
-  def description = column[String]("description", O.Nullable)
-  def enabled = column[Boolean]("enabled")
+  // Map only significative fields
   def simcardId = column[Int]("simcardId", O.Nullable)
   def deviceManagerId = column[Int]("deviceManagerId", O.Nullable)
   def deviceTypeId = column[Int]("deviceTypeId")
   def deviceGroupId = column[Int]("deviceGroupId")
   def vehicleId = column[Int]("vehicleId", O.Nullable)
-  def creationTime = column[Timestamp]("creationTime")
-  def modificationTime = column[Timestamp]("modificationTime")
-  def version = column[Int]("version")
 
   def deviceTypeFk = foreignKey("device_type_fk", deviceTypeId, DeviceTypes)(_.id)
   def deviceGroupFk = foreignKey("device_group_fk", deviceGroupId, DeviceGroups)(_.id)
   def vehicleFk = foreignKey("vehicle_fk", vehicleId, Vehicles)(_.id)
 
   def * = id ~ name ~ displayName.? ~ description.? ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ enabled ~ simcardId.? ~ deviceManagerId.? ~ creationTime ~ modificationTime ~ version <> (DevicePersisted, DevicePersisted.unapply _)
-
+  def forInsert = name ~ displayName.? ~ description.? ~ deviceTypeId ~ deviceGroupId ~ vehicleId.? ~ enabled ~ simcardId.? ~ deviceManagerId.? ~ creationTime ~ modificationTime ~ version <> (
+    { t => Device(t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9) },
+    { (o: Device) =>
+      {
+        val now = new Timestamp(new Date().getTime())
+        Some((o.name, Some(o.displayName), o.description, o.deviceTypeId, o.deviceGroupId, o.vehicleId, o.enabled, o.simcardId, o.deviceManagerId, now, now, 0))
+      }
+    })
   /**
     * Exception mapper
     *
     * Maps a native postgres exception to a ValidationException.
     */
-  implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
+  override implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
     val errMessage = e.getMessage()
     if (errMessage.contains("devices_name_key"))
       throw new ValidationException(e, "name", "Already in use")
@@ -130,15 +123,6 @@ object Devices
       r.nextStringOption // deviceManagerDisplayName
       ))
 
-  def find(enabled: Option[Boolean] = None): Seq[DevicePersisted] = db withSession {
-    val qy = enabled match {
-      case None     => for { d <- Devices } yield d
-      case Some(en) => for { d <- Devices if (d.enabled === en) } yield d
-    }
-
-    qy.list
-  }
-
   def findWithInfo(enabled: Option[Boolean] = None): Seq[DeviceInfoPersisted] = db withSession {
     val sql = enabled.map(en =>
       sql"""
@@ -168,12 +152,6 @@ object Devices
     executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[DeviceInfoPersisted]) { _.list }
   }
 
-  def findById(id: Int): Option[DevicePersisted] = db withSession {
-    val qy = for { d <- Devices if (d.id === id) } yield d
-
-    qy.firstOption
-  }
-
   def findWithInfoById(id: Int): Option[DeviceInfoPersisted] = db withSession {
     val sql = sql"""
     SELECT 
@@ -189,12 +167,6 @@ object Devices
     """
 
     executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[DeviceInfoPersisted]) { _.firstOption }
-  }
-
-  def findByName(name: String): Option[DevicePersisted] = db withSession {
-    val qy = for { d <- Devices if (d.name === name) } yield d
-
-    qy.firstOption
   }
 
   def findWithInfoByName(name: String): Option[DeviceInfoPersisted] = db withSession {
@@ -213,44 +185,8 @@ object Devices
 
     executeSql(BackendOperation.SELECT, s"$tableName ${this.toString}", sql.as[DeviceInfoPersisted]) { _.firstOption }
   }
-
-  def insert(uobj: Device): Int = WithValidation(uobj) { obj =>
-    db withSession {
-      val sql = sql"""
-    INSERT INTO "#$tableName"  (
-    		name, 
-    		"displayName",
-    		description,
-    		enabled,
-    		"simcardId",
-    		"deviceManagerId",
-    		"deviceTypeId", 
-    		"deviceGroupId",
-    		"vehicleId",
-    		"creationTime",
-    		"modificationTime",
-    		version
-    ) 
-    VALUES (
-    		${obj.name},
-    		${obj.displayName},
-    		${obj.description},
-    		${obj.enabled},
-    		${obj.simcardId},
-    		${obj.deviceManagerId},
-    		${obj.deviceTypeId},
-    		${obj.deviceGroupId},
-    		${obj.vehicleId},
-    		NOW(),
-    		NOW(),
-    		0
-    )
-    RETURNING id
-    """
-      executeSql(BackendOperation.INSERT, s"$tableName $obj", sql.as[Int]) { _.first }
-    }
-  }
-  def update(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
+  // TODO: reimplement avoiding explicit SQL
+  override def update(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE "#$tableName"
@@ -270,7 +206,8 @@ object Devices
       executeUpdate(s"$tableName $obj", sql) == 1
     }
   }
-  def updateWithVersion(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
+  // TODO: reimplement avoiding explicit SQL
+  override def updateWithVersion(uobj: DevicePersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
 	   UPDATE "#$tableName"
@@ -289,12 +226,6 @@ object Devices
 		   AND version = ${obj.version}
 		 """
       executeUpdate(s"$tableName $obj", sql) == 1
-    }
-  }
-  def deleteById(id: Int): Boolean = WithValidation {
-    db withSession {
-      val sql = sqlu"""DELETE FROM "#$tableName" WHERE id = ${id}"""
-      executeDelete("$tableName $id", sql) == 1
     }
   }
 }

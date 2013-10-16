@@ -44,23 +44,24 @@ case class SimcardPersisted(id: Int, imei: String, displayName0: Option[String],
 }
 
 object Simcards
-  extends Table[SimcardPersisted]("Simcards")
-  with Backend
-  with NameEntityCrudOperations[SimcardTrait, Simcard, SimcardPersisted] {
+  extends EnabledEntityCrudTable[SimcardTrait, Simcard, SimcardPersisted]("Simcards") {
 
-  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def imei = column[String]("imei")
   def displayName = column[String]("displayName")
   def description = column[String]("description", O.Nullable)
-  def enabled = column[Boolean]("enabled")
   def mobileNumber = column[String]("mobileNumber")
   def carrierId = column[Int]("carrierId")
 
-  def creationTime = column[Timestamp]("creationTime")
-  def modificationTime = column[Timestamp]("modificationTime")
-  def version = column[Int]("version")
-
   def * = id ~ imei ~ displayName.? ~ description.? ~ enabled ~ mobileNumber ~ carrierId ~ creationTime ~ modificationTime ~ version <> (SimcardPersisted, SimcardPersisted.unapply _)
+  def forInsert = imei ~ displayName.? ~ description.? ~ enabled ~ mobileNumber ~ carrierId ~ creationTime ~ modificationTime ~ version <> (
+    { t => Simcard(t._1, t._2, t._3, t._4, t._5, t._6) },
+    { (o: Simcard) =>
+      {
+        import java.util.Date
+        val now = new Timestamp(new Date().getTime())
+        Some((o.imei, Some(o.displayName), o.description, o.enabled, o.mobileNumber, o.carrierId, now, now, 0))
+      }
+    })
 
   /**
     * Exception mapper
@@ -79,66 +80,18 @@ object Simcards
       throw e;
   }
 
-  def find(enabled: Option[Boolean] = None): Seq[SimcardPersisted] = db withSession {
-    val qy = enabled match {
-      case None     => for { s <- Simcards } yield s
-      case Some(en) => for { s <- Simcards if (s.enabled === en) } yield s
-    }
-
-    qy.list
-  }
-
-  def findById(id: Int): Option[SimcardPersisted] = db withSession {
-    val qy = for { s <- Simcards if (s.id === id) } yield s
-
-    qy.firstOption
-  }
-
   def findByImei(imei: String): Option[SimcardPersisted] = db withSession {
     val qy = for { s <- Simcards if (s.imei === imei) } yield s
 
     qy.firstOption
   }
 
-  def findByName(name: String) = findByImei(name)
-
   def findByMobileNumber(number: String): Option[SimcardPersisted] = db withSession {
     val qy = for { s <- Simcards if (s.mobileNumber === number) } yield s
 
     qy.firstOption
   }
-
-  def insert(uobj: Simcard): Int = WithValidation(uobj) { obj =>
-    db withSession {
-
-      val sql = sql"""
-    INSERT INTO "#$tableName"  (
-    		imei, 
-    		"displayName",
-    		description,
-    		enabled,
-    		"mobileNumber",
-    		"carrierId", 
-    		"creationTime",
-    		"modificationTime",
-    		version
-    ) 
-    VALUES (
-    		${obj.imei},
-    		${obj.displayName},
-    		${obj.description},
-    		${obj.enabled},
-    		${obj.mobileNumber},
-    		${obj.carrierId},
-    		NOW(),
-    		NOW(),
-    		0
-    )
-    RETURNING id
-    """
-      executeSql(BackendOperation.INSERT, s"$tableName $obj", sql.as[Int]) { _.first }
-    }
-  }
+  // TODO: reimplement avoiding explicit SQL
   def update(uobj: SimcardPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
@@ -156,6 +109,7 @@ object Simcards
       executeUpdate(s"$tableName $obj", sql) == 1
     }
   }
+  // TODO: reimplement avoiding explicit SQL
   def updateWithVersion(uobj: SimcardPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val sql = sqlu"""
@@ -172,12 +126,6 @@ object Simcards
 		   AND version = ${obj.version}
 		 """
       executeUpdate(s"$tableName $obj", sql) == 1
-    }
-  }
-  def deleteById(id: Int): Boolean = WithValidation {
-    db withSession {
-      val sql = sqlu"""DELETE FROM "#$tableName" WHERE id = ${id}"""
-      executeDelete(s"$tableName $id", sql) == 1
     }
   }
 }

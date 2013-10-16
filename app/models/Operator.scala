@@ -27,18 +27,12 @@ case class OperatorPersisted(id: Int, name: String, surname: String, displayName
   with Persisted[Operator]
 
 object Operators
-  extends Table[OperatorPersisted]("Operators")
-  with Backend
-  with NameEntityCrudOperations[OperatorTrait, Operator, OperatorPersisted] {
+  extends EnabledEntityCrudTable[OperatorTrait, Operator, OperatorPersisted]("Operators") {
 
-  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+  // implement only specific fields
   def name = column[String]("name")
   def surname = column[String]("surname")
   def displayName = column[String]("displayName")
-  def enabled = column[Boolean]("enabled")
-  def creationTime = column[Timestamp]("creationTime")
-  def modificationTime = column[Timestamp]("modificationTime")
-  def version = column[Int]("version")
 
   def * = id ~ name ~ surname ~ displayName.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (OperatorPersisted, OperatorPersisted.unapply _)
   def forInsert = name ~ surname ~ displayName.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (
@@ -50,7 +44,7 @@ object Operators
       }
     })
 
-  private implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
+  override implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
     val errMessage = e.getMessage()
     //if (errMessage.contains("vehicle_name_key"))
     //  throw new ValidationException(e, "name", "Already in use")
@@ -60,37 +54,9 @@ object Operators
 
   def qyFindById(id: Int) = (for { d <- Drivers if (d.id === id) } yield d)
 
-  def find(enabled: Option[Boolean] = None): Seq[OperatorPersisted] = db withSession {
-    val qy = enabled match {
-      case None     => for { d <- Operators } yield d
-      case Some(en) => for { d <- Operators if (d.enabled === en) } yield d
-    }
-    qy.list 
-  }
-
-  def findById(id: Int): Option[OperatorPersisted] = db withSession {
-    val qy = for { d <- Operators if (d.id === id) } yield d
-    qy.firstOption
-  }
-
-  def deleteById(id: Int): Boolean = db withSession {
-    val qy = for { d <- Operators if (d.id === id) } yield d
-    qy.delete == 1
-  }
-
-  def findByName(name: String): Option[OperatorPersisted] = db withSession {
-    val qy = for { d <- Operators if (d.name === name) } yield d
-    qy.firstOption
-  }
-
-  def insert(uobj: models.Operator): Int = WithValidation(uobj) { obj =>
-    db withSession {
-      Operators.forInsert returning Operators.id insert obj
-    }
-  }
   def update(uobj: models.OperatorPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
-      val qy = for { d <- Operators if (d.id === obj.id) } 
+      val qy = for { d <- this if (d.id === obj.id) } 
         yield d.name ~ d.surname ~ d.displayName ~ d.enabled ~ d.modificationTime ~ d.version
       val now = new Timestamp(new Date().getTime())
       qy.update((obj.name, obj.surname, obj.displayName, obj.enabled, now, obj.version + 1)) == 1
@@ -98,7 +64,7 @@ object Operators
   }
   def updateWithVersion(uobj: models.OperatorPersisted): Boolean = WithValidation(uobj) { obj =>
     db withSession {
-      val qy = for { d <- Operators if (d.id === id && d.version === obj.version) } 
+      val qy = for { d <- this if (d.id === id && d.version === obj.version) } 
         yield d.name ~ d.surname ~ d.displayName ~ d.enabled ~ d.modificationTime ~ d.version
       val now = new Timestamp(new Date().getTime())
       qy.update((obj.name, obj.surname, obj.displayName, obj.enabled, now, obj.version + 1)) == 1
