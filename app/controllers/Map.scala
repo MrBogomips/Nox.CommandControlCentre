@@ -37,6 +37,12 @@ object Map extends Secured {
     Ok(views.html.aria.map.index(user))
   }
   
+  def history = WithAuthentication {  (user, request) =>
+    implicit val u = user
+    implicit val r = request
+	
+    Ok(views.html.aria.map.historical(user))
+  }
   
   
   def receiveJsonAuthenticated = WithAuthentication(parse.json) { (user, json) =>

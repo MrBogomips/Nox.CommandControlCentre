@@ -1,9 +1,9 @@
-steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
+steal('/assets/webapp/models/device.js')
 	.then( function($){
 		/**
 		 * @class Webapp.channels
 		 */
-		Aria.Controller('webapp.wslistner',
+		Aria.Controller('webapp.wshistorical',
 		/** @Static */
 		{
 			defaults : { }
@@ -16,24 +16,20 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 				this._super();
 				
 				devices = {};
-				self.socket = io.connect(Aria.Page.getInstance().configuration.eventsWebSocket);  // events_ws_uri
 				
-				var initializeClientChannels = function () {
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttClientTopic}, true);
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttApplicationTopic}, true);
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttUserTopic}, true);
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttSessionTopic}, true);
+				// History Playback PoC -- Just to show how it works
+				if (false) {
+					self.playback_socket = new WebSocket("ws://localhost:9000/positions/play_back?device=dev_0&start=2013-10-11T19%3A23%3A30");
+					self.playback_socket.onopen = function () {
+						console.log("Web socket open")
+					}
+					self.playback_socket.onmessage = function (e) {
+						console.log(e.data)
+						var payload = $.parseJSON(e.data);
+						var channel = self.app.getChannelByName(payload.message_type);
+						channel.trigger(payload.message_subtype, payload);
+					}
 				}
-			  
-				self.socket.on('connect', function () {
-					self.socket.on('mqtt', self.proxy(self._onNewMsg));
-					console.log('socket.io::connect');
-					initializeClientChannels();
-			      });
-			    
-				self.WS_Channel = self.app.getChannelByName("WS_MQTT");
-				self.WS_Channel.subscribe("new_topic", self.proxy(self._onNewSubscription));
-				
 			},
 			
 			_onNewMsg: function(msg) {

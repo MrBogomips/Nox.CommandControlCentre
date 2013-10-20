@@ -29,6 +29,7 @@ GET      /dashboard                            controllers.Dashboard.index
 # Maps
 GET      /map_old                              controllers.MapOld.index
 GET      /map                                  controllers.Map.index
+GET      /map/history                          controllers.Map.history
 
 # Client configuration
 GET      /app/configuration                    controllers.Application.clientConfiguration
