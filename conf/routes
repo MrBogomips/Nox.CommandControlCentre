@@ -143,7 +143,7 @@ DELETE   /mqtt/functional_channel/:id          controllers.MqttFunctionalChannel
 POST     /mqtt/functional_channel              controllers.MqttFunctionalChannel.create
 
 # Playback positio
-GET		/positions/play_back					controllers.PositionPlayer.history
+GET		/positions/play_back					controllers.PositionPlayer.history(device: String, start: String)
 GET		/positions/mongo						controllers.PositionPlayer.mongo
 GET		/positions/history						controllers.PositionPlayer.index
 

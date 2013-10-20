@@ -42,12 +42,17 @@ object PositionPlayer extends Secured with MongoController {
     val time: String = isoTime.print(startTime)
     val collectionName: String = s"${deviceName}_${date.replace("-", "")}"
 
-    Logger.debug(s"Date: $date, Time: $time, Collection: $collectionName")
+    Logger.debug(s"$deviceName>>> Date: $date, Time: $time, Collection: $collectionName")
 
     // Retrieve a cursor on the filtered collection
     def fetchData = {
       val collection: JSONCollection = mongodb.collection[JSONCollection](collectionName)
-      collection.find(Json.obj()).cursor[JsValue]
+      collection
+        .find(
+          Json.obj("data.ts" -> Json.obj("$gt" -> s"$date $time")),
+          Json.obj("_id" -> 0))
+        .sort(Json.obj("data.ts" -> 1))
+        .cursor[JsValue]
     }
     // Add delay between two consecutive events
     def delayer: Enumeratee[JsValue, JsValue] = {
@@ -61,24 +66,24 @@ object PositionPlayer extends Secured with MongoController {
       Enumeratee.map {
         json =>
           val timeStamp: String = (json \ "data" \ "ts").as[String].replace(" ", "T")
-          Logger.debug(s"Timestamp: $timeStamp")
+          Logger.debug(s"$deviceName>>>Timestamp: $timeStamp")
           val curTime: DateTime = new DateTime(timeStamp)
-          Logger.debug(s"Curtime: $curTime")
+          Logger.debug(s"$deviceName>>>Curtime: $curTime")
 
           try {
             lastTime match {
               case None => {} // No wait
               case Some(lastTime) => {
                 val delay = new Interval(lastTime, curTime).toDurationMillis
-                Logger.debug("delay: "+delay)
+                Logger.debug(s"$deviceName>>> delay: $delay")
                 val sleep = List(delay, minimumTimeOut).max
-                Logger.debug("sleep: "+sleep)
+                Logger.debug(s"$deviceName>>> sleep: $sleep")
                 Thread.sleep(sleep)
               }
             }
           } catch {
             case ex: Throwable => {
-              Logger.debug(ex.toString)
+              Logger.debug(s"$deviceName>>> exception: ${ex.toString}")
               Thread.sleep(minimumTimeOut)
             }
           }
@@ -93,11 +98,20 @@ object PositionPlayer extends Secured with MongoController {
 
   }
 
-  def history: WebSocket[JsValue] = WebSocket.using[JsValue] { request =>
-    //val deviceData = fetchData("dev_0", "20131011", "12:23:30")
+  def history(device: String, start: String): WebSocket[JsValue] = WebSocket.using[JsValue] { request =>
+    val skipSleepForFirstEvent = true
+    //val startTime = new DateTime("2013-10-11T19:23:30")
+    val startTime = new DateTime(start)
+    //val dev0_enumerator = getDeviceHistoryEnumerator("dev_0", startTime, skipSleepForFirstEvent)
+    //val dev1_enumerator = getDeviceHistoryEnumerator("dev_1", startTime, skipSleepForFirstEvent)
+    //val dev4308199_enumeartor = getDeviceHistoryEnumerator("4308199", startTime, skipSleepForFirstEvent)
+    //val dev012896001078333_enumeartor = getDeviceHistoryEnumerator("012896001078333", startTime, skipSleepForFirstEvent)
+    
+    
+    val deviceHistory = getDeviceHistoryEnumerator(device, startTime, skipSleepForFirstEvent)
 
     val in = Iteratee.ignore[JsValue]
-    val out = getDeviceHistoryEnumerator("dev_0", new DateTime("2013-10-11T12:23:30"), false)
+    val out = deviceHistory //interleave dev1_enumerator interleave dev4308199_enumeartor interleave dev012896001078333_enumeartor
 
     (in, out)
   }
