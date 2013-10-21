@@ -25,7 +25,7 @@ case class MqttFunctionalChannel(name: String, displayName0: Option[String] = No
 case class MqttFunctionalChannelPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends NamedEntityPersisted[MqttFunctionalChannel]
 
-object MqttFunctionalChannels extends NamedEntities[MqttFunctionalChannelTrait, MqttFunctionalChannel, MqttFunctionalChannelPersisted]("MqttFunctionalChannels", "MqttFunctionalChannelsNameUQ") {
+object MqttFunctionalChannels extends NamedEntityCrudTable[MqttFunctionalChannelTrait, MqttFunctionalChannel, MqttFunctionalChannelPersisted]("MqttFunctionalChannels", "MqttFunctionalChannelsNameUQ") {
   def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (MqttFunctionalChannelPersisted, MqttFunctionalChannelPersisted.unapply _)
   def forInsert = name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (
     { t => MqttFunctionalChannel(t._1, t._2, t._3, t._4) },

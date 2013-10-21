@@ -21,12 +21,12 @@ trait Secured extends ControllerBase with AuthenticatedController[UserPersisted]
   /**
    * Redirect to login if the user in not authorized.
    */
-  def onUnauthenticated(request: RequestHeader) : Result = {
+  def onUnauthenticated(request: RequestHeader) : SimpleResult = {
     val loginUrl = s"${routes.Application.login.toString}?${auth_cb}=${URLEncoder.encode(request.uri, "UTF-8")}"  
     Logger.debug(loginUrl)
     
     Results.Redirect(loginUrl)
-  }
+  } 
   /**
    * Just for the sake of explanation: default beahviour already return a 403 code
    */

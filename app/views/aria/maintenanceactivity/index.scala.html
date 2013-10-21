@@ -1,0 +1,12 @@
+@(services: Seq[MaintenanceActivityPersisted], user: UserTrait)
+
+
+@header_more = {}
+
+@footer_scripts = {
+
+}
+
+@aria.master.authenticated("MaintenanceActivity", user, footer_more = footer_scripts) {
+	TODO
+}

@@ -25,7 +25,7 @@ case class MqttLogisticChannel(name: String, displayName0: Option[String] = None
 case class MqttLogisticChannelPersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends NamedEntityPersisted[MqttLogisticChannel]
 
-object MqttLogisticChannels extends NamedEntities[MqttLogisticChannelTrait, MqttLogisticChannel, MqttLogisticChannelPersisted]("MqttLogisticChannels", "MqttLogisticChannelsNameUQ") {
+object MqttLogisticChannels extends NamedEntityCrudTable[MqttLogisticChannelTrait, MqttLogisticChannel, MqttLogisticChannelPersisted]("MqttLogisticChannels", "MqttLogisticChannelsNameUQ") {
   def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (MqttLogisticChannelPersisted, MqttLogisticChannelPersisted.unapply _)
   def forInsert = name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (
     { t => MqttLogisticChannel(t._1, t._2, t._3, t._4) },

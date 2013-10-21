@@ -33,6 +33,7 @@ steal('/assets/js/socket.io.js', '/assets/webapp/models/device.js')
 			    
 				self.WS_Channel = self.app.getChannelByName("WS_MQTT");
 				self.WS_Channel.subscribe("new_topic", self.proxy(self._onNewSubscription));
+				
 			},
 			
 			_onNewMsg: function(msg) {

@@ -25,7 +25,7 @@ case class DeviceType(name: String, displayName0: Option[String] = None, descrip
 case class DeviceTypePersisted(id: Int, name: String, displayName0: Option[String], description: Option[String], enabled: Boolean, creationTime: Timestamp = new Timestamp(0), modificationTime: Timestamp = new Timestamp(0), version: Int)
   extends NamedEntityPersisted[DeviceType]
 
-object DeviceTypes extends NamedEntities[DeviceTypeTrait, DeviceType, DeviceTypePersisted]("DeviceTypes", "device_types_name_key") {
+object DeviceTypes extends NamedEntityCrudTable[DeviceTypeTrait, DeviceType, DeviceTypePersisted]("DeviceTypes", "device_types_name_key") {
   def * = id ~ name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (DeviceTypePersisted, DeviceTypePersisted.unapply _)
   def forInsert = name ~ displayName.? ~ description.? ~ enabled ~ creationTime ~ modificationTime ~ version <> (
     { t => DeviceType(t._1, t._2, t._3, t._4) },
