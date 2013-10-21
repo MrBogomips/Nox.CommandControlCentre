@@ -418,7 +418,11 @@
         row.append('<td class="day' + clsName + '">' + prevMonth.getUTCDate() + '</td>');
         prevMonth.setUTCDate(prevMonth.getUTCDate() + 1);
       }
-      this.widget.find('.datepicker-days tbody').empty().append(html);
+      // GC Fix:BEGIN
+      var tbody = this.widget.find('.datepicker-days tbody')  
+      tbody.empty();
+      _.map(html, function(e) {tbody.append(e)})
+      // GC Fix:END
       var currentYear = this._date.getUTCFullYear();
 
       var months = this.widget.find('.datepicker-months').find(

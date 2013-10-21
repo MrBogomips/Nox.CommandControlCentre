@@ -18,9 +18,12 @@
 	<td><span class="speed"><%=data.speed%>Km/h</span></td>
 	<td>
 		<a class="btn btn-mini more" type="button" href="#"><i class="icon-info-sign"></i></a>
+		
+		<% if (show_tools) { %>
 		<a class="btn btn-mini settings" type="button" href="#"><i class="icon-wrench"></i></a>
+		<% } %>
 		<%
-			if (webcams != undefined) {
+			if (show_webcam && webcams != undefined) {
 				if (webcams.length > 0) {
 		%>
 					<a class="btn btn-mini webcam" type="button" href="#"><i class="icon-facetime-video"></i></a>

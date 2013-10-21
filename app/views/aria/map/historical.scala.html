@@ -19,7 +19,7 @@
             		var wslistner = new webapp.wshistorical(window);
             		
                     $('#device_selector').webapp_wshistorical_selector();
-                    $('#devices').webapp_table();
+                    $('#devices').webapp_table({show_webcam: false, show_tools: false});
                     $('#device_info').webapp_lastdevice_info();
                     
                     var resizeMapArea = function(){

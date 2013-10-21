@@ -19,7 +19,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 				version: -1,
 				serverController: jsRoutes.controllers.MqttLogisticChannel,
 				className: 'MqttLogisticChannel',
-				formTitle: 'mqtt logistic channel'
+				formTitle: 'logistic channel'
 			}
 		},
 		/** @Prototype */

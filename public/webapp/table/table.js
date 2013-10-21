@@ -13,7 +13,9 @@ steal( '/assets/webapp/models/channels.js',
 				id : '',
 				model : '',
 				labels : [],
-				values : []
+				values : [],
+				show_tools : true,
+				show_webcam : true,
 			}
 		},
 		/** @Prototype */
@@ -93,6 +95,7 @@ steal( '/assets/webapp/models/channels.js',
 						}
 					).always(
 						function() {
+							$.extend(data, { 'show_tools' : self.options.show_tools, 'show_webcam' : self.options.show_webcam });
 							$('<tr data-device-id="' + data.device + '"></tr>').appendTo(self.element.find('tbody')).webapp_row(data);
 							self._notDiscard(discard, data);
 						}

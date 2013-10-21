@@ -101,7 +101,7 @@ object PositionPlayer extends Secured with MongoController {
   def history(device: String, start: String): WebSocket[JsValue] = WebSocket.using[JsValue] { request =>
     val skipSleepForFirstEvent = true
     //val startTime = new DateTime("2013-10-11T19:23:30")
-    val startTime = new DateTime(start)
+    val startTime = new DateTime(start.replace(" ", "T")) // Quick fix to correct ISO format
     //val dev0_enumerator = getDeviceHistoryEnumerator("dev_0", startTime, skipSleepForFirstEvent)
     //val dev1_enumerator = getDeviceHistoryEnumerator("dev_1", startTime, skipSleepForFirstEvent)
     //val dev4308199_enumeartor = getDeviceHistoryEnumerator("4308199", startTime, skipSleepForFirstEvent)
@@ -111,7 +111,7 @@ object PositionPlayer extends Secured with MongoController {
     val deviceHistory = getDeviceHistoryEnumerator(device, startTime, skipSleepForFirstEvent)
 
     val in = Iteratee.ignore[JsValue]
-    val out = deviceHistory //interleave dev1_enumerator interleave dev4308199_enumeartor interleave dev012896001078333_enumeartor
+    val out = deviceHistory // interleave getDeviceHistoryEnumerator("dev_1", startTime, skipSleepForFirstEvent) // interleave dev4308199_enumeartor interleave dev012896001078333_enumeartor
 
     (in, out)
   }
