@@ -2,156 +2,166 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+#################################################################################
+# Some experiments
+GET      /__tests/async                        controllers.tests.Test.asyncTest
+GET      /__tests/fibonacci                    controllers.tests.Test.fibonacci
+
 # Map static resources from the /public folder to the /assets URL path
-GET 	/assets/js/routes.js		controllers.Application.javascriptRoutes
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
-GET     /jwplayer.flash.swf                controllers.Assets.at(path="/public", file="jwplayer.flash.swf")
+GET      /jwplayer.flash.swf                   controllers.Assets.at(path="/public", file="jwplayer.flash.swf")
+GET      /assets/js/routes.js                  controllers.Application.javascriptRoutes
+GET      /assets/*file                         controllers.Assets.at(path="/public", file)
 #GET		/api/*file				    controllers.Assets.at(path="/target/scala-2.10/api", file)
 
 # Home page
-GET     /                           controllers.Application.login
+GET      /                                     controllers.Application.login
 
 # Login / Logout
 #GET     /login                      controllers.Application.login
-POST    /authenticate               controllers.Application.authenticate
-GET		/logout						controllers.Application.logout
-GET		/tech/whoami				controllers.Application.whoAmI
-GET		/tech/routes_testbench		controllers.Application.javascriptRoutesTestbench
+POST     /authenticate                         controllers.Application.authenticate
+GET      /logout                               controllers.Application.logout
+GET      /tech/whoami                          controllers.Application.whoAmI
+GET      /tech/routes_testbench                controllers.Application.javascriptRoutesTestbench
 
 # Dashboard
-GET		/dashboard					controllers.Dashboard.index
+GET      /dashboard                            controllers.Dashboard.index
 
 # Maps
-GET		/map_old					controllers.MapOld.index
-GET		/map						controllers.Map.index
+GET      /map_old                              controllers.MapOld.index
+GET      /map                                  controllers.Map.index
+GET      /map/history                          controllers.Map.history
 
 # Client configuration
-GET		/app/configuration			controllers.Application.clientConfiguration
+GET      /app/configuration                    controllers.Application.clientConfiguration
 
 # Channels' management
-GET		/map/channel/logistic/index		controllers.Channel.logisticIndex
-GET		/map/channel/functional/index	controllers.Channel.functionalIndex
+GET      /map/channel/logistic/index           controllers.Channel.logisticIndex
+GET      /map/channel/functional/index         controllers.Channel.functionalIndex
 
 # User
-GET		/user/current				controllers.User.getCurrent
+GET      /user/current                         controllers.User.getCurrent
 
 # Device
-GET		/device/index				controllers.Device.index(all: Boolean ?= true)
-GET		/device/:id					controllers.Device.get(id: Int)
-GET		/device/byName/:name		controllers.Device.getByName(name: String)
-PUT		/device/:id					controllers.Device.update(id: Int)
-DELETE	/device/:id					controllers.Device.delete(id: Int)
-POST	/device						controllers.Device.create
-POST	/device/:id/execute			controllers.Device.receiveCommand(id: String)
-GET		/device/:id/configure		controllers.Device.configureDevice(id: String)
+GET      /device/index                         controllers.Device.index(all: Boolean ?= true)
+GET      /device/:id                           controllers.Device.get(id: Int)
+GET      /device/byName/:name                  controllers.Device.getByName(name: String)
+PUT      /device/:id                           controllers.Device.update(id: Int)
+DELETE   /device/:id                           controllers.Device.delete(id: Int)
+POST     /device                               controllers.Device.create
+POST     /device/:id/execute                   controllers.Device.receiveCommand(id: String)
+GET      /device/:id/configure                 controllers.Device.configureDevice(id: String)
 
 # Device types
-GET		/device_type/index			controllers.DeviceType.index(all: Boolean ?= true)
-GET		/device_type/:id			controllers.DeviceType.get(id: Int)
-PUT		/device_type/:id			controllers.DeviceType.update(id: Int)
-DELETE	/device_type/:id			controllers.DeviceType.delete(id: Int)
-POST	/device_type				controllers.DeviceType.create
+GET      /device_type/index                    controllers.DeviceType.index(all: Boolean ?= true)
+GET      /device_type/:id                      controllers.DeviceType.get(id: Int)
+PUT      /device_type/:id                      controllers.DeviceType.update(id: Int)
+DELETE   /device_type/:id                      controllers.DeviceType.delete(id: Int)
+POST     /device_type                          controllers.DeviceType.create
 
 # Device groups
-GET		/device_group/index			controllers.DeviceGroup.index(all: Boolean ?= true)
-GET		/device_group/:id			controllers.DeviceGroup.get(id: Int)
-PUT		/device_group/:id			controllers.DeviceGroup.update(id: Int)
-DELETE	/device_group/:id			controllers.DeviceGroup.delete(id: Int)
-POST	/device_group				controllers.DeviceGroup.create 
+GET      /device_group/index                   controllers.DeviceGroup.index(all: Boolean ?= true)
+GET      /device_group/:id                     controllers.DeviceGroup.get(id: Int)
+PUT      /device_group/:id                     controllers.DeviceGroup.update(id: Int)
+DELETE   /device_group/:id                     controllers.DeviceGroup.delete(id: Int)
+POST     /device_group                         controllers.DeviceGroup.create 
 
 # Vehicle
-GET		/vehicle/index				controllers.Vehicle.index(all: Boolean ?= true)
-GET		/vehicle/:id				controllers.Vehicle.get(id: Int)
-GET		/vehicle/:id/maintenance_duties			controllers.MaintenanceDuty.findByVehicleId(id: Int)
-PUT		/vehicle/:id				controllers.Vehicle.update(id: Int)
-DELETE	/vehicle/:id				controllers.Vehicle.delete(id: Int)
-POST	/vehicle					controllers.Vehicle.create
+GET      /vehicle/index                        controllers.Vehicle.index(all: Boolean ?= true)
+GET      /vehicle/:id                          controllers.Vehicle.get(id: Int)
+GET      /vehicle/:id/maintenance_duties       controllers.MaintenanceDuty.findByVehicleId(id: Int)
+PUT      /vehicle/:id                          controllers.Vehicle.update(id: Int)
+DELETE   /vehicle/:id                          controllers.Vehicle.delete(id: Int)
+POST     /vehicle                              controllers.Vehicle.create
 
 # Vehicle Type
-GET		/vehicle_type/index			controllers.VehicleType.index(all: Boolean ?= true)
-GET		/vehicle_type/:id			controllers.VehicleType.get(id: Int)
-PUT		/vehicle_type/:id			controllers.VehicleType.update(id: Int)
-DELETE	/vehicle_type/:id			controllers.VehicleType.delete(id: Int)
-POST	/vehicle_type				controllers.VehicleType.create
+GET      /vehicle_type/index                   controllers.VehicleType.index(all: Boolean ?= true)
+GET      /vehicle_type/:id                     controllers.VehicleType.get(id: Int)
+PUT      /vehicle_type/:id                     controllers.VehicleType.update(id: Int)
+DELETE   /vehicle_type/:id                     controllers.VehicleType.delete(id: Int)
+POST     /vehicle_type                         controllers.VehicleType.create
 
 # Driver
-GET		/driver/index				controllers.Driver.index(all: Boolean ?= true)
-GET		/driver/:id					controllers.Driver.get(id: Int)
-PUT		/driver/:id					controllers.Driver.update(id: Int)
-DELETE	/driver/:id					controllers.Driver.delete(id: Int)
-POST	/driver						controllers.Driver.create
+GET      /driver/index                         controllers.Driver.index(all: Boolean ?= true)
+GET      /driver/:id                           controllers.Driver.get(id: Int)
+PUT      /driver/:id                           controllers.Driver.update(id: Int)
+DELETE   /driver/:id                           controllers.Driver.delete(id: Int)
+POST     /driver                               controllers.Driver.create
 
 # Vechicle Assignement
-GET		/vehicle_assignement/index	controllers.VehicleAssignement.index(all: Boolean ?= true)
-GET		/vehicle_assignement/:id	controllers.VehicleAssignement.get(id: Int)
-PUT		/vehicle_assignement/:id	controllers.VehicleAssignement.update(id: Int)
-DELETE	/vehicle_assignement/:id	controllers.VehicleAssignement.delete(id: Int)
-POST	/vehicle_assignement		controllers.VehicleAssignement.create
+GET      /vehicle_assignement/index            controllers.VehicleAssignement.index(all: Boolean ?= true)
+GET      /vehicle_assignement/:id              controllers.VehicleAssignement.get(id: Int)
+PUT      /vehicle_assignement/:id              controllers.VehicleAssignement.update(id: Int)
+DELETE   /vehicle_assignement/:id              controllers.VehicleAssignement.delete(id: Int)
+POST     /vehicle_assignement                  controllers.VehicleAssignement.create
 
 # Simcards
-GET		/simcard/index				controllers.Simcard.index(all: Boolean ?= true)
-GET		/simcard/:id				controllers.Simcard.get(id: Int)
-PUT		/simcard/:id				controllers.Simcard.update(id: Int)
-DELETE	/simcard/:id				controllers.Simcard.delete(id: Int)
-POST	/simcard					controllers.Simcard.create
+GET      /simcard/index                        controllers.Simcard.index(all: Boolean ?= true)
+GET      /simcard/:id                          controllers.Simcard.get(id: Int)
+PUT      /simcard/:id                          controllers.Simcard.update(id: Int)
+DELETE   /simcard/:id                          controllers.Simcard.delete(id: Int)
+POST     /simcard                              controllers.Simcard.create
 
 # Maintenance service
-GET		/maintenance_service/index	controllers.MaintenanceService.index(all: Boolean ?= true)
-GET		/maintenance_service/:id	controllers.MaintenanceService.get(id: Int)
-PUT		/maintenance_service/:id	controllers.MaintenanceService.update(id: Int)
-DELETE	/maintenance_service/:id	controllers.MaintenanceService.delete(id: Int)
-POST	/maintenance_service		controllers.MaintenanceService.create
+GET      /maintenance_service/index            controllers.MaintenanceService.index(all: Boolean ?= true)
+GET      /maintenance_service/:id              controllers.MaintenanceService.get(id: Int)
+PUT      /maintenance_service/:id              controllers.MaintenanceService.update(id: Int)
+DELETE   /maintenance_service/:id              controllers.MaintenanceService.delete(id: Int)
+POST     /maintenance_service                  controllers.MaintenanceService.create
 
 # Maintenance activity outcomes
-GET		/maintenance_activity/outcome/index			controllers.MaintenanceActivityOutcome.index(all: Boolean ?= true)
-GET		/maintenance_activity/outcome/:id			controllers.MaintenanceActivityOutcome.get(id: Int)
-PUT		/maintenance_activity/outcome/:id			controllers.MaintenanceActivityOutcome.update(id: Int)
-DELETE	/maintenance_activity/outcome/:id			controllers.MaintenanceActivityOutcome.delete(id: Int)
-POST	/maintenance_activity/outcome				controllers.MaintenanceActivityOutcome.create
+GET      /maintenance_activity/outcome/index   controllers.MaintenanceActivityOutcome.index(all: Boolean ?= true)
+GET      /maintenance_activity/outcome/:id     controllers.MaintenanceActivityOutcome.get(id: Int)
+PUT      /maintenance_activity/outcome/:id     controllers.MaintenanceActivityOutcome.update(id: Int)
+DELETE   /maintenance_activity/outcome/:id     controllers.MaintenanceActivityOutcome.delete(id: Int)
+POST     /maintenance_activity/outcome         controllers.MaintenanceActivityOutcome.create
  
 # Maintenance duty
-GET		/maintenance_duty/index		controllers.MaintenanceDuty.index(all: Boolean ?= true)
-GET		/maintenance_duty/:id		controllers.MaintenanceDuty.get(id: Int)
-PUT		/maintenance_duty/:id		controllers.MaintenanceDuty.update(id: Int)
-DELETE	/maintenance_duty/:id		controllers.MaintenanceDuty.delete(id: Int)
-POST	/maintenance_duty			controllers.MaintenanceDuty.create
+GET      /maintenance_duty/index               controllers.MaintenanceDuty.index(all: Boolean ?= true)
+GET      /maintenance_duty/:id                 controllers.MaintenanceDuty.get(id: Int)
+PUT      /maintenance_duty/:id                 controllers.MaintenanceDuty.update(id: Int)
+DELETE   /maintenance_duty/:id                 controllers.MaintenanceDuty.delete(id: Int)
+POST     /maintenance_duty                     controllers.MaintenanceDuty.create
 
 # Operator
-GET		/operator/index				controllers.Operator.index(all: Boolean ?= true)
-GET		/operator/:id				controllers.Operator.get(id: Int)
-PUT		/operator/:id				controllers.Operator.update(id: Int)
-DELETE	/operator/:id				controllers.Operator.delete(id: Int)
-POST	/operator					controllers.Operator.create
+GET      /operator/index                       controllers.Operator.index(all: Boolean ?= true)
+GET      /operator/:id                         controllers.Operator.get(id: Int)
+PUT      /operator/:id                         controllers.Operator.update(id: Int)
+DELETE   /operator/:id                         controllers.Operator.delete(id: Int)
+POST     /operator                             controllers.Operator.create
 
 # Mqtt logistic channel
-GET		/mqtt/logistic_channel/index			controllers.MqttLogisticChannel.index(all: Boolean ?= true)
-GET		/mqtt/logistic_channel/:id				controllers.MqttLogisticChannel.get(id: Int)
-PUT		/mqtt/logistic_channel/:id				controllers.MqttLogisticChannel.update(id: Int)
-DELETE	/mqtt/logistic_channel/:id				controllers.MqttLogisticChannel.delete(id: Int)
-POST	/mqtt/logistic_channel					controllers.MqttLogisticChannel.create
+GET      /mqtt/logistic_channel/index          controllers.MqttLogisticChannel.index(all: Boolean ?= true)
+GET      /mqtt/logistic_channel/:id            controllers.MqttLogisticChannel.get(id: Int)
+PUT      /mqtt/logistic_channel/:id            controllers.MqttLogisticChannel.update(id: Int)
+DELETE   /mqtt/logistic_channel/:id            controllers.MqttLogisticChannel.delete(id: Int)
+POST     /mqtt/logistic_channel                controllers.MqttLogisticChannel.create
 
 # Mqtt functional channel
-GET		/mqtt/functional_channel/index				controllers.MqttFunctionalChannel.index(all: Boolean ?= true)
-GET		/mqtt/functional_channel/:id				controllers.MqttFunctionalChannel.get(id: Int)
-PUT		/mqtt/functional_channel/:id				controllers.MqttFunctionalChannel.update(id: Int)
-DELETE	/mqtt/functional_channel/:id				controllers.MqttFunctionalChannel.delete(id: Int)
-POST	/mqtt/functional_channel					controllers.MqttFunctionalChannel.create
+GET      /mqtt/functional_channel/index        controllers.MqttFunctionalChannel.index(all: Boolean ?= true)
+GET      /mqtt/functional_channel/:id          controllers.MqttFunctionalChannel.get(id: Int)
+PUT      /mqtt/functional_channel/:id          controllers.MqttFunctionalChannel.update(id: Int)
+DELETE   /mqtt/functional_channel/:id          controllers.MqttFunctionalChannel.delete(id: Int)
+POST     /mqtt/functional_channel              controllers.MqttFunctionalChannel.create
 
+# Playback positio
+GET		/positions/play_back					controllers.PositionPlayer.history(device: String, start: String)
+GET		/positions/mongo						controllers.PositionPlayer.mongo
+GET		/positions/history						controllers.PositionPlayer.index
 
 ######################################################################################################
 ###
 ###   APPLIANCE SERVICES (For internal usage)
-GET		/biz/device/index				controllers.biz.Device.index(all: Boolean ?= true)
-GET		/biz/device/:id					controllers.biz.Device.get(id: Int)
-GET		/biz/device/byName/:name		controllers.biz.Device.getByName(name: String)
+GET      /biz/device/index                     controllers.biz.Device.index(all: Boolean ?= true)
+GET      /biz/device/:id                       controllers.biz.Device.get(id: Int)
+GET      /biz/device/byName/:name              controllers.biz.Device.getByName(name: String)
 
 
 ######################################################################################################
 ###
 ###   POC (For internal usage)
-GET		/poc/jsonapi/index				poc.controllers.JsonApi.index
-GET		/poc/jsonapi/:id				poc.controllers.JsonApi.get(id: Int)
-POST	/poc/jsonapi					poc.controllers.JsonApi.post
+GET      /poc/jsonapi/index                    poc.controllers.JsonApi.index
+GET      /poc/jsonapi/:id                      poc.controllers.JsonApi.get(id: Int)
+POST     /poc/jsonapi                          poc.controllers.JsonApi.post
 #PUT		/poc/jsonapi					poc.controllers.JsonApi.put
 #DELETE	/poc/jsonapi/:id				poc.controllers.JsonApi.delete(id: Int)
 #HEAD	/poc/jsonapi					poc.controllers.JsonApi.head

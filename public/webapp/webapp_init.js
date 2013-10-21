@@ -35,6 +35,7 @@ steal('aria/page')
 	  '/assets/javascripts/bootstrap.js',
 	  '/assets/javascripts/bootstrap-modalmanager.js',
 	  '/assets/javascripts/bootstrap-datepicker.js',
+	  '/assets/javascripts/bootstrap-datetimepicker.js',
 	  '/assets/javascripts/bootstrap-switch.js',
 	  '/assets/javascripts/bootstrap-select.js')
 .then('/assets/javascripts/bootstrap-modal.js',

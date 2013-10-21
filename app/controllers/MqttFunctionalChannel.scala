@@ -4,7 +4,7 @@ import models.{ MqttFunctionalChannelTrait, MqttFunctionalChannel => MqttFunctio
 import models.json.MqttFunctionalChannelPersistedSerializer
 
 object MqttFunctionalChannel extends NamedEntityController[MqttFunctionalChannelTrait, MqttFunctionalChannelModel, MqttFunctionalChannelPersisted] {
-  val pageTitle = "Mqtt Functional Channel"
+  val pageTitle = "Functional Channel"
 
   val dataAccessObject = MqttFunctionalChannels
   implicit val jsonSerializer = MqttFunctionalChannelPersistedSerializer

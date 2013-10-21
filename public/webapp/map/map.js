@@ -69,11 +69,18 @@ steal( '/assets/webapp/models/channels.js',
 			 */
 			_updateMarker: function(event, data) {
 				var marker;
-				if ((marker = this.markers[data.marker]) === undefined) {
+				if (typeof (marker = this.markers[data.marker]) == 'undefined') {
 					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title}).addTo(this.map).bindPopup(data.title);
 				} else {
 					marker.setLatLng([data.lat, data.lng]);
 				}
+			},
+			
+			_removeAllMarkers: function() {
+				for (var k in this.markers) {
+					this.map.removeLayer(this.markers[k])
+				}
+				this.markers = {}
 			},
 
 			'.leaflet-clickable mouseup' : function(el, ev) {

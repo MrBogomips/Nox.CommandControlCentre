@@ -15,7 +15,7 @@ object Converter {
   
   implicit def jodaDateTimeToTimestamp(v: DateTime): Timestamp = new Timestamp(v.getMillis())
   
-  implicit val jodaDateTimeToTimestampMapper = MappedTypeMapper.base[DateTime, Timestamp](v => new Timestamp(v.getMillis()), v => new DateTime(v))
+  //implicit val jodaDateTimeToTimestampMapper = MappedTypeMapper.base[DateTime, Timestamp](v => new Timestamp(v.getMillis()), v => new DateTime(v))
 
   implicit val validationErrorJsonWriter = new Writes[ValidationError] {
     def writes(e: ValidationError): JsValue = {

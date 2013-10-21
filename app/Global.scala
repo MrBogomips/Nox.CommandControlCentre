@@ -4,6 +4,7 @@ import play.api.mvc.Results._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import patterns.models.ValidationException
+import scala.concurrent.Future
 
 package object globals {
   lazy val Configuration = play.Configuration.root()
@@ -80,21 +81,21 @@ object Global extends GlobalSettings {
     Logger.info("Application shutdown...")
   }
   
-  override def onHandlerNotFound(r: RequestHeader): Result = {
-    NotFound(Json.toJson(Status(StatusCodes.KO_NO_ACTION, s"No action found for: [${r.method} ${r.uri}]")))
+  override def onHandlerNotFound(r: RequestHeader) = {
+    Future.successful(NotFound(Json.toJson(Status(StatusCodes.KO_NO_ACTION, s"No action found for: [${r.method} ${r.uri}]"))))
   }
 
   override def onError(request: RequestHeader, ex: Throwable) = ex.getCause() match {
-    case ex: ValidationException => BadRequest(Json.toJson(Status(ex)))
-    case ex: java.util.NoSuchElementException => NotFound(Json.toJson(Status(ex)))
-    case ex                      => InternalServerError(Json.toJson(Status(ex)))
+    case ex: ValidationException => Future.successful(BadRequest(Json.toJson(Status(ex))))
+    case ex: java.util.NoSuchElementException => Future.successful(NotFound(Json.toJson(Status(ex))))
+    case ex                      => Future.successful(InternalServerError(Json.toJson(Status(ex))))
   }
 
   override def onBadRequest(request: RequestHeader, error: String) = {
     val json = Json.obj(
       "status" -> "KO_BAD_REQUEST",
       "description" -> error);
-    BadRequest(json)
+    Future.successful(BadRequest(json))
   }
 
   override def onRouteRequest(request: RequestHeader): Option[Handler] = {

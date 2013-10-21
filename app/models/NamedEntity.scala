@@ -44,19 +44,12 @@ trait NamedEntityPersisted[A <: NamedEntity[_]] extends NamedEntityTrait with Pe
 /**
  * Basic Data Access Object that prvide CRUD operations to NamedEntities like
  */
-abstract class NamedEntities[TRAIT <: NamedEntityTrait, MODEL <: NamedEntity[TRAIT], PERSISTED <: NamedEntityPersisted[MODEL]](tableName: String, nameUniqueConstraint: String)
-  extends Table[PERSISTED](tableName)
-  with Backend
-  with NameEntityCrudOperations[TRAIT, MODEL, PERSISTED] {
+abstract class NamedEntityCrudTable[TRAIT <: NamedEntityTrait, MODEL <: NamedEntity[TRAIT], PERSISTED <: NamedEntityPersisted[MODEL]](tableName: String, nameUniqueConstraint: String)
+  extends EnabledEntityCrudTable[TRAIT, MODEL, PERSISTED](tableName) {
 
-  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
   def displayName = column[String]("displayName", O.Nullable)
   def description = column[String]("description", O.Nullable)
-  def enabled = column[Boolean]("enabled")
-  def creationTime = column[Timestamp]("creationTime")
-  def modificationTime = column[Timestamp]("modificationTime")
-  def version = column[Int]("version")
   
   def forInsert: scala.slick.lifted.ColumnBase[MODEL]
   
@@ -65,7 +58,7 @@ abstract class NamedEntities[TRAIT <: NamedEntityTrait, MODEL <: NamedEntity[TRA
     *
     * Maps a native postgres exception to a ValidationException.
     */
-  implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
+  protected implicit val exceptionToValidationErrorMapper: (PSQLException => Nothing) = { e =>
     val errMessage = e.getMessage()
     if (errMessage.contains(nameUniqueConstraint))
       throw new ValidationException(e, "name", "Already in use")
@@ -73,27 +66,11 @@ abstract class NamedEntities[TRAIT <: NamedEntityTrait, MODEL <: NamedEntity[TRA
       throw e;
   }
   
-  def find(enabled: Option[Boolean] = None): Seq[PERSISTED] = db withSession {
-    val qy = enabled match {
-      case None     => for { dt <- this } yield dt
-      case Some(en) => for { dt <- this if (dt.enabled === en) } yield dt
-    }
-    qy.list
-  }
-  def findById(id: Int): Option[PERSISTED] = db withSession {
-    val qy = for { dt <- this if (dt.id === id) } yield dt
-    qy.firstOption
-  }
   def findByName(name: String): Option[PERSISTED] = db withSession {
     val qy = for { dt <- this if (dt.name === name) } yield dt
     qy.firstOption
   }
 
-  def insert(uobj: MODEL): Int = WithValidation(uobj) { obj =>
-    db withSession {
-      this.forInsert returning this.id insert obj
-    }
-  }
   def update(uobj: PERSISTED): Boolean = WithValidation(uobj) { obj =>
     db withSession {
       val qy = for { d <- this if (d.id === obj.id) }
@@ -109,9 +86,5 @@ abstract class NamedEntities[TRAIT <: NamedEntityTrait, MODEL <: NamedEntity[TRA
       val now = new Timestamp(new Date().getTime())
       qy.update((obj.name, obj.displayName, obj.description, obj.enabled, now, obj.version + 1)) == 1
     }
-  }
-  def deleteById(id: Int): Boolean = db withSession {
-    val qy = for { d <- this if (d.id === id) } yield d
-    qy.delete == 1
   }
 }

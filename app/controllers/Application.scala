@@ -112,7 +112,9 @@ object Application extends Secured {
         MqttFunctionalChannel.get,
         MqttFunctionalChannel.create,
         MqttFunctionalChannel.update,
-        MqttFunctionalChannel.delete
+        MqttFunctionalChannel.delete,
+        
+        PositionPlayer.history
       )
      ).as("text/javascript")
   }

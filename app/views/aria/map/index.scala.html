@@ -12,13 +12,15 @@
                   '/assets/webapp/fixtures/fixtures.js',
                   '/assets/webapp/webapp.less',
                   '/assets/webapp/wslistner/wslistner.js',
-                  '/assets/webapp/map/map.js'
+                  '/assets/webapp/map/map.js',
+                  '/assets/webapp/lastdevice_info/lastdevice_info.js'
                   )
             .then(function() {
             		var wslistner = new webapp.wslistner(window);
             		
                     $('#channels').webapp_channels();
                     $('#devices').webapp_table();
+                    $('#device_info').webapp_lastdevice_info();
                     
                     var resizeMapArea = function(){
                     	$('.page-container').height(
@@ -48,7 +50,9 @@
 }
 
 @aria.master.authenticated("Realtime Map", user, header_more = header_more, footer_more = footer_scripts) {
-<div id='map' class="map fullscreen"></div>
+<div id='map' class="map fullscreen">
+<div id='device_info'></div>
+</div>
 <div class='devices_table' style="">
     <div>
         <div id='settings'></div>

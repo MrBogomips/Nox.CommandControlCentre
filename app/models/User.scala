@@ -207,6 +207,11 @@ object Users
     }
     qy.list
   }
+  
+  def index = db withSession {
+    val qy = for {u <- this} yield u
+    qy.list
+  }
 
   /**
     * Authenticate a User.

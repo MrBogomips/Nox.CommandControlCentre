@@ -12,7 +12,9 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 		{
 			defaults : {
 				id : '',
-				values : ''
+				values : '',
+				show_tools : true,
+				show_webcam : true
 			}
 		},
 		/** @Prototype */
