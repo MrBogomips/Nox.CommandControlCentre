@@ -13,7 +13,7 @@ import akka.actor._
 
 import actors._
 
-object MqttProxy extends Controller {
+object Events extends Controller {
 
   lazy val akkaSys = ActorSystem("MqttProxySystem")
 

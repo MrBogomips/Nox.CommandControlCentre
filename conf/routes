@@ -43,7 +43,7 @@ GET      /user/current                         controllers.User.getCurrent
 
 # Device
 GET      /device/index                         controllers.Device.index(all: Boolean ?= true)
-GET		 /device/events						   controllers.MqttProxy.channel
+GET		 /device/events						   controllers.Events.channel
 GET      /device/:id                           controllers.Device.get(id: Int)
 GET      /device/byName/:name                  controllers.Device.getByName(name: String)
 PUT      /device/:id                           controllers.Device.update(id: Int)

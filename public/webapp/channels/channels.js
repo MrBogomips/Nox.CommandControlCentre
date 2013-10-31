@@ -20,7 +20,7 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 				
 				this.element.addClass('webapp_channels');
 				
-				this.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_MQTT");
+				this.WS_Channel = Aria.Page.getInstance().getChannelByName("WS_EVENTS");
 
 				that.channelsList = '';
 				jsRoutes.controllers.Channel.logisticIndex().ajax({

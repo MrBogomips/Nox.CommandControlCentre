@@ -20,24 +20,13 @@ steal('/assets/webapp/models/device.js')
 				//var chatSocket = new WS("@routes.Application.chat(username).webSocketURL()")
 				
 				var initializeClientChannels = function () {
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttClientTopic}, true);
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttApplicationTopic}, true);
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttUserTopic}, true);
-					self._onNewSubscription(null, {topic: self.app.configuration.mqttSessionTopic}, true);
+					self._onNewSubscription(null, {topic: self.app.configuration.eventClientTopic}, true);
+					self._onNewSubscription(null, {topic: self.app.configuration.eventApplicationTopic}, true);
+					self._onNewSubscription(null, {topic: self.app.configuration.eventUserTopic}, true);
+					self._onNewSubscription(null, {topic: self.app.configuration.eventSessionTopic}, true);
 				}
 				
-				var socketUri = function () {
-					var loc = window.location, new_uri;
-					if (loc.protocol === "https:") {
-					    new_uri = "wss:";
-					} else {
-					    new_uri = "ws:";
-					}
-					new_uri += "//" + loc.host + Aria.Page.getInstance().configuration.eventsWebSocket;
-					return new_uri
-				}
-				
-				self.socket = new WS(socketUri());  // events_ws_uri
+				self.socket = new WS(jsRoutes.controllers.Events.channel().webSocketURL());  // events_ws_uri
 				
 				self.socket.onmessage = $.proxy(self._onNewMsg, self);
 				self.socket.onopen = function () {
@@ -48,15 +37,7 @@ steal('/assets/webapp/models/device.js')
 					console.log("websocket close");
 				}
 				
-				
-				/*
-				self.socket.on('connect', function () {
-					self.socket.on('mqtt', self.proxy(self._onNewMsg));
-					console.log('socket.io::connect');
-					initializeClientChannels();
-			      });
-			    */
-				self.WS_Channel = self.app.getChannelByName("WS_MQTT");
+				self.WS_Channel = self.app.getChannelByName("WS_EVENTS");
 				self.WS_Channel.subscribe("new_topic", self.proxy(self._onNewSubscription));
 				
 			},

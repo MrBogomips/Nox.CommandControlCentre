@@ -41,6 +41,8 @@ object Application extends Secured {
         Device.update,
         Device.delete,
         Device.receiveCommand,
+        
+        Events.channel,
       
         DeviceType.index,
         DeviceType.get,
@@ -132,11 +134,10 @@ object Application extends Secured {
       "applicationKey" -> app.applicationKey,
       "userId" -> Demo.userId,
       "sessionId" -> Demo.sessionId,
-      "mqttClientTopic" -> Demo.mqttClientTopic,
-      "mqttApplicationTopic" -> Demo.mqttApplicationTopic,
-      "mqttUserTopic" -> Demo.mqttUserTopic,
-      "mqttSessionTopic" -> Demo.mqttSessionTopic,
-      "eventsWebSocket" -> app.eventsWebSocket,
+      "eventClientTopic" -> Demo.mqttClientTopic,
+      "eventApplicationTopic" -> Demo.mqttApplicationTopic,
+      "eventUserTopic" -> Demo.mqttUserTopic,
+      "eventSessionTopic" -> Demo.mqttSessionTopic,
       "eventsOutOfSequencePolicy" -> config.getString("nox.ccc.events_out_of_seq_policy"))
 
     request.queryString.get("callback").flatMap(_.headOption) match {
