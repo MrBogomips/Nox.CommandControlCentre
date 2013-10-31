@@ -18,12 +18,12 @@ object Device extends Secured {
 
   def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) =>
     request.body.validate[DeviceCommandRequest].map { c ⇒
-      Logger.debug("HTTP REQUEST: "+request.body.toString)
+      Logger.debug("HTTP REQUEST: " + request.body.toString)
       val response = Json.toJson(c.sendToDevice())
-      Logger.debug("HTTP RESPONSE: "+response.toString)
+      Logger.debug("HTTP RESPONSE: " + response.toString)
       Ok(response)
     }.recoverTotal {
-      e => BadRequest("Invalid Command:"+JsError.toFlatJson(e))
+      e => BadRequest("Invalid Command:" + JsError.toFlatJson(e))
     }
   }
 
@@ -120,7 +120,7 @@ object Device extends Secured {
         case true ⇒ {
           Ok(s"Device $id deleted successfully")
         }
-        case _ ⇒ NotFound("")
+        case _ => NotFound("")
       }
     }
   }

@@ -41,7 +41,7 @@ object Map extends Secured {
     implicit val u = user
     implicit val r = request
 	
-    Ok(views.html.aria.map.historical(user))
+    Ok(content = views.html.aria.map.historical(user))
   }
   
   

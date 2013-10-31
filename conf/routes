@@ -43,6 +43,7 @@ GET      /user/current                         controllers.User.getCurrent
 
 # Device
 GET      /device/index                         controllers.Device.index(all: Boolean ?= true)
+GET		 /device/events						   controllers.MqttProxy.channel
 GET      /device/:id                           controllers.Device.get(id: Int)
 GET      /device/byName/:name                  controllers.Device.getByName(name: String)
 PUT      /device/:id                           controllers.Device.update(id: Int)
@@ -50,6 +51,7 @@ DELETE   /device/:id                           controllers.Device.delete(id: Int
 POST     /device                               controllers.Device.create
 POST     /device/:id/execute                   controllers.Device.receiveCommand(id: String)
 GET      /device/:id/configure                 controllers.Device.configureDevice(id: String)
+		 
 
 # Device types
 GET      /device_type/index                    controllers.DeviceType.index(all: Boolean ?= true)
