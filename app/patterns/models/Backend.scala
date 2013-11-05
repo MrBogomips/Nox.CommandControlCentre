@@ -1,6 +1,6 @@
 package patterns.models
 
-import play.api.Logger
+import play.Logger
 import play.api.db.DB
 import play.api.Play.current
 import scala.slick.session.{ Database, Session }
@@ -29,6 +29,7 @@ trait Backend {
     * The backend db
     */
   val db = Database.forDataSource(DB.getDataSource())
+  val log = Logger.of("noxccc.BackendOperation")
 
   /**
     * Execute an INSERT statement and returns the number of rows affected
@@ -55,10 +56,10 @@ trait Backend {
     */
   def executeSql[P, A](operation: BackendOperation, loginfo: String, sql: StaticQuery0[P])(f: StaticQuery0[P] => A)(implicit session: Session, getResult: GetResult[P]): A = {
       val method = "executeSql"
-      Logger.info(s"SQL:$method[$operation]: $loginfo...")
-      Logger.debug(s"SQL:$method[$operation]: ${sql.getStatement}")
+      log.info(s"SQL:$method[$operation]: $loginfo...")
+      log.debug(s"SQL:$method[$operation]: ${sql.getStatement}")
       val ret = f(sql)
-      Logger.info(s"SQL:$method[$operation]: $loginfo done with return value [$ret]")
+      log.info(s"SQL:$method[$operation]: $loginfo done with return value [$ret]")
       ret
   }
 }

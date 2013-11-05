@@ -3,7 +3,7 @@ package controllers
 import models.{ MqttFunctionalChannelTrait, MqttFunctionalChannel => MqttFunctionalChannelModel, MqttFunctionalChannelPersisted, MqttFunctionalChannels }
 import models.json.MqttFunctionalChannelPersistedSerializer
 
-object MqttFunctionalChannel extends NamedEntityController[MqttFunctionalChannelTrait, MqttFunctionalChannelModel, MqttFunctionalChannelPersisted] {
+object EventsFunctionalChannel extends NamedEntityController[MqttFunctionalChannelTrait, MqttFunctionalChannelModel, MqttFunctionalChannelPersisted] {
   val pageTitle = "Functional Channel"
 
   val dataAccessObject = MqttFunctionalChannels

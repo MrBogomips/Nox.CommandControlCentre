@@ -132,18 +132,18 @@ DELETE   /operator/:id                         controllers.Operator.delete(id: I
 POST     /operator                             controllers.Operator.create
 
 # Mqtt logistic channel
-GET      /mqtt/logistic_channel/index          controllers.MqttLogisticChannel.index(all: Boolean ?= true)
-GET      /mqtt/logistic_channel/:id            controllers.MqttLogisticChannel.get(id: Int)
-PUT      /mqtt/logistic_channel/:id            controllers.MqttLogisticChannel.update(id: Int)
-DELETE   /mqtt/logistic_channel/:id            controllers.MqttLogisticChannel.delete(id: Int)
-POST     /mqtt/logistic_channel                controllers.MqttLogisticChannel.create
+GET      /events/logistic_channel/index          controllers.EventsLogisticChannel.index(all: Boolean ?= true)
+GET      /events/logistic_channel/:id            controllers.EventsLogisticChannel.get(id: Int)
+PUT      /events/logistic_channel/:id            controllers.EventsLogisticChannel.update(id: Int)
+DELETE   /events/logistic_channel/:id            controllers.EventsLogisticChannel.delete(id: Int)
+POST     /events/logistic_channel                controllers.EventsLogisticChannel.create
 
 # Mqtt functional channel
-GET      /mqtt/functional_channel/index        controllers.MqttFunctionalChannel.index(all: Boolean ?= true)
-GET      /mqtt/functional_channel/:id          controllers.MqttFunctionalChannel.get(id: Int)
-PUT      /mqtt/functional_channel/:id          controllers.MqttFunctionalChannel.update(id: Int)
-DELETE   /mqtt/functional_channel/:id          controllers.MqttFunctionalChannel.delete(id: Int)
-POST     /mqtt/functional_channel              controllers.MqttFunctionalChannel.create
+GET      /events/functional_channel/index        controllers.EventsFunctionalChannel.index(all: Boolean ?= true)
+GET      /events/functional_channel/:id          controllers.EventsFunctionalChannel.get(id: Int)
+PUT      /events/functional_channel/:id          controllers.EventsFunctionalChannel.update(id: Int)
+DELETE   /events/functional_channel/:id          controllers.EventsFunctionalChannel.delete(id: Int)
+POST     /events/functional_channel              controllers.EventsFunctionalChannel.create
 
 # Playback positio
 GET		/positions/play_back					controllers.PositionPlayer.history(device: String, start: String)

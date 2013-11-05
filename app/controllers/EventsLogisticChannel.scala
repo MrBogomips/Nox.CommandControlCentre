@@ -3,7 +3,7 @@ package controllers
 import models.{ MqttLogisticChannelTrait, MqttLogisticChannel => MqttLogisticChannelModel, MqttLogisticChannelPersisted, MqttLogisticChannels }
 import models.json.MqttLogisticChannelPersistedSerializer
 
-object MqttLogisticChannel extends NamedEntityController[MqttLogisticChannelTrait, MqttLogisticChannelModel, MqttLogisticChannelPersisted] {
+object EventsLogisticChannel extends NamedEntityController[MqttLogisticChannelTrait, MqttLogisticChannelModel, MqttLogisticChannelPersisted] {
   val pageTitle = "Logistic Channel"
 
   val dataAccessObject = MqttLogisticChannels

@@ -104,17 +104,17 @@ object Application extends Secured {
         Operator.update,
         Operator.delete,
         
-        MqttLogisticChannel.index,
-        MqttLogisticChannel.get,
-        MqttLogisticChannel.create,
-        MqttLogisticChannel.update,
-        MqttLogisticChannel.delete,
+        EventsLogisticChannel.index,
+        EventsLogisticChannel.get,
+        EventsLogisticChannel.create,
+        EventsLogisticChannel.update,
+        EventsLogisticChannel.delete,
         
-        MqttFunctionalChannel.index,
-        MqttFunctionalChannel.get,
-        MqttFunctionalChannel.create,
-        MqttFunctionalChannel.update,
-        MqttFunctionalChannel.delete,
+        EventsFunctionalChannel.index,
+        EventsFunctionalChannel.get,
+        EventsFunctionalChannel.create,
+        EventsFunctionalChannel.update,
+        EventsFunctionalChannel.delete,
         
         PositionPlayer.history
       )

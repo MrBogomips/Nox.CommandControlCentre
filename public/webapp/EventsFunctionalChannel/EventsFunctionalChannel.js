@@ -4,7 +4,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 		/**
 		 * @class Webapp.devicegroups
 		 */
-		Webapp.NamedEntity('Webapp.MqttFunctionalChannel',
+		Webapp.NamedEntity('Webapp.EventsFunctionalChannel',
 		/** @Static */
 		{
 			defaults : {
@@ -17,8 +17,8 @@ steal('/assets/webapp/namedentity/namedentity.js',
 				enabled: true,
 				modificationTime: '',
 				version: -1,
-				serverController: jsRoutes.controllers.MqttFunctionalChannel,
-				className: 'MqttFunctionalChannel',
+				serverController: jsRoutes.controllers.EventsFunctionalChannel,
+				className: 'EventsFunctionalChannel',
 				formTitle: 'functional channel'
 			}
 		},

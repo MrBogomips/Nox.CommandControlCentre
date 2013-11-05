@@ -1,6 +1,7 @@
 package actors
 
 import akka.actor._
+import akka.event.Logging
 import org.eclipse.paho.client.mqttv3._
 import play.api.libs.json._
 import play.Logger
@@ -55,10 +56,8 @@ case class MessageArrived(topic: String, message: MqttMessage) extends MqttActor
 case class DeliveryComplete(token: IMqttDeliveryToken)
 
 class MqttActor(serverUri: String, clientId: String, persistence: MqttClientPersistence = null)
-  extends Actor
+  extends Actor with ActorLogging
   with MqttCallback {
-
-  val log = Logger.of(s"noxccc.MqttActor.effectiveClientId")
 
   val effectiveClientId = if (clientId.isEmpty()) {
     import java.security.SecureRandom
@@ -74,7 +73,10 @@ class MqttActor(serverUri: String, clientId: String, persistence: MqttClientPers
   mqttClient.setCallback(this)
 
   override def postStop() {
-    mqttClient.close()
+    if (mqttClient.isConnected()) {
+    	mqttClient.disconnect()
+    	mqttClient.close()
+    }
     super.postStop()
   }
   def connectionLost(cause: Throwable) = context.parent ! ConnectionLost(cause: Throwable)

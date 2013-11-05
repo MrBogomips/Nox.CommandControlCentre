@@ -4,7 +4,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 		/**
 		 * @class Webapp.devicegroups
 		 */
-		Webapp.NamedEntity('Webapp.MqttLogisticChannel',
+		Webapp.NamedEntity('Webapp.EventsLogisticChannel',
 		/** @Static */
 		{
 			defaults : {
@@ -17,8 +17,8 @@ steal('/assets/webapp/namedentity/namedentity.js',
 				enabled: true,
 				modificationTime: '',
 				version: -1,
-				serverController: jsRoutes.controllers.MqttLogisticChannel,
-				className: 'MqttLogisticChannel',
+				serverController: jsRoutes.controllers.EventsLogisticChannel,
+				className: 'EventsLogisticChannel',
 				formTitle: 'logistic channel'
 			}
 		},

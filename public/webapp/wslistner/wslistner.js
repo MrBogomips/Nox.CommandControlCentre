@@ -60,9 +60,13 @@ steal('/assets/webapp/models/device.js')
 				// TODO: manage logistic channels. For the moment we just subscribe to the POSITION
 				var self = this
 				var prepareJson= function(command, topics) {
+					var ts = (function () {
+						if (typeof topics === 'string') return [topics]
+						else return topics
+					})();
 					var obj = {
 						command: command,
-						topics: [topics]
+						topics: ts
 					};
 					return JSON.stringify(obj);
 				}
@@ -78,11 +82,16 @@ steal('/assets/webapp/models/device.js')
 					    }}
 					).done(
 						function(result) {
+							/*
+							var topics = [];
 							for (var i = 0; i < result.channels.length; i++) {
 								var t = result.channels[i] +'/'+data.topic;
-								self.socket.send(prepareJson("subscribe", t));
-								console.log("Subscribed to the topic [" + t + "]")
+								topics.push(t);
 							}
+							*/
+							var topics = _.map(result.channels, function(c) {return c + '/'+data.topic;})
+							self.socket.send(prepareJson("subscribe", topics));
+							console.log("Subscribed to the topics [" + topics + "]")
 						}
 					).fail(
 						console.log("Error retrieving the list of the functional channels enabled")
