@@ -14,31 +14,35 @@ import models.json.vehicleAssignementPersistedJsonWriter
 
 object VehicleAssignement extends Secured {
 
-  def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
-    implicit val req = request
-    val vehicleAssignements = all match {
-      case false => VehicleAssignements.find(Some(true))
-      case true  => VehicleAssignements.find(None)
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(vehicleAssignements))
-    } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.vehicleassignement.index(user))
-    } else {
-      BadRequest
-    }
-  }
-
-  def get(id: Int) = WithAuthentication { (user, request) =>
-    VehicleAssignements.findById(id).map { va =>
+  def index(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) ⇒
+      implicit val req = request
+      val vehicleAssignements = all match {
+        case false => VehicleAssignements.find(Some(true))
+        case true  => VehicleAssignements.find(None)
+      }
       if (acceptsJson(request)) {
-        Ok(Json.toJson(va))
+        Ok(Json.toJson(vehicleAssignements))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.vehicleassignement.item(va.id, user))
+        Ok(views.html.aria.vehicleassignement.index(user))
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound);
+    }
+  }
+
+  def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
+    WithAuthentication { (user, request) =>
+      VehicleAssignements.findById(id).map { va =>
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(va))
+        } else if (acceptsHtml(request)) {
+          Ok(views.html.aria.vehicleassignement.item(va.id, user))
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound);
+    }
   }
 
   val createForm = Form(
@@ -57,15 +61,17 @@ object VehicleAssignement extends Secured {
       "enabled" -> boolean,
       "version" -> number))
 
-  def create = WithAuthentication { implicit request =>
-    createForm.bindFromRequest.fold(
-      errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (vehicleId, driverId, beginAssignement, endAssignement, enabled) =>
-          val va = VehicleAssignementModel(vehicleId, driverId, beginAssignement, endAssignement, enabled)
-          val id = VehicleAssignements.insert(va)
-          Ok(s"""{"id":$id}""").as("application/json")
-      })
+  def create = WithCors("PSOT") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (vehicleId, driverId, beginAssignement, endAssignement, enabled) =>
+            val va = VehicleAssignementModel(vehicleId, driverId, beginAssignement, endAssignement, enabled)
+            val id = VehicleAssignements.insert(va)
+            Ok(s"""{"id":$id}""").as("application/json")
+        })
+    }
   }
 
   def update(id: Int) = WithAuthentication { implicit request =>
@@ -83,8 +89,8 @@ object VehicleAssignement extends Secured {
 
   def delete(id: Int) = WithAuthentication {
     VehicleAssignements.deleteById(id) match {
-      case true ⇒ Ok
-      case _    ⇒ NotFound
+      case true => Ok
+      case _    => NotFound
     }
   }
 }

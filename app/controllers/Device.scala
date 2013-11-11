@@ -52,7 +52,7 @@ object Device extends Secured {
     }
   }
 
-  def get(id: Int) = WithCors("GET, POST, PUT, DELETE") {
+  def get(id: Int) = WithCors("GET", "POST", "PUT", "DELETE") {
     WithAuthentication { (user, request) =>
       implicit val req = request
       Devices.findById(id).map { d =>
@@ -96,18 +96,20 @@ object Device extends Secured {
       "deviceManagerId" -> optional(number),
       "version" -> number))
 
-  def create = WithAuthentication { implicit request ⇒
-    createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId, deviceManagerId) =>
-          val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId, deviceManagerId)
-          val id = Devices.insert(d)
-          Ok(s"""{"id"=id}""")
-      })
+  def create = WithCors("POST") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors => BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId, deviceManagerId) =>
+            val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId, deviceManagerId)
+            val id = Devices.insert(d)
+            Ok(s"""{"id"=id}""")
+        })
+    }
   }
 
-  def update(id: Int) = WithAuthentication { implicit request ⇒
+  def update(id: Int) = WithAuthentication { implicit request =>
     updateForm.bindFromRequest.fold(
       errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),
       {
@@ -118,7 +120,7 @@ object Device extends Secured {
               notifications.notifyDeviceChangeConfiguration(dp.name)
               Ok(s"Device $id updated successfully")
             }
-            case _ ⇒ NotFound
+            case _ => NotFound
           }
       })
   }
@@ -127,7 +129,7 @@ object Device extends Secured {
     Devices.findById(id).fold(NotFound("")) { dp =>
       notifications.notifyDeviceChangeConfiguration(dp.name)
       Devices.deleteById(id) match {
-        case true ⇒ {
+        case true => {
           Ok(s"Device $id deleted successfully")
         }
         case _ => NotFound("")

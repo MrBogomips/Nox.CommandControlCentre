@@ -15,33 +15,37 @@ import org.joda.time.format.ISODateTimeFormat
 import models.json.vehicleTypePersistedJsonWriter
 
 object VehicleType extends Secured {
-  def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
-    implicit val req = request
-    val objs = all match {
-      case false => VehicleTypes.find(Some(true))
-      case true  => VehicleTypes.find(None)
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(objs))
-    } else if (acceptsHtml(request)) {
-      //Ok(views.html.aria.devicetype.index(objs, user))
-      ???
-    } else {
-      BadRequest
-    }
-  }
-
-  def get(id: Int) = WithAuthentication { (user, request) ⇒
-    VehicleTypes.findById(id).map { d ⇒
+  def index(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      val objs = all match {
+        case false => VehicleTypes.find(Some(true))
+        case true  => VehicleTypes.find(None)
+      }
       if (acceptsJson(request)) {
-        Ok(Json.toJson(d))
+        Ok(Json.toJson(objs))
       } else if (acceptsHtml(request)) {
-        //Ok(views.html.aria.devicetype.item(d.id, user))
+        //Ok(views.html.aria.devicetype.index(objs, user))
         ???
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound);
+    }
+  }
+
+  def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
+    WithAuthentication { (user, request) =>
+      VehicleTypes.findById(id).map { d =>
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(d))
+        } else if (acceptsHtml(request)) {
+          //Ok(views.html.aria.devicetype.item(d.id, user))
+          ???
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound);
+    }
   }
 
   val createForm = Form(
@@ -58,15 +62,17 @@ object VehicleType extends Secured {
       "enabled" -> boolean,
       "version" -> number))
 
-  def create = WithAuthentication { implicit request =>
-    createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (name, displayName, description, enabled) =>
-          val dt = VehicleTypeModel(name, displayName, description, enabled)
-          val id = VehicleTypes.insert(dt)
-          Ok(s"""{"id"=id}""")
-      })
+  def create = WithCors("POST") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors => BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (name, displayName, description, enabled) =>
+            val dt = VehicleTypeModel(name, displayName, description, enabled)
+            val id = VehicleTypes.insert(dt)
+            Ok(s"""{"id"=id}""")
+        })
+    }
   }
 
   def update(id: Int) = WithAuthentication { implicit request =>

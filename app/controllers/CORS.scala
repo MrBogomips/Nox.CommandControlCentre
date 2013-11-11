@@ -37,15 +37,23 @@ case class WithCors(httpVerbs: String*)(action: EssentialAction) extends Essenti
       corsAction(request)
     } else {
       action(request).map(res => res.withHeaders(
-        "Access-Control-Allow-Origin" -> origin))
+        "Access-Control-Allow-Origin" -> origin,
+        "Access-Control-Allow-Credentials" -> "true"
+        ))
     }
   }
 }
 
-/*
-case class WithCors(params: Seq[String]) extends ActionBuilder[Request] {
-  def invokeBlock[A](request: Request[A], block: (Request[A] => Future[SimpleResult])) = {
-    block(request)
+/**
+ * Helper controller to simplify route configuration
+ */
+object CorsOptions extends Controller {
+  /**
+   * @param httpVerbs  a comma separated value list of accepted HTTP verbs (i.e. "GET,POST")
+   */
+  def options(httpVerbs: String) = WithCors(httpVerbs.split(","):_*) {
+    Action {
+      Ok("")
+    }
   }
 }
-*/

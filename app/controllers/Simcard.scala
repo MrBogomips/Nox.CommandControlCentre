@@ -13,30 +13,34 @@ import patterns.models.ValidationException
 
 object Simcard extends Secured {
 
-  def index(all: Boolean = false) = WithAuthentication { (user, request) ⇒
-    implicit val req = request
-    val simcards = all match {
-      case false => Simcards.find(Some(true))
-      case true => Simcards.find(None)
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(simcards))
-    } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.simcard.index(simcards, user))
-    } else {
-      BadRequest
-    }
-  }
-
-  def get(id: Int) = WithAuthentication { (user, request) ⇒
-    implicit val req = request
-    Simcards.findById(id).map { s =>
+  def index(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      val simcards = all match {
+        case false => Simcards.find(Some(true))
+        case true  => Simcards.find(None)
+      }
       if (acceptsJson(request)) {
-        Ok(Json.toJson(s))
+        Ok(Json.toJson(simcards))
+      } else if (acceptsHtml(request)) {
+        Ok(views.html.aria.simcard.index(simcards, user))
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound)
+    }
+  }
+
+  def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      Simcards.findById(id).map { s =>
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(s))
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound)
+    }
   }
 
   val createForm = Form(
@@ -58,15 +62,17 @@ object Simcard extends Secured {
       "carrierId" -> number,
       "version" -> number))
 
-  def create = WithAuthentication { implicit request =>
-    createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (imei, displayName0, description, mobileNumber, carrierId, enabled) =>
-          val sc = SimcardModel(imei, displayName0, description, enabled, mobileNumber, carrierId)
-          val id = Simcards.insert(sc)
-          Ok(s"""{"id"=id}""")
-      })
+  def create = WithCors("POST") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors => BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (imei, displayName0, description, mobileNumber, carrierId, enabled) =>
+            val sc = SimcardModel(imei, displayName0, description, enabled, mobileNumber, carrierId)
+            val id = Simcards.insert(sc)
+            Ok(s"""{"id"=id}""")
+        })
+    }
   }
 
   def update(id: Int) = WithAuthentication { implicit request =>
@@ -78,15 +84,15 @@ object Simcard extends Secured {
           //Simcards.up
           Simcards.update(sp) match {
             case true => Ok
-            case _ => NotFound
+            case _    => NotFound
           }
       })
   }
 
   def delete(id: Int) = WithAuthentication {
     Simcards.deleteById(id) match {
-      case true ⇒ Ok
-      case _ ⇒ NotFound
+      case true => Ok
+      case _    => NotFound
     }
   }
 }

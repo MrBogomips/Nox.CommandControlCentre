@@ -14,55 +14,61 @@ object MaintenanceService extends Secured {
 
   import models.json.{ maintenanceServicePersistedJsonWriter }
 
-  def index2(all: Boolean = false) = WithAuthentication { (user, request) =>
-    implicit val req = request
-    val services = all match {
-      case false => MaintenanceServices.find(Some(true))
-      case true  => MaintenanceServices.find(None)
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(services))
-    } else if (acceptsHtml(request)) {
-      ??? // Ok(views.html.aria.device.index(devices, user))
-    } else {
-      BadRequest
+  def index2(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      val services = all match {
+        case false => MaintenanceServices.find(Some(true))
+        case true  => MaintenanceServices.find(None)
+      }
+      if (acceptsJson(request)) {
+        Ok(Json.toJson(services))
+      } else if (acceptsHtml(request)) {
+        ??? // Ok(views.html.aria.device.index(devices, user))
+      } else {
+        BadRequest
+      }
     }
   }
 
-  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
-    implicit val req = request
+  def index(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
 
-    /*
+      /*
     MaintenanceServices.db withSession {
       val out = MaintenanceServices.findByName2("ciccio")
       Ok(Json.toJson(out))
     }
     * */
 
-    val services = all match {
-      case false => MaintenanceServices.find(Some(true))
-      case true  => MaintenanceServices.find(None)
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(services))
-    } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.maintenanceservice.index(services, user))
-    } else {
-      BadRequest
-    }
-  }
-
-  def get(id: Int) = WithAuthentication { (user, request) =>
-    implicit val req = request
-    MaintenanceServices.findById(id).map { d =>
+      val services = all match {
+        case false => MaintenanceServices.find(Some(true))
+        case true  => MaintenanceServices.find(None)
+      }
       if (acceptsJson(request)) {
-        Ok(Json.toJson(d))
+        Ok(Json.toJson(services))
       } else if (acceptsHtml(request)) {
-        ??? // Ok(views.html.aria.device.item(d.id, user))
+        Ok(views.html.aria.maintenanceservice.index(services, user))
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound);
+    }
+  }
+
+  def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      MaintenanceServices.findById(id).map { d =>
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(d))
+        } else if (acceptsHtml(request)) {
+          ??? // Ok(views.html.aria.device.item(d.id, user))
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound);
+    }
   }
 
   val createForm = Form(
@@ -84,15 +90,17 @@ object MaintenanceService extends Secured {
       "enabled" -> boolean,
       "version" -> number))
 
-  def create = WithAuthentication { implicit request =>
-    createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (name, displayName, description, odometer, monthsPeriod, enabled) =>
-          val d = MaintenanceServiceModel(name, displayName, description, odometer, monthsPeriod, enabled)
-          val id = MaintenanceServices.insert(d)
-          Ok(s"""{"id"=id}""")
-      })
+  def create = WithCors("POST") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors => BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (name, displayName, description, odometer, monthsPeriod, enabled) =>
+            val d = MaintenanceServiceModel(name, displayName, description, odometer, monthsPeriod, enabled)
+            val id = MaintenanceServices.insert(d)
+            Ok(s"""{"id"=id}""")
+        })
+    }
   }
 
   def update(id: Int) = WithAuthentication { implicit request =>

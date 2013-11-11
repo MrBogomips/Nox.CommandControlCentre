@@ -13,29 +13,33 @@ import org.joda.time.format.ISODateTimeFormat
 import models.json.maintenanceActivityPersistedJsonWriter
 
 object MaintenanceActivity extends Secured {
-  def index = WithAuthentication { (user, request) =>
-    implicit val req = request
-    val activities = MaintenanceActivities.index
-    
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(activities))
-    } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.maintenanceactivity.index(activities, user))
-    } else {
-      BadRequest
-    }
-  }
+  def index = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      val activities = MaintenanceActivities.index
 
-  def get(id: Int) = WithAuthentication { (user, request) =>
-    MaintenanceActivities.findById(id).map { d ⇒
       if (acceptsJson(request)) {
-        Ok(Json.toJson(d))
+        Ok(Json.toJson(activities))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.maintenanceactivity.item(d.id, user))
+        Ok(views.html.aria.maintenanceactivity.index(activities, user))
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound);
+    }
+  }
+
+  def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
+    WithAuthentication { (user, request) =>
+      MaintenanceActivities.findById(id).map { d =>
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(d))
+        } else if (acceptsHtml(request)) {
+          Ok(views.html.aria.maintenanceactivity.item(d.id, user))
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound);
+    }
   }
 
   val createForm = Form(
@@ -56,15 +60,17 @@ object MaintenanceActivity extends Secured {
       "activityEnd" -> jodaDate("yyyy-MM-dd’T’hh:mm:ss’Z'"),
       "version" -> number))
 
-  def create = WithAuthentication { implicit request =>
-    createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (idVehicle, idOperator, odometer, note, activityStart, activityEnd) =>
-          val obj = MaintenanceActivityModel(idVehicle, idOperator, odometer, note, activityStart, activityEnd)
-          val id = MaintenanceActivities.insert(obj)
-          Ok(s"""{"id"=id}""")
-      })
+  def create = WithCors("POST") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors => BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (idVehicle, idOperator, odometer, note, activityStart, activityEnd) =>
+            val obj = MaintenanceActivityModel(idVehicle, idOperator, odometer, note, activityStart, activityEnd)
+            val id = MaintenanceActivities.insert(obj)
+            Ok(s"""{"id"=id}""")
+        })
+    }
   }
 
   def update(id: Int) = WithAuthentication { implicit request =>

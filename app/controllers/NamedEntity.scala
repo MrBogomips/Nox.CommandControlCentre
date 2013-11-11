@@ -39,33 +39,37 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
   def persistedBuilder(id: Int, name: String, displayName: Option[String], description: Option[String], enabled: Boolean, version: Int): PERSISTED
 
   // COMMON METHODS
-  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
-    implicit val req = request
+  def index(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
 
-    val entities: Seq[PERSISTED] = all match {
-      case false => dataAccessObject.find(Some(true))
-      case true  => dataAccessObject.find(None)
-    }
-    if (acceptsJson(request)) {
-      import scala.language.reflectiveCalls
-      Ok(jsonSerializer.jsonWriter.writesSeq(entities))
-    } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.namedentity.index(entities, user, ariaController, ariaControllerFile, pageTitle, playController))
-    } else {
-      BadRequest
-    }
-  }
-
-  def get(id: Int) = WithAuthentication { (user, request) =>
-    dataAccessObject.findById(id).map { d ⇒
+      val entities: Seq[PERSISTED] = all match {
+        case false => dataAccessObject.find(Some(true))
+        case true  => dataAccessObject.find(None)
+      }
       if (acceptsJson(request)) {
-        Ok(Json.toJson(d)(jsonSerializer.jsonWriter))
+        import scala.language.reflectiveCalls
+        Ok(jsonSerializer.jsonWriter.writesSeq(entities))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.namedentity.item(d.id, user, ariaController, ariaControllerFile, pageTitle))
+        Ok(views.html.aria.namedentity.index(entities, user, ariaController, ariaControllerFile, pageTitle, playController))
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound);
+    }
+  }
+
+  def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
+    WithAuthentication { (user, request) =>
+      dataAccessObject.findById(id).map { d ⇒
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(d)(jsonSerializer.jsonWriter))
+        } else if (acceptsHtml(request)) {
+          Ok(views.html.aria.namedentity.item(d.id, user, ariaController, ariaControllerFile, pageTitle))
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound);
+    }
   }
 
   val createForm = Form(
@@ -82,15 +86,17 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
       "enabled" -> boolean,
       "version" -> number))
 
-  def create = WithAuthentication { implicit request =>
-    createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (name, displayName, description, enabled) =>
-          val dt: MODEL = modelBuilder(name, displayName, description, enabled)
-          val id = dataAccessObject.insert(dt)
-          Ok(s"""{"id"=id}""")
-      })
+  def create = WithCors("POST") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors => BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (name, displayName, description, enabled) =>
+            val dt: MODEL = modelBuilder(name, displayName, description, enabled)
+            val id = dataAccessObject.insert(dt)
+            Ok(s"""{"id"=id}""")
+        })
+    }
   }
 
   def update(id: Int) = WithAuthentication { implicit request =>

@@ -14,43 +14,49 @@ object MaintenanceDuty extends Secured {
 
   import models.json.{ maintenanceDutyPersistedJsonWriter, maintenanceDutyInfoPersistedJsonWriter }
 
-  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
-    implicit val req = request
+  def index(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
 
-    val duties = MaintenanceDuties.index
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(duties))
-    } else if (acceptsHtml(request)) {
-      ???
-    } else {
-      BadRequest
-    }
-  }
-
-  def findByVehicleId(idVehicle: Int) = WithAuthentication { (user, request) =>
-    implicit val req = request 
-    //implicit val pagination = NoPagination
-    val duties = MaintenanceDuties.findByVehicleId(idVehicle, Paginator.fromRequest)
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(duties))
-    } else if (acceptsHtml(request)) {
-      ??? 
-    } else {
-      BadRequest
-    }
-  }
-  
-  def get(id: Int) = WithAuthentication { (user, request) =>
-    implicit val req = request
-    MaintenanceDuties.findById(id).map { d =>
+      val duties = MaintenanceDuties.index
       if (acceptsJson(request)) {
-        Ok(Json.toJson(d))
+        Ok(Json.toJson(duties))
       } else if (acceptsHtml(request)) {
-        ??? // Ok(views.html.aria.device.item(d.id, user))
+        ???
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound);
+    }
+  }
+
+  def findByVehicleId(idVehicle: Int) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      //implicit val pagination = NoPagination
+      val duties = MaintenanceDuties.findByVehicleId(idVehicle, Paginator.fromRequest)
+      if (acceptsJson(request)) {
+        Ok(Json.toJson(duties))
+      } else if (acceptsHtml(request)) {
+        ???
+      } else {
+        BadRequest
+      }
+    }
+  }
+
+  def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      MaintenanceDuties.findById(id).map { d =>
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(d))
+        } else if (acceptsHtml(request)) {
+          ??? // Ok(views.html.aria.device.item(d.id, user))
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound);
+    }
   }
 
   val createForm = Form(
@@ -63,15 +69,17 @@ object MaintenanceDuty extends Secured {
       "idService" -> number,
       "version" -> number))
 
-  def create = WithAuthentication { implicit request =>
-    createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (idVehicle, idService) =>
-          val d = MaintenanceDutyModel(idVehicle, idService)
-          val id = MaintenanceDuties.insert(d)
-          Ok(s"""{"id"=id}""")
-      })
+  def create = WithCors("POST") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors => BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (idVehicle, idService) =>
+            val d = MaintenanceDutyModel(idVehicle, idService)
+            val id = MaintenanceDuties.insert(d)
+            Ok(s"""{"id"=id}""")
+        })
+    }
   }
 
   def update(id: Int) = WithAuthentication { implicit request =>
