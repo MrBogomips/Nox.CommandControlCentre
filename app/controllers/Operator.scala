@@ -14,55 +14,54 @@ object Operator extends Secured {
 
   import models.json.{ operatorPersistedJsonWriter }
 
-  def index2(all: Boolean = false) = WithAuthentication { (user, request) =>
-    implicit val req = request
-    val operators = all match {
-      case false => Operators.find(Some(true))
-      case true  => Operators.find(None)
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(operators))
-    } else if (acceptsHtml(request)) {
-      ??? // Ok(views.html.aria.device.index(devices, user))
-    } else {
-      BadRequest
-    }
-  }
-
-  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
-    implicit val req = request
-
-    /*
-    MaintenanceServices.db withSession {
-      val out = MaintenanceServices.findByName2("ciccio")
-      Ok(Json.toJson(out))
-    }
-    * */
-
-    val operators = all match {
-      case false => Operators.find(Some(true))
-      case true  => Operators.find(None)
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(operators))
-    } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.operator.index(operators, user))
-    } else {
-      BadRequest
-    }
-  }
-
-  def get(id: Int) = WithAuthentication { (user, request) =>
-    implicit val req = request
-    Operators.findById(id).map { d =>
+  def index2(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      val operators = all match {
+        case false => Operators.find(Some(true))
+        case true  => Operators.find(None)
+      }
       if (acceptsJson(request)) {
-        Ok(Json.toJson(d))
+        Ok(Json.toJson(operators))
       } else if (acceptsHtml(request)) {
-        ??? // Ok(views.html.aria.device.item(d.id, user))
+        ??? // Ok(views.html.aria.device.index(devices, user))
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound);
+    }
+  }
+
+  def index(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+
+      val operators = all match {
+        case false => Operators.find(Some(true))
+        case true  => Operators.find(None)
+      }
+      if (acceptsJson(request)) {
+        Ok(Json.toJson(operators))
+      } else if (acceptsHtml(request)) {
+        Ok(views.html.aria.operator.index(operators, user))
+      } else {
+        BadRequest
+      }
+    }
+  }
+
+  def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      Operators.findById(id).map { d =>
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(d))
+        } else if (acceptsHtml(request)) {
+          ??? // Ok(views.html.aria.device.item(d.id, user))
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound);
+    }
   }
 
   val createForm = Form(
@@ -79,15 +78,17 @@ object Operator extends Secured {
       "enabled" -> boolean,
       "version" -> number))
 
-  def create = WithAuthentication { implicit request =>
-    createForm.bindFromRequest.fold(
-      errors => BadRequest(errors.errorsAsJson).as("application/json"),
-      {
-        case (name, surname, displayName, enabled) =>
-          val d = OperatorModel(name, surname, displayName, enabled)
-          val id = Operators.insert(d)
-          Ok(s"""{"id"=id}""")
-      })
+  def create = WithCors("POST") {
+    WithAuthentication { implicit request =>
+      createForm.bindFromRequest.fold(
+        errors => BadRequest(errors.errorsAsJson).as("application/json"),
+        {
+          case (name, surname, displayName, enabled) =>
+            val d = OperatorModel(name, surname, displayName, enabled)
+            val id = Operators.insert(d)
+            Ok(s"""{"id"=id}""")
+        })
+    }
   }
 
   def update(id: Int) = WithAuthentication { implicit request =>

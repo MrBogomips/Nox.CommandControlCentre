@@ -13,7 +13,9 @@ import org.joda.time.format.ISODateTimeFormat
 import models.json.userPersistedJsonWriter
 
 object User extends Secured {
-  def getCurrent = WithAuthentication { (user, request) =>
-    Ok(Json.toJson(user))
+  def getCurrent = WithCors("GET") {
+    WithAuthentication { (user, request) =>
+      Ok(Json.toJson(user))
+    }
   }
 }

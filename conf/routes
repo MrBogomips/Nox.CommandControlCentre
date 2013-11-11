@@ -22,6 +22,8 @@ POST     /authenticate                         controllers.Application.authentic
 GET      /logout                               controllers.Application.logout
 GET      /tech/whoami                          controllers.Application.whoAmI
 GET      /tech/routes_testbench                controllers.Application.javascriptRoutesTestbench
+OPTIONS	 /authenticate                         controllers.Application.authenticate
+OPTIONS  /logout                               controllers.Application.logout
 
 # Dashboard
 GET      /dashboard                            controllers.Dashboard.index
@@ -32,14 +34,18 @@ GET      /map                                  controllers.Map.index
 GET      /map/history                          controllers.Map.history
 
 # Client configuration
+OPTIONS	 /app/configuration                    controllers.Application.clientConfiguration
 GET      /app/configuration                    controllers.Application.clientConfiguration
 
 # Channels' management
 GET      /map/channel/logistic/index           controllers.Channel.logisticIndex
 GET      /map/channel/functional/index         controllers.Channel.functionalIndex
+OPTIONS  /map/channel/logistic/index           controllers.Channel.logisticIndex
+OPTIONS  /map/channel/functional/index         controllers.Channel.functionalIndex
 
 # User
 GET      /user/current                         controllers.User.getCurrent
+OPTIONS  /user/current                         controllers.User.getCurrent
 
 # Device
 GET      /device/index                         controllers.Device.index(all: Boolean ?= true)
@@ -51,7 +57,11 @@ DELETE   /device/:id                           controllers.Device.delete(id: Int
 POST     /device                               controllers.Device.create
 POST     /device/:id/execute                   controllers.Device.receiveCommand(id: String)
 GET      /device/:id/configure                 controllers.Device.configureDevice(id: String)
-		 
+OPTIONS  /device/index                         controllers.Device.index(all: Boolean ?= true)		 
+OPTIONS  /device/:id                           controllers.Device.get(id: Int)
+OPTIONS  /device/byName/:name                  controllers.Device.getByName(name: String)
+OPTIONS  /device                               controllers.Device.create
+OPTIONS  /device/:id/execute                   controllers.Device.receiveCommand(id: String)
 
 # Device types
 GET      /device_type/index                    controllers.DeviceType.index(all: Boolean ?= true)
@@ -59,6 +69,9 @@ GET      /device_type/:id                      controllers.DeviceType.get(id: In
 PUT      /device_type/:id                      controllers.DeviceType.update(id: Int)
 DELETE   /device_type/:id                      controllers.DeviceType.delete(id: Int)
 POST     /device_type                          controllers.DeviceType.create
+OPTIONS  /device_type/index                    controllers.DeviceType.index(all: Boolean ?= true)
+OPTIONS  /device_type/:id                      controllers.DeviceType.get(id: Int)
+OPTIONS  /device_type                          controllers.DeviceType.create
 
 # Device groups
 GET      /device_group/index                   controllers.DeviceGroup.index(all: Boolean ?= true)
@@ -66,6 +79,9 @@ GET      /device_group/:id                     controllers.DeviceGroup.get(id: I
 PUT      /device_group/:id                     controllers.DeviceGroup.update(id: Int)
 DELETE   /device_group/:id                     controllers.DeviceGroup.delete(id: Int)
 POST     /device_group                         controllers.DeviceGroup.create 
+OPTIONS  /device_group/index                   controllers.DeviceGroup.index(all: Boolean ?= true)
+OPTIONS  /device_group/:id                     controllers.DeviceGroup.get(id: Int)
+OPTIONS  /device_group                         controllers.DeviceGroup.create
 
 # Vehicle
 GET      /vehicle/index                        controllers.Vehicle.index(all: Boolean ?= true)
@@ -74,6 +90,9 @@ GET      /vehicle/:id/maintenance_duties       controllers.MaintenanceDuty.findB
 PUT      /vehicle/:id                          controllers.Vehicle.update(id: Int)
 DELETE   /vehicle/:id                          controllers.Vehicle.delete(id: Int)
 POST     /vehicle                              controllers.Vehicle.create
+OPTIONS  /vehicle/index                        controllers.Vehicle.index(all: Boolean ?= true)
+OPTIONS  /vehicle/:id                          controllers.Vehicle.get(id: Int)
+OPTIONS  /vehicle                              controllers.Vehicle.create
 
 # Vehicle Type
 GET      /vehicle_type/index                   controllers.VehicleType.index(all: Boolean ?= true)
@@ -81,6 +100,9 @@ GET      /vehicle_type/:id                     controllers.VehicleType.get(id: I
 PUT      /vehicle_type/:id                     controllers.VehicleType.update(id: Int)
 DELETE   /vehicle_type/:id                     controllers.VehicleType.delete(id: Int)
 POST     /vehicle_type                         controllers.VehicleType.create
+OPTIONS  /vehicle_type/index                   controllers.VehicleType.index(all: Boolean ?= true)
+OPTIONS  /vehicle_type/:id                     controllers.VehicleType.get(id: Int)
+OPTIONS  /vehicle_type                         controllers.VehicleType.create
 
 # Driver
 GET      /driver/index                         controllers.Driver.index(all: Boolean ?= true)
@@ -88,6 +110,9 @@ GET      /driver/:id                           controllers.Driver.get(id: Int)
 PUT      /driver/:id                           controllers.Driver.update(id: Int)
 DELETE   /driver/:id                           controllers.Driver.delete(id: Int)
 POST     /driver                               controllers.Driver.create
+OPTIONS  /driver/index                         controllers.Driver.index(all: Boolean ?= true)
+OPTIONS  /driver/:id                           controllers.Driver.get(id: Int)
+OPTIONS  /driver                               controllers.Driver.create
 
 # Vechicle Assignement
 GET      /vehicle_assignement/index            controllers.VehicleAssignement.index(all: Boolean ?= true)
@@ -95,6 +120,9 @@ GET      /vehicle_assignement/:id              controllers.VehicleAssignement.ge
 PUT      /vehicle_assignement/:id              controllers.VehicleAssignement.update(id: Int)
 DELETE   /vehicle_assignement/:id              controllers.VehicleAssignement.delete(id: Int)
 POST     /vehicle_assignement                  controllers.VehicleAssignement.create
+OPTIONS  /vehicle_assignement/index            controllers.VehicleAssignement.index(all: Boolean ?= true)
+OPTIONS  /vehicle_assignement/:id              controllers.VehicleAssignement.get(id: Int)
+OPTIONS  /vehicle_assignement                  controllers.VehicleAssignement.create
 
 # Simcards
 GET      /simcard/index                        controllers.Simcard.index(all: Boolean ?= true)
@@ -102,6 +130,9 @@ GET      /simcard/:id                          controllers.Simcard.get(id: Int)
 PUT      /simcard/:id                          controllers.Simcard.update(id: Int)
 DELETE   /simcard/:id                          controllers.Simcard.delete(id: Int)
 POST     /simcard                              controllers.Simcard.create
+OPTIONS  /simcard/index                        controllers.Simcard.index(all: Boolean ?= true)
+OPTIONS  /simcard/:id                          controllers.Simcard.get(id: Int)
+OPTIONS  /simcard                              controllers.Simcard.create
 
 # Maintenance service
 GET      /maintenance_service/index            controllers.MaintenanceService.index(all: Boolean ?= true)
@@ -109,6 +140,9 @@ GET      /maintenance_service/:id              controllers.MaintenanceService.ge
 PUT      /maintenance_service/:id              controllers.MaintenanceService.update(id: Int)
 DELETE   /maintenance_service/:id              controllers.MaintenanceService.delete(id: Int)
 POST     /maintenance_service                  controllers.MaintenanceService.create
+OPTIONS  /maintenance_service/index            controllers.MaintenanceService.index(all: Boolean ?= true)
+OPTIONS  /maintenance_service/:id              controllers.MaintenanceService.get(id: Int)
+OPTIONS  /maintenance_service                  controllers.MaintenanceService.create
 
 # Maintenance activity outcomes
 GET      /maintenance_activity/outcome/index   controllers.MaintenanceActivityOutcome.index(all: Boolean ?= true)
@@ -116,6 +150,9 @@ GET      /maintenance_activity/outcome/:id     controllers.MaintenanceActivityOu
 PUT      /maintenance_activity/outcome/:id     controllers.MaintenanceActivityOutcome.update(id: Int)
 DELETE   /maintenance_activity/outcome/:id     controllers.MaintenanceActivityOutcome.delete(id: Int)
 POST     /maintenance_activity/outcome         controllers.MaintenanceActivityOutcome.create
+OPTIONS  /maintenance_activity/outcome/index   controllers.MaintenanceActivityOutcome.index(all: Boolean ?= true)
+OPTIONS  /maintenance_activity/outcome/:id     controllers.MaintenanceActivityOutcome.get(id: Int)
+OPTIONS  /maintenance_activity/outcome         controllers.MaintenanceActivityOutcome.create
  
 # Maintenance duty
 GET      /maintenance_duty/index               controllers.MaintenanceDuty.index(all: Boolean ?= true)
@@ -123,6 +160,9 @@ GET      /maintenance_duty/:id                 controllers.MaintenanceDuty.get(i
 PUT      /maintenance_duty/:id                 controllers.MaintenanceDuty.update(id: Int)
 DELETE   /maintenance_duty/:id                 controllers.MaintenanceDuty.delete(id: Int)
 POST     /maintenance_duty                     controllers.MaintenanceDuty.create
+OPTIONS  /maintenance_duty/index               controllers.MaintenanceDuty.index(all: Boolean ?= true)
+OPTIONS  /maintenance_duty/:id                 controllers.MaintenanceDuty.get(id: Int)
+OPTIONS  /maintenance_duty                     controllers.MaintenanceDuty.create
 
 # Operator
 GET      /operator/index                       controllers.Operator.index(all: Boolean ?= true)
@@ -130,6 +170,9 @@ GET      /operator/:id                         controllers.Operator.get(id: Int)
 PUT      /operator/:id                         controllers.Operator.update(id: Int)
 DELETE   /operator/:id                         controllers.Operator.delete(id: Int)
 POST     /operator                             controllers.Operator.create
+OPTIONS  /operator/index                       controllers.Operator.index(all: Boolean ?= true)
+OPTIONS  /operator/:id                         controllers.Operator.get(id: Int)
+OPTIONS  /operator                             controllers.Operator.create
 
 # Mqtt logistic channel
 GET      /events/logistic_channel/index          controllers.EventsLogisticChannel.index(all: Boolean ?= true)
@@ -137,6 +180,9 @@ GET      /events/logistic_channel/:id            controllers.EventsLogisticChann
 PUT      /events/logistic_channel/:id            controllers.EventsLogisticChannel.update(id: Int)
 DELETE   /events/logistic_channel/:id            controllers.EventsLogisticChannel.delete(id: Int)
 POST     /events/logistic_channel                controllers.EventsLogisticChannel.create
+OPTIONS  /events/logistic_channel/index          controllers.EventsLogisticChannel.index(all: Boolean ?= true)
+OPTIONS  /events/logistic_channel/:id            controllers.EventsLogisticChannel.get(id: Int)
+OPTIONS  /events/logistic_channel                controllers.EventsLogisticChannel.create
 
 # Mqtt functional channel
 GET      /events/functional_channel/index        controllers.EventsFunctionalChannel.index(all: Boolean ?= true)
@@ -144,6 +190,9 @@ GET      /events/functional_channel/:id          controllers.EventsFunctionalCha
 PUT      /events/functional_channel/:id          controllers.EventsFunctionalChannel.update(id: Int)
 DELETE   /events/functional_channel/:id          controllers.EventsFunctionalChannel.delete(id: Int)
 POST     /events/functional_channel              controllers.EventsFunctionalChannel.create
+OPTIONS  /events/functional_channel/index        controllers.EventsFunctionalChannel.index(all: Boolean ?= true)
+OPTIONS  /events/functional_channel/:id          controllers.EventsFunctionalChannel.get(id: Int)
+OPTIONS  /events/functional_channel              controllers.EventsFunctionalChannel.create
 
 # Playback positio
 GET		/positions/play_back					controllers.PositionPlayer.history(device: String, start: String)
