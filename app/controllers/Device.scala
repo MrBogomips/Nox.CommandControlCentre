@@ -16,14 +16,16 @@ object Device extends Secured {
   import models.DeviceCommandResponse._
   import models.json.{ devicePersistedJsonWriter, deviceInfoPersistedJsonWriter }
 
-  def receiveCommand(deviceId: String) = WithAuthentication(parse.json) { (user, request) =>
-    request.body.validate[DeviceCommandRequest].map { c ⇒
-      Logger.debug("HTTP REQUEST: " + request.body.toString)
-      val response = Json.toJson(c.sendToDevice())
-      Logger.debug("HTTP RESPONSE: " + response.toString)
-      Ok(response)
-    }.recoverTotal {
-      e => BadRequest("Invalid Command:" + JsError.toFlatJson(e))
+  def receiveCommand(deviceId: String) = WithCors("POST") {
+    WithAuthentication(parse.json) { (user, request) =>
+      request.body.validate[DeviceCommandRequest].map { c ⇒
+        Logger.debug("HTTP REQUEST: "+request.body.toString)
+        val response = Json.toJson(c.sendToDevice())
+        Logger.debug("HTTP RESPONSE: "+response.toString)
+        Ok(response)
+      }.recoverTotal {
+        e => BadRequest("Invalid Command:"+JsError.toFlatJson(e))
+      }
     }
   }
 
@@ -31,35 +33,43 @@ object Device extends Secured {
     Ok(views.html.aria.device.configure(deviceId));
   }
 
-  def index(all: Boolean = false) = WithAuthentication { (user, request) =>
-    implicit val req = request
-    val devices = all match {
-      case false => Devices.findWithInfo(Some(true))
-      case true  => Devices.findWithInfo(None)
-    }
-    if (acceptsJson(request)) {
-      Ok(Json.toJson(devices))
-    } else if (acceptsHtml(request)) {
-      Ok(views.html.aria.device.index(devices, user))
-    } else {
-      BadRequest
-    }
-  }
+  import models.UserPersisted
 
-  def get(id: Int) = WithAuthentication { (user, request) =>
-    implicit val req = request
-    Devices.findById(id).map { d =>
+  def index(all: Boolean = false) = WithCors("GET", "OPTIONS") {
+    WithAuthentication { (user: UserPersisted, request: Request[AnyContent]) =>
+      implicit val req = request
+      val devices = all match {
+        case false => Devices.findWithInfo(Some(true))
+        case true  => Devices.findWithInfo(None)
+      }
       if (acceptsJson(request)) {
-        Ok(Json.toJson(d))
+        Ok(Json.toJson(devices))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.device.item(d.id, user))
+        Ok(views.html.aria.device.index(devices, user))
       } else {
         BadRequest
       }
-    }.getOrElse(NotFound);
+    }
   }
-  
-  def getByName(name: String) = controllers.biz.Device.getByName(name)
+
+  def get(id: Int) = WithCors("GET, POST, PUT, DELETE") {
+    WithAuthentication { (user, request) =>
+      implicit val req = request
+      Devices.findById(id).map { d =>
+        if (acceptsJson(request)) {
+          Ok(Json.toJson(d))
+        } else if (acceptsHtml(request)) {
+          Ok(views.html.aria.device.item(d.id, user))
+        } else {
+          BadRequest
+        }
+      }.getOrElse(NotFound);
+    }
+  }
+
+  def getByName(name: String) = WithCors("GET") {
+    controllers.biz.Device.getByName(name)
+  }
 
   val createForm = Form(
     tuple(

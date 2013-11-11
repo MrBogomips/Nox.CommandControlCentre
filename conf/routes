@@ -18,7 +18,9 @@ GET      /                                     controllers.Application.login
 
 # Login / Logout
 #GET     /login                      controllers.Application.login
+OPTIONS	 /authenticate                         controllers.Application.authenticate
 POST     /authenticate                         controllers.Application.authenticate
+OPTIONS  /logout                               controllers.Application.logout
 GET      /logout                               controllers.Application.logout
 GET      /tech/whoami                          controllers.Application.whoAmI
 GET      /tech/routes_testbench                controllers.Application.javascriptRoutesTestbench
@@ -32,23 +34,32 @@ GET      /map                                  controllers.Map.index
 GET      /map/history                          controllers.Map.history
 
 # Client configuration
+OPTIONS	 /app/configuration                    controllers.Application.clientConfiguration
 GET      /app/configuration                    controllers.Application.clientConfiguration
 
 # Channels' management
+OPTIONS  /map/channel/logistic/index           controllers.Channel.logisticIndex
 GET      /map/channel/logistic/index           controllers.Channel.logisticIndex
+OPTIONS  /map/channel/functional/index         controllers.Channel.functionalIndex
 GET      /map/channel/functional/index         controllers.Channel.functionalIndex
 
 # User
+OPTIONS  /user/current                         controllers.User.getCurrent
 GET      /user/current                         controllers.User.getCurrent
 
 # Device
+OPTIONS  /device/index                         controllers.Device.index(all: Boolean ?= true)
 GET      /device/index                         controllers.Device.index(all: Boolean ?= true)
+#OPTIONS  /device/events						   controllers.Events.channel
 GET		 /device/events						   controllers.Events.channel
+OPTIONS  /device/:id                           controllers.Device.get(id: Int)
 GET      /device/:id                           controllers.Device.get(id: Int)
+OPTIONS  /device/byName/:name                  controllers.Device.getByName(name: String)
 GET      /device/byName/:name                  controllers.Device.getByName(name: String)
 PUT      /device/:id                           controllers.Device.update(id: Int)
 DELETE   /device/:id                           controllers.Device.delete(id: Int)
 POST     /device                               controllers.Device.create
+OPTIONS  /device/:id/execute                   controllers.Device.receiveCommand(id: String)
 POST     /device/:id/execute                   controllers.Device.receiveCommand(id: String)
 GET      /device/:id/configure                 controllers.Device.configureDevice(id: String)
 		 

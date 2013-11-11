@@ -46,7 +46,8 @@ object Events extends Controller with Secured {
     }
   }
 
-  def channel = WebSocket.using[JsValue] { implicit request =>
+  def channel = 
+    WebSocket.using[JsValue] { implicit request =>
 
     user(request) match {
       // Found a user
