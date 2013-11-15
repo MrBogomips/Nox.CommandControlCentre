@@ -18,21 +18,11 @@
                 var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
                 var events_ws = new WebSocket("@wsUrl");
                 
-                var onClick = function() {
-                    alert("ciccio");
-                };
-                
                 var logMessage = function(msg) {
                     var $o = $("#output");
                     $o.val($o.val() + msg + '\n');
                 };
                 
-                var pushMessage = function () {
-
-                };
-                var receiveMessage = function(data) {
-
-                };
                 events_ws.onopen = function(e) {
                     logMessage("CONNECTED");
                 };
@@ -42,8 +32,6 @@
                 events_ws.onmessage = function(e) {
                     logMessage("<<< RECEIVED:\n" + json(JSON.parse(e.data)));
                 };
-                
-                $("#submit").click(onClick);
                 
                 var json = function(obj) {
                 	return JSON.stringify(obj, null, '\t');
@@ -64,7 +52,7 @@
                         message: json(
                         {
                             command: "subscribe",
-                            topics: ["POSITION/TEST/+"]
+                            topics: ["POSITION/TEST/#"]
                         }
                     )},
                     subscribe_multi: { 
