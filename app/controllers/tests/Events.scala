@@ -12,16 +12,13 @@ import views.utils.context._
 object Events extends Secured with ProvidesViewContext {
 
   def index = WithAuthentication { (user, request) =>
-    play.api.Play.current.mode match {
-      //case Mode.Dev | Mode.Test =>
-      case _ =>
+    if (isDemoMode) {
         implicit val r = request
         implicit val u = user
         val wsUrl = controllers.routes.Events.channel.webSocketURL()
         Ok(views.html.tests.events.index(user, wsUrl))
-      //case _ =>
-        //NotFound("")
+    } else {
+        NotFound("")
     }
-
   }
 }

@@ -25,6 +25,11 @@ trait ControllerBase extends Controller {
   lazy val default_auth_uri = conf.getString("nox.ccc.security.default_auth_uri", "/")  
   
   /**
+   * Signal that the application is running in demo mode
+   */
+  def isDemoMode = globals.Demo.isEnabled
+  
+  /**
    * The request accepts Json
    * 
    * We mean that the client issued an «application/json» accept header or decorated the uri with a ?json or &json
