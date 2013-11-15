@@ -1,4 +1,4 @@
-package actors
+package actors.mqttactor
 
 import akka.actor._
 import akka.event.Logging

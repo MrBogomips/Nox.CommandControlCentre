@@ -1,0 +1,214 @@
+@(user: UserTrait, wsUrl: String)(implicit cx: ViewContext)
+
+@header_more = {}
+
+@footer_scripts = {
+<script type='text/javascript'>
+            steal('/assets/webapp/webapp_init.js')
+            .then('/assets/webapp/channels/channels.js',
+                  '/assets/webapp/settings/settings.js',
+                  '/assets/webapp/table/table.js',
+                  '/assets/webapp/fixtures/fixtures.js',
+                  '/assets/webapp/webapp.less',
+                  '/assets/webapp/wslistner/wslistner.js',
+                  '/assets/webapp/map/map.js',
+                  '/assets/webapp/lastdevice_info/lastdevice_info.js'
+                  )
+            .then(function() {
+                var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
+                var events_ws = new WebSocket("@wsUrl");
+                
+                var onClick = function() {
+                    alert("ciccio");
+                };
+                
+                var logMessage = function(msg) {
+                    var $o = $("#output");
+                    $o.val($o.val() + msg + '\n');
+                };
+                
+                var pushMessage = function () {
+
+                };
+                var receiveMessage = function(data) {
+
+                };
+                events_ws.onopen = function(e) {
+                    logMessage("CONNECTED");
+                };
+                events_ws.onclose = function(e) {
+                    logMessage("DISCONNECTED");
+                };
+                events_ws.onmessage = function(e) {
+                    logMessage("<<< RECEIVED:\n" + json(JSON.parse(e.data)));
+                };
+                
+                $("#submit").click(onClick);
+                
+                var json = function(obj) {
+                	return JSON.stringify(obj, null, '\t');
+                }
+                
+                // The samples
+                var samples = {
+                    subscribe: { 
+                        description: "Subscribe to a single channel",
+                        message: json(
+                        {
+                            command: "subscribe",
+                            topics: ["POSITION/TEST"]
+                        }
+                    )},
+                    subscribe_plus: { 
+                        description: "Subscribe to a hierarchy of channels",
+                        message: json(
+                        {
+                            command: "subscribe",
+                            topics: ["POSITION/TEST/+"]
+                        }
+                    )},
+                    subscribe_multi: { 
+                        description: "Subscribe to multiple channels",
+                        message: json(
+                        {
+                            command: "subscribe",
+                            topics: ["POSITION/TEST","EVENT/TEST"]
+                        }
+                    )},
+                    unsubscribe: { 
+                        description: "Unsubscribe from a single channel",
+                        message: json(
+                        {
+                            command: "unsubscribe",
+                            topics: ["POSITION/TEST"]
+                        }
+                    )},
+                    unsubscribe_multi: { 
+                        description: "Unsubscribe from multiple channels",
+                        message: json(
+                        {
+                            command: "unsubscribe",
+                            topics: ["POSITION/TEST","EVENT/TEST"]
+                        }
+                    )},
+                    push_message: { 
+                        description: "Push a device event",
+                        message: json(
+                        {
+                            command: "push-message",
+                            topic: "POSITION/TEST/dev_TEST",
+                            payload: {
+                                device: "dev_TEST",
+                                message_subtype: "info",
+                                message_type: "tracking",
+                                data: {
+                                    coords: {
+                                        lat: "-20.311243",
+                                        lon: "-40.275997"
+                                    },
+                                    objs: {
+                                        GSM_jamming: 1,
+                                        accessory_missing: 0,
+                                        anti_theft_status: 1,
+                                        battery_charging: 1,
+                                        battery_fault: 1,
+                                        cell_id_present: 0,
+                                        direction: 1,
+                                        gprs_conn: 1,
+                                        gps_antenna_fail: 1,
+                                        gps_fix: 1,
+                                        ignition: 0,
+                                        input1: 1,
+                                        input2: 1,
+                                        input3: 1,
+                                        input4: 1,
+                                        max_speed_exceeded: 1,
+                                        moving_status: 0,
+                                        output1: 0,
+                                        output2: 1,
+                                        output3: 1,
+                                        panic: 1,
+                                        power_fail: 0,
+                                        sleep: 0,
+                                        tampering_sensor: 1,
+                                        voice_call: 1,
+                                        waypoint_entering: 0,
+                                        waypoint_leaving: 0,
+                                        waypoint_restricted: 0
+                                    },
+                                    speed: 77,
+                                    ts: "2013-11-07 00:04:31.809326"
+                                }
+                            }
+                        }
+                    )},
+                };
+                
+                // Render samples
+                (function() {
+                    $opt = $("#samples");
+                    $opt.append($("<option>", {value: '', text: 'select a sample…'}));
+                    for(s in samples)
+                        $opt.append($("<option>", {value: s, text: samples[s].description}));
+                })();
+                
+                $("#samples").change(function(el) {
+                   var sample = samples[$("#samples").val()];
+                   if (typeof sample != 'undefined') {
+                       $("#message").val(sample.message);
+                   }
+                });
+
+                $("#pushMessage").click(function() {
+                    var msg = $("#message").val().replace('\t','');
+                    logMessage(">>> SENDING:\n" + msg);
+                    events_ws.send(msg);
+                });
+
+                $("#clear").click(function(){
+                    $("#output").val("");
+                });
+            });
+</script>
+}
+
+@aria.master.authenticated("Events Tester", user, header_more = header_more, footer_more = footer_scripts) {
+<div class="row">
+	<div class="fullscreen offset1 span12">
+	<h1>Events Tester</h1>
+    Consider to open multiple browser's instances to test communication
+	</div>
+</div>
+<div class='message row'>
+  <div class="span4 offset1">
+    	<fieldset>
+    	<legend>Prepare message</legend>
+    	<label></label>
+    	<div class="control-group">
+		    <label class="control-label" for="topic">Sample</label>
+		    <div class="controls">
+		      <select name="samples" id="samples" class="span4"></select>
+		    </div>
+		</div>
+    	<div class="control-group">
+		    <label class="control-label" for="message">Message</label>
+		    <div class="controls">
+		      <textarea id="message" name="message" rows="10" placeholder="message" class="span4"></textarea>
+		    </div>
+		</div>
+    	</fieldset>
+    	<button class="btn btn-primary" id="pushMessage">Push message</button>
+  </div>
+  
+  <div class="span8">
+	<fieldset>
+	<legend>Websocket log</legend>
+	<label>Messages received from the websocket</label>
+	
+	      <textarea id="output" rows="30" class="span8"></textarea>
+	
+	</fieldset>
+	<button class="btn btn-primary" id="clear">Clear</button>
+  </div>
+</div>
+}

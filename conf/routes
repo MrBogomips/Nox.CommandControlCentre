@@ -205,6 +205,10 @@ GET      /biz/device/index                     controllers.biz.Device.index(all:
 GET      /biz/device/:id                       controllers.biz.Device.get(id: Int)
 GET      /biz/device/byName/:name              controllers.biz.Device.getByName(name: String)
 
+######################################################################################################
+###
+###   TESTS (For internal usage)
+GET      /tests/events                   controllers.tests.Events.index
 
 ######################################################################################################
 ###

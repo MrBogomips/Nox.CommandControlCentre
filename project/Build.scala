@@ -18,12 +18,14 @@ object ApplicationBuild extends Build {
     "org.slf4j" % "slf4j-nop" % "1.6.4" withSources,
     "com.github.nscala-time" %% "nscala-time" % "0.6.0" withSources,
     "com.github.tototoshi" %% "slick-joda-mapper" % "0.4.0" withSources,
-    "org.reactivemongo" %% "play2-reactivemongo" % "0.10.0-SNAPSHOT" exclude("org.scala-stm", "scala-stm_2.10.0") exclude("play", "*") withSources
-    )
+    "org.reactivemongo" %% "play2-reactivemongo" % "0.10.0-SNAPSHOT" exclude ("org.scala-stm", "scala-stm_2.10.0") exclude ("play", "*") withSources)
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here
-    templatesImport ++= Seq("views.utils.Helper._", "patterns.models.Persisted"),
+    templatesImport ++= Seq(
+      "views.utils.Helper._",
+      "views.utils.context.ViewContext",
+      "patterns.models.Persisted"),
     scalacOptions ++= Seq("-deprecation", "-feature"))
 }
  

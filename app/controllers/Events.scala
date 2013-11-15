@@ -1,5 +1,7 @@
 package controllers
 
+import scala.util.{Try, Success, Failure}
+
 import play.api._
 import play.Logger
 import play.api.libs.concurrent._
@@ -9,8 +11,10 @@ import play.api.mvc._
 import play.api.db._
 import play.api.Play.current
 import akka.actor._
-import actors._
 import akka.pattern.AskTimeoutException
+
+import actors.mqttactor._
+import models.events.messages._
 
 object Events extends Controller with Secured {
 
@@ -40,6 +44,14 @@ object Events extends Controller with Secured {
           val topics = (json \ "topics").as[Seq[String]]
           log.debug(s"subscribe to topic $topics")
           mqttActor ! Unsubscribe(topics)
+        case "push-message" =>
+          val topic = (json \ "topic").as[String]
+          log.debug(s"subscribe to topic $topic")
+          val payload = (json \ "payload").as[JsValue]
+          EventMessage.parse(topic, payload) match {
+            case Success(message) => mqttActor ! message
+            case Failure(error) => outChannel push Json.obj() // TODO
+          }
       }
       case MessageArrived(topic, message) =>
         outChannel push Json.parse(message.getPayload())

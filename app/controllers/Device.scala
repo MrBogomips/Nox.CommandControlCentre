@@ -6,7 +6,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data._
 import play.api.data.Forms._
-import models.{ Devices, Device ⇒ DeviceModel, DevicePersisted, DeviceInfoPersisted }
+import models.{ Devices, Device => DeviceModel, DevicePersisted, DeviceInfoPersisted }
 import org.joda.time.format.ISODateTimeFormat
 import patterns.models.ValidationException
 
