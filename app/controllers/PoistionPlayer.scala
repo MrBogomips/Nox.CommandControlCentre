@@ -19,6 +19,8 @@ import play.modules.reactivemongo._
 import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.api._
 
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
 object PositionPlayer extends Secured with MongoController {
 
   val mongodb = ReactiveMongoPlugin.db
