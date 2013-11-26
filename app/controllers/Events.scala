@@ -1,6 +1,6 @@
 package controllers
 
-import scala.util.{Try, Success, Failure}
+import scala.util.{ Try, Success, Failure }
 
 import play.api._
 import play.Logger
@@ -52,46 +52,48 @@ object Events extends Controller with Secured {
             case Success(message) => mqttActor ! message
             case Failure(error) => outChannel push Json.obj() // TODO
           }
+        case "ping" => // just for diagnostic
+          outChannel push Json.parse("""{"pong": true}""")
       }
       case MessageArrived(topic, message) =>
         outChannel push Json.parse(message.getPayload())
     }
   }
 
-  def channel = 
+  def channel =
     WebSocket.using[JsValue] { implicit request =>
 
-    user(request) match {
-      // Found a user
-      case Some(u) =>
-        import play.api.libs.concurrent.Execution.Implicits._
-        val log = Logger.of(s"noxccc.MqttListner.WebSocket")
-        val (outEnumerator, outChannel) = Concurrent.broadcast[JsValue]
-        val listnerRef = akkaSys.actorOf(Props(classOf[MqttListner], outChannel))
-        val inIteratee = Iteratee.foreach[JsValue] { json =>
-          listnerRef ! json
-        }.map { _ =>
-          import akka.pattern.gracefulStop
-          import scala.concurrent.duration._
-          import scala.concurrent.Await
-          import scala.language.postfixOps
+      user(request) match {
+        // Found a user
+        case Some(u) =>
+          import play.api.libs.concurrent.Execution.Implicits._
+          val log = Logger.of(s"noxccc.MqttListner.WebSocket")
+          val (outEnumerator, outChannel) = Concurrent.broadcast[JsValue]
+          val listnerRef = akkaSys.actorOf(Props(classOf[MqttListner], outChannel))
+          val inIteratee = Iteratee.foreach[JsValue] { json =>
+            listnerRef ! json
+          }.map { _ =>
+            import akka.pattern.gracefulStop
+            import scala.concurrent.duration._
+            import scala.concurrent.Await
+            import scala.language.postfixOps
 
-          try {
-            val stopped = gracefulStop(listnerRef, 5 seconds)
-            Await.result(stopped, 6 seconds)
-          } catch {
-            case _: AskTimeoutException => log.debug("Timeout passed while waiting for actor closing")
+            try {
+              val stopped = gracefulStop(listnerRef, 5 seconds)
+              Await.result(stopped, 6 seconds)
+            } catch {
+              case _: AskTimeoutException => log.debug("Timeout passed while waiting for actor closing")
+            }
           }
-        }
-        (inIteratee, outEnumerator)
+          (inIteratee, outEnumerator)
 
-      // Not found a user
-      case None =>
-        val inIteratee = Iteratee.ignore[JsValue]
-        val outEnumerator = Enumerator.eof[JsValue]
-        (inIteratee, outEnumerator)
+        // Not found a user
+        case None =>
+          val inIteratee = Iteratee.ignore[JsValue]
+          val outEnumerator = Enumerator.eof[JsValue]
+          (inIteratee, outEnumerator)
+      }
+
     }
-
-  }
 
 }
