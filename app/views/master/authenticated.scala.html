@@ -1,20 +1,8 @@
-@(title: String)(content: Html)
+@(title: String, user: UserTrait, header: Html = Html(""), footer: Html = Html(""))(content: Html)
+@master.header(title, header)
 
-@header(title)
-
-<div class="navbar">
-	@navbar.top()
+<div class="container">
+@content
 </div>
 
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span2">
-			@sidebar.index()
-		</div>
-		<div class="span10" style="overflow: hidden; width: auto;">
-			@content
-		</div>
-	</div>
-</div>
-
-@footer()
+@master.footer(footer)
