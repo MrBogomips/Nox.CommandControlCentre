@@ -136,29 +136,33 @@ $(document).ready(function() {
 	fnShowHide(5);		
 	
     //init the table*****************************
-	var aryJSONColTable = [];
-	 
-	aryJSONColTable.push({
-        "sTitle": "",
-        "aTargets": [5],
-        "mData": null,
-        "bSearchable": false,
-        "bSortable": false,
-        "mRender": function (data, type, full) {
-        	//aggiunta pulsanti ultima colonna in base al contenuto della riga
-        	if(full[1].search('Internet')!=-1){
-            	return fnAddLocalActions();
-        	}else if(full[1].search('Firefox')!=-1){
-            	return fnAddLocalActions1();
-        	}else{
-        		return fnAddLocalActions2();
-        	}
-        },
-	});
-	
 	oTable = $('#example').dataTable( {
 		"bDestroy": true,		
-		"aoColumnDefs": aryJSONColTable,
+		"aoColumnDefs": [
+		                 	{ "sName": "RenderingEngine", "aTargets": [ 0 ] },
+		                 	{ "sName": "Browser", "aTargets": [ 1 ] },
+		                 	{ "sName": "Platform", "aTargets": [ 2 ] },
+		                 	{ "sName": "EngineVersion", "aTargets": [ 3 ] },
+		                 	{ "sName": "CSSgrade", "aTargets": [ 4 ] },
+							{
+		                 		"sName": "ActionColumn",
+		                 		"sTitle": "",
+								"aTargets": [5],
+								"mData": null,
+								"bSearchable": false,
+								"bSortable": false,
+								"mRender": function (data, type, full) {
+									//aggiunta pulsanti ultima colonna in base al contenuto della riga
+									if(full[1].search('Internet')!=-1){
+										return fnAddLocalActions();
+									}else if(full[1].search('Firefox')!=-1){
+										return fnAddLocalActions1();
+									}else{
+										return fnAddLocalActions2();
+									}
+								},
+							},
+		               ],
 		"fnDrawCallback": function( oSettings ) {
 			//funzioni chiamate ad ogni redraw della tabella
 				// Gestione selezione righe
