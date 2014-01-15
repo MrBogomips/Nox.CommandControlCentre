@@ -1,0 +1,8 @@
+@(title: String, user: UserTrait, header: Html = Html(""), footer: Html = Html(""))(content: Html)
+@master2.header(title, header)
+
+<div class="container">
+@content
+</div>
+
+@master2.footer(footer)

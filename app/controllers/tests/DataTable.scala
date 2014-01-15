@@ -13,4 +13,8 @@ object DataTable extends Secured with ProvidesViewContext {
   def index = WithAuthentication { (user, request) =>
     Ok(views.html.datatable.index("ciccio", user))
   }
+  
+  def index2 = WithAuthentication { (user, request) =>
+    Ok(views.html.datatable.index2("ciccio", user))
+  }
 }

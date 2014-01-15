@@ -8,8 +8,8 @@
 	test
 }
 
-@master.authenticated("Datatable test", user, footer = footer) {
-	
+@master2.authenticated("Datatable test", user, footer = footer) {
+<script src="@routes.Assets.at("javascripts/DataTableBootstrap2.js")" type="text/javascript" charset="utf-8"></script>
 	<h1>Ciccio</h1>
     
 <div class="container">
@@ -432,6 +432,4 @@
 </table>
 			
 		</div>
-		
-		<script src="@routes.Assets.at("javascripts/DataTableBootstrap.js")" type="text/javascript" charset="utf-8"></script>
 }
