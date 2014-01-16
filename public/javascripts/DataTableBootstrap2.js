@@ -19,7 +19,6 @@ $.extend( true, $.fn.dataTable.defaults, {
 						            return "Found " + iTotal + " of " + iMax + " records";
 						        }
 						    },
-		"sInfoFiltered": "",
 		"oPaginate": {
 			"sNext": "»",
 			"sPrevious": "«"
@@ -130,46 +129,57 @@ var oTable;
 var giRedraw = false;
 /* Table initialisation */
 $(document).ready(function() {
-	//predispone colonna local actions
-	$('thead tr').append('<th class="noRowSelected"></th>');
-	$('tbody tr').append('<td class="noClick"></td>');
-	fnShowHide(5);		
-	
     //init the table*****************************
 	oTable = $('#example').dataTable( {
-		"bDestroy": true,		
+		"bDestroy": true,
+        "sAjaxSource": '/assets/json.txt',
 		"aoColumnDefs": [
-		                 	{ "sName": "RenderingEngine", "aTargets": [ 0 ] },
-		                 	{ "sName": "Browser", "aTargets": [ 1 ] },
-		                 	{ "sName": "Platform", "aTargets": [ 2 ] },
-		                 	{ "sName": "EngineVersion", "aTargets": [ 3 ] },
-		                 	{ "sName": "CSSgrade", "aTargets": [ 4 ] },
-							{
-		                 		"sName": "ActionColumn",
+		                 	{	"aTargets": [0],
+		                 		"sTitle": "Rendering engine",
+		                 		"mData": "engine"
+		                 	},
+		                 	{	"aTargets": [1],
+		                 		"sTitle": "Browser",
+		                 		"mData": "browser"
+		                 	},
+		                 	{	"aTargets": [2],
+		                 		"sTitle": "Platform(s)",
+		                 		"mData": "platform"
+		                 	},
+		                 	{	"aTargets": [3],
+		                 		"sTitle": "Engine version",
+		                 		"mData": "version"
+		                 	},
+		                 	{	"aTargets": [4],
+		                 		"sTitle": "CSS grade",
+		                 		"mData": "grade"
+		                 	},
+							{	"aTargets": [5],
 		                 		"sTitle": "",
-								"aTargets": [5],
-								"mData": null,
+		                 		"mData": "action",
 								"bSearchable": false,
 								"bSortable": false,
-								"mRender": function (data, type, full) {
-									//aggiunta pulsanti ultima colonna in base al contenuto della riga
-									if(full[1].search('Internet')!=-1){
-										return fnAddLocalActions();
-									}else if(full[1].search('Firefox')!=-1){
-										return fnAddLocalActions1();
-									}else{
-										return fnAddLocalActions2();
-									}
-								},
-							},
+								"sWidth": "1%"
+							}
 		               ],
 		"fnDrawCallback": function( oSettings ) {
 			//funzioni chiamate ad ogni redraw della tabella
 				// Gestione selezione righe
 				fnActivateSelection();
+				// local actions
+				$("td:last-child:contains('action0')").html(fnAddLocalActions());
+				$("td:last-child:contains('action1')").html(fnAddLocalActions1());
+				$("td:last-child:contains('action2')").html(fnAddLocalActions2());
 				// (necessarie per bootstrap-select
 				$('.localfunctions .selectpicker').change(fnLocalAction);
 				$('.selectpicker').selectpicker();
+	    },
+	    "fnInitComplete": function(){
+	    	//predispone colonna local actions
+	    	$('tr:last-child').addClass("noRowSelected");
+			$('td:last-child').addClass("noClick");
+			//filter autocomplete
+			fnAutoComplete();
 	    },
 		"bAutoWidth": false,
 		"bDeferRender": false,
@@ -218,24 +228,6 @@ $(document).ready(function() {
 	$('#example').bind('filter', function () {fnUpdateNumSelected(); });
 	//Miglioria gui su firefox
 	$('th').attr('unselectable', 'on').css('user-select', 'none').on('selectstart', false);
-	//filter autocomplete
-	var wordlist = []; 
-	var data = oTable._('tr');
-	var colonna = [];
-	for(var i=0; i<3; i++){	//per le prime 3 colonne		
-		colonna[i] = unique( data.map(function(value,index){return value[i];}) );	//estrae i dati unici dalla colonna
-		$.merge(wordlist,colonna[i]);	//li aggiunge alla wordlist
-	}
-	$.each(colonna[1], function( index, value ) { colonna[1][index] = value.replace(/\d|\+|\-|\.|\r|\n|\f|\t/g, '').trim(); });	//estrae i nomi dei browser (senza versione)
-	$.merge(wordlist,unique(colonna[1]));
-	wordlist.sort();	
-//	for(var i=0; i<3; i++){ $.merge(wordlist,unique( data.map(function(value,index){return value[i];}) ));}	//estrae i dati unici dalle colonne e li aggiunge alla wordlist
-	$('.tablefilter input').autocomplete({source: wordlist});
-//	$('.tablefilter input').autocomplete({
-//			select: function( event, ui ) {
-//				$('.tablefilter .search').click();
-//			}
-//		});
 	//Event bindings*****************************
 	
 	//Enable Bootstrap-Select
@@ -255,7 +247,7 @@ function fnShowHide( iCol )
 
 //elimina duplicati da array
 function unique(array) {
-    return $.grep(array, function(el, index) {
+    return $.grep(array, function(el, index){
         return index == $.inArray(el, array);
     });
 }
@@ -544,4 +536,26 @@ $.fn.dataTableExt.afnFiltering.push(
 		return true;
 	}
 );
+//************************************************************************************************************************
+
+//************************************************************************************************************************
+//imposta e attiva l'autocompletamento sul campo di ricerca
+function fnAutoComplete(){
+	var wordlist = []; 
+	var table = oTable.$('tr');
+	var colonna = [];
+	for(var j=0; j<3; j++){	//per le prime 3 colonne //i<table[0].cells.length-1 per prendere tutta la riga meno la colonna action
+		colonna[j]=[];
+		for(var i=0; i<table.length; i++){
+			colonna[j].push(table[i].cells.item(j).innerHTML);
+		}
+		colonna[j] = unique( colonna[j] );	//elimina duplicati
+		$.merge(wordlist,colonna[j]);		//aggiunge la colonna alla wordlist
+	}
+	$.each(colonna[1], function( index, value ) { colonna[1][index] = value.replace(/\d|\+|\-|\.|\r|\n|\f|\t/g, '').trim(); });	//estrae i nomi dei browser (senza versione)
+	$.merge(wordlist,unique(colonna[1]));	//li aggiunge alla wordlist (eliminando i duplicati)
+	wordlist.sort();	
+	//attiva autocompletamento con la wordlist costruita
+	$('.tablefilter input').autocomplete({source: wordlist});
+}
 //************************************************************************************************************************

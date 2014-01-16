@@ -216,10 +216,10 @@ form{
 	display: inline;
 }
 
-div.row{
-	margin-bottom:10px;
-}
-
 div.btn-label{
 	display:inline;
+}
+
+div.row{
+	margin-bottom:5px;
 }
