@@ -1,0 +1,19 @@
+@(title: String, user: UserTrait)
+
+@footer = {
+	
+}
+
+@globalfunctions={
+	test
+}
+
+@master2.authenticated("Datatable test", user, footer = footer) {
+<script src="@routes.Assets.at("javascripts/DataTableBootstrap2.js")" type="text/javascript" charset="utf-8"></script>
+	<h1>Ciccio</h1>
+    
+		<div class="container">		
+			<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-condensed table-hover" id="example">
+			</table>
+		</div>
+}

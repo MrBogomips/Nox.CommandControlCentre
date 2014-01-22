@@ -17,8 +17,7 @@ object ApplicationBuild extends Build {
     "com.github.nscala-time" %% "nscala-time" % "0.6.0" withSources,
     "com.github.tototoshi" %% "slick-joda-mapper" % "0.4.0" withSources,
     "org.reactivemongo" %% "play2-reactivemongo" % "0.10.0" withSources
-    //"org.reactivemongo" %% "play2-reactivemongo" % "0.9" exclude ("org.scala-stm", "scala-stm_2.10.0") exclude ("play", "*") withSources
-    //"org.reactivemongo" %% "play2-reactivemongo" % "0.9" exclude ("org.scala-stm", "scala-stm_2.10.0") exclude ("play", "*") withSources
+
     )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
@@ -28,7 +27,8 @@ object ApplicationBuild extends Build {
       "views.utils.context.ViewContext",
       "patterns.models.Persisted"),
     scalacOptions ++= Seq("-deprecation", "-feature")).settings(
-      resolvers += "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
+        resolvers += "Sonatype OSS Releases" at "http://oss.sonatype.org/content/repositories/releases"
+//      resolvers += "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
     )
     
 }
