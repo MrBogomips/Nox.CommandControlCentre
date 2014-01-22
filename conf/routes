@@ -206,6 +206,8 @@ GET      /biz/device/byName/:name              controllers.biz.Device.getByName(
 ###   TESTS (For internal usage)
 GET     /tests/events                   controllers.tests.Events.index
 GET		/tests/datatable				controllers.tests.DataTable.index 
+GET		/tests/datatableSSPoc			controllers.tests.DataTable.serverSidePoc
+GET		/tests/datatableFakeData		controllers.tests.DataTable.fakeData
 
 ######################################################################################################
 ###

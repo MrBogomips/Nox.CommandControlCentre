@@ -7,8 +7,6 @@ object ApplicationBuild extends Build {
   val appName = "CommandControlCentre"
   val appVersion = "1.0-SNAPSHOT"
 
-
-
   val appDependencies = Seq(
     javaCore, javaJdbc, jdbc, anorm, javaEbean, cache,
     //"mysql" % "mysql-connector-java" % "5.1.21"
@@ -18,7 +16,7 @@ object ApplicationBuild extends Build {
     "org.slf4j" % "slf4j-nop" % "1.6.4" withSources,
     "com.github.nscala-time" %% "nscala-time" % "0.6.0" withSources,
     "com.github.tototoshi" %% "slick-joda-mapper" % "0.4.0" withSources,
-    "org.reactivemongo" %% "play2-reactivemongo" % "0.10.0-SNAPSHOT" exclude ("org.scala-stm", "scala-stm_2.10.0") exclude ("play", "*") withSources
+    "org.reactivemongo" %% "play2-reactivemongo" % "0.10.0" withSources
     //"org.reactivemongo" %% "play2-reactivemongo" % "0.9" exclude ("org.scala-stm", "scala-stm_2.10.0") exclude ("play", "*") withSources
     //"org.reactivemongo" %% "play2-reactivemongo" % "0.9" exclude ("org.scala-stm", "scala-stm_2.10.0") exclude ("play", "*") withSources
     )
@@ -31,7 +29,6 @@ object ApplicationBuild extends Build {
       "patterns.models.Persisted"),
     scalacOptions ++= Seq("-deprecation", "-feature")).settings(
       resolvers += "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
-      //resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"    
     )
     
 }
