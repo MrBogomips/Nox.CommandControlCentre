@@ -1,9 +1,20 @@
 /* Set the defaults for DataTables initialisation */
 $.extend( true, $.fn.dataTable.defaults, {
-	"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+	"sDom": "<'row'<'span12'f<'span'i>>r>t<'row'<'span6'<'globalfunctions'>'><'span6'pl>>>",
 	"sPaginationType": "bootstrap",
 	"oLanguage": {
-		"sLengthMenu": "_MENU_ records per page"
+		"sLengthMenu": "Show <select class='selectpicker span1'>" +
+				"<option value='10'>10</option>" +
+				"<option value='20'>20</option>" +
+				"<option value='50'>50</option>" +
+				"<option value='100'>100</option>" +
+		"</select>&nbsp;",
+		"sInfo": "found _TOTAL_ records",
+		"sInfoFiltered": "",
+		"oPaginate": {
+			"sNext": "&#x2192;",
+			"sPrevious": "&#x2190;"
+		}
 	}
 } );
 
@@ -23,10 +34,8 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
 		"iLength":        oSettings._iDisplayLength,
 		"iTotal":         oSettings.fnRecordsTotal(),
 		"iFilteredTotal": oSettings.fnRecordsDisplay(),
-		"iPage":          oSettings._iDisplayLength === -1 ?
-			0 : Math.ceil( oSettings._iDisplayStart / oSettings._iDisplayLength ),
-		"iTotalPages":    oSettings._iDisplayLength === -1 ?
-			0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
+		"iPage":          oSettings._iDisplayLength === -1 ? 0 : Math.ceil( oSettings._iDisplayStart / oSettings._iDisplayLength ),
+		"iTotalPages":    oSettings._iDisplayLength === -1 ? 0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
 	};
 };
 
@@ -152,27 +161,9 @@ if ( $.fn.DataTable.TableTools ) {
 /* Table initialisation */
 $(document).ready(function() {
 	var oTable = $('#example').dataTable( {
-		"sDom": "<'row'<'span12'f<'span'i>>r>t<'row'<'span6'<'globalfunctions'>'><'span6'pl>>>",
-		"sPaginationType": "bootstrap",
-		"oLanguage": {
-			'sLengthMenu': "Show " +
-							"<select class='selectpicker'>" +
-									"<option value='10'>10 elements </option>" +
-									"<option value='20'>20 elements </option>" +
-									"<option value='50'>50 elements </option>" +
-									"<option value='100'>100 elements </option>" +
-							"</select>",
-			"sInfo": "found _TOTAL_ records",
-			"sInfoFiltered": "",
-			"oPaginate": {
-				"sNext": "»",
-				"sPrevious": "«"
-		      }
-		},
-		
-	} );
-	
-
+		"bProcessing": true,
+		"bServerSide": true
+	});
 	
 	$(".globalfunctions").html("<select class='selectpicker' data-style='btn-primary'> \
 									<option>Create new vehicle</option> \
