@@ -25,7 +25,7 @@ $.extend( true, $.fn.dataTable.defaults, {
 	      }
 	},
 	"bDestroy": true,
-	"bAutoWidth": false,
+//	"bAutoWidth": false,
 	"bDeferRender": false,
 } );
 
@@ -127,6 +127,18 @@ $.extend( $.fn.dataTableExt.oPagination, {
 	}
 } );
 
+//ordinamento colonne checkbox
+$.fn.dataTableExt.afnSortData['dom-checkbox'] = function ( oSettings, iColumn )
+{
+    var aData = [];
+    $( 'td:eq('+iColumn+') input', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
+        aData.push( this.checked==true ? "1" : "0" );
+    } );
+    alert(aData);
+    return aData;
+};
+
+
 //Init***************************************************************************************************************
 var oTable;
 
@@ -159,8 +171,6 @@ function init(){
 	$('.selectionbuttons .deselPage').click(function(){ fnDeselectPage(); });
 	$('.selectionbuttons .deselAll').click(function(){ fnDeselectAll(); });
 	$('.selectionbuttons .showSel').click(function(){ fnShowSelected(); });
-	//aggiorna i contatori righe selezionate dopo il filtering
-	$('#example').bind('filter', function () {fnUpdateNumSelected(); });
 	//Miglioria gui su firefox
 	$('th').attr('unselectable', 'on').css('user-select', 'none').on('selectstart', false);
 	//Event bindings*****************************
@@ -246,7 +256,7 @@ function fnUpdateNumSelected(){
 	var div = $(".selectedinfo");
 	var totSelected = fnGetSelected(oTable).length;
 	div.children(".total").text(totSelected);
-	div.children(".number").text( oTable.$('tr.row_selected', {"filter": "applied"}).length );
+//	div.children(".number").text( oTable.$('tr.row_selected', {"filter": "applied"}).length );
 	if(totSelected > 0){
 		div.show();
 	}else{

@@ -32,12 +32,14 @@ $(document).ready(function() {
 		                 	},
 		                 	{	"aTargets": [6],
 		                 		"sTitle": "enabled",
+		                 		"sSortDataType": "dom-checkbox",
 		                 		"mData": function ( source, type, val ) {
 		                 			var content = '<div class="switch"><input type="checkbox" ';
 		                 			if(source.enabled) content += 'checked';
 		                 			content += ' disabled ></div>';
 		                 			return content;
 		                 		},
+		                 		"sWidth": "1%",
 		                 	},
 							{	"aTargets": [7],
 		                 		"sTitle": "",
