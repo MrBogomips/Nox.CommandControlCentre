@@ -1,16 +1,13 @@
+div.dataTables_length{
+	display: inline;
+	text-align: left;
+	margin-right:6px;
+	float: right;
+}
+
 div.dataTables_length label {
 	float: right;
 	text-align: left;
-	margin-right:10px;
-}
-
-div.dataTables_length select {
-	width: 150px;
-}
-
-div.dataTables_filter label {
-	float: left;
-	margin-right:10px;
 }
 
 div.dataTables_info {
@@ -19,12 +16,14 @@ div.dataTables_info {
 }
 
 div.dataTables_paginate {
-	float: right;
 	margin: 0;
+	display: inline;
+	float: right;
 }
 
 table.table {
 	clear: both;
+	margin-top: 6px !important;
 	margin-bottom: 6px !important;
 	max-width: none !important;
 }
@@ -75,8 +74,6 @@ div.dataTables_scrollBody tbody tr:first-child td {
 div.dataTables_scrollFoot table {
 	border-top: none;
 }
-
-
 
 
 /*
@@ -196,11 +193,11 @@ span.hide{
 }
 
 .rspace{
-	margin-right:10px;
+	margin-right:2px;
 }
 
 div.selectionbuttons{
-	float:right;
+	float: right;
 }
 
 div.selectedinfo{
@@ -209,7 +206,7 @@ div.selectedinfo{
 
 div.tablefilter{
 	display: inline;
-	margin-right:10px;	
+	margin-right:6px;	
 }
 
 form{
@@ -220,6 +217,11 @@ div.btn-label{
 	display:inline;
 }
 
-div.row{
-	margin-bottom:5px;
+div.half{
+	float: left;
+	width: 50%;
+}
+
+div.clear{
+	clear: both;
 }

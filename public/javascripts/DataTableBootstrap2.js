@@ -1,6 +1,6 @@
 /* Set the defaults for DataTables initialisation */
 $.extend( true, $.fn.dataTable.defaults, {
-	"sDom": "<'row'<'span6'<'tablefilter'>i><'span6'<'selectionbuttons'>>r>t<'row'<'span6'<'globalfunctions'>'><'span6'pl>>>",
+	"sDom": "<'riga'<'half'<'tablefilter'>i><'half'<'selectionbuttons'>r>><'clear'>t<'riga'<'half'<'globalfunctions'>><'half'pl>><'clear'>",
 	"sPaginationType": "bootstrap",
 	"oLanguage": {
 		'sLengthMenu': "Show " +
@@ -24,6 +24,9 @@ $.extend( true, $.fn.dataTable.defaults, {
 			"sPrevious": "«"
 	      }
 	},
+	"bDestroy": true,
+	"bAutoWidth": false,
+	"bDeferRender": false,
 } );
 
 /* Default class modification */
@@ -129,9 +132,8 @@ var oTable;
 var giRedraw = false;
 /* Table initialisation */
 $(document).ready(function() {
-    //init the table*****************************
+    //init the tables*****************************
 	oTable = $('#example').dataTable( {
-		"bDestroy": true,
         "sAjaxSource": '/assets/json.txt',
 		"aoColumnDefs": [
 		                 	{	"aTargets": [0],
@@ -157,6 +159,9 @@ $(document).ready(function() {
 							{	"aTargets": [5],
 		                 		"sTitle": "",
 		                 		"mData": "action",
+//		                 		"mData": function ( source, type, val ) {
+//		                 	         return "action0";
+//		                 	       },
 								"bSearchable": false,
 								"bSortable": false,
 								"sWidth": "1%"
@@ -181,8 +186,115 @@ $(document).ready(function() {
 			//filter autocomplete
 			fnAutoComplete();
 	    },
-		"bAutoWidth": false,
-		"bDeferRender": false,
+	} );
+	
+	oTable = $('#device').dataTable( {
+        "sAjaxSource": '/device/index',
+        "sAjaxDataProp": "",
+		"aoColumnDefs": [
+		                 	{	"aTargets": [0],
+		                 		"sTitle": "ID",
+		                 		"mData": "id"
+		                 	},
+		                 	{	"aTargets": [1],
+		                 		"sTitle": "Device ID",
+		                 		"mData": "name"
+		                 	},
+		                 	{	"aTargets": [2],
+		                 		"sTitle": "Display Name",
+		                 		"mData": "displayName"
+		                 	},
+		                 	{	"aTargets": [3],
+		                 		"sTitle": "Description",
+		                 		"mData": "description"
+		                 	},
+		                 	{	"aTargets": [4],
+		                 		"sTitle": "Simcard",
+		                 		"mData": "simcardDisplayName"
+		                 	},
+		                 	{	"aTargets": [5],
+		                 		"sTitle": "Vehicle Installed",
+		                 		"mData": "vehicleDisplayName"
+		                 	},
+		                 	{	"aTargets": [6],
+		                 		"sTitle": "enabled",
+		                 		"mData": function ( source, type, val ) {
+		                 			var content = '<div class="switch"><input type="checkbox" ';
+		                 			if(source.enabled) content += 'checked';
+		                 			content += ' disabled ></div>';
+		                 			return content;
+		                 		},
+		                 	},
+							{	"aTargets": [7],
+		                 		"sTitle": "",
+		                 		"mData": function ( source, type, val ) {
+		                 			return '<nobr>' +			
+											    '<div class="btn-group">' +
+												    '<a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">' +
+												    	'Actions' +
+												    	'<span class="caret"></span>' +
+												    '</a>' +
+												    '<ul class="dropdown-menu pull-right">' +
+												    	'<li><a tabindex="-1" href="#" class="btn-edit" data-device-id="@d.id">Edit</a></li>' +
+												    	'<li><a tabindex="-1" href="#" class="btn-delete" data-device-id="@d.id">Delete</a></li>' +
+												    '</ul>' +
+											    '</div>' +
+										    '</nobr>';
+		                 		},
+								"bSearchable": false,
+								"bSortable": false,
+								"sWidth": "1%",
+							},	
+		               ],
+		"fnDrawCallback": function( oSettings ) {
+			//funzioni chiamate ad ogni redraw della tabella
+				// Gestione selezione righe
+				fnActivateSelection();
+				// local actions
+				$("td:last-child:contains('action0')").html(fnAddLocalActions());
+				$("td:last-child:contains('action1')").html(fnAddLocalActions1());
+				$("td:last-child:contains('action2')").html(fnAddLocalActions2());
+				// (necessarie per bootstrap-select
+				$('.localfunctions .selectpicker').change(fnLocalAction);
+				$('.selectpicker').selectpicker();
+	    },
+	    "fnInitComplete": function(){
+	    	//predispone colonna local actions
+	    	$('.switch').bootstrapSwitch();
+	    	steal('/assets/webapp/webapp_init.js')
+	    	.then('/assets/webapp/devicetypes/devicetypes.js')
+	    	.then(function() {
+	    		$("#create_device").click(function() {
+	    			var $el = $("<div></div>")
+	    			$('body').append($el);
+	    			$el.webapp_devicetypes();
+	    		});
+
+	    		$(".btn-edit").click(function(el, ev) {
+	    			var options = {};
+	    			options["id"] = $(this).attr("data-device-id");
+	    			var $el = $("<div></div>");
+	    			$('body').append($el);
+	    			$el.webapp_devicetypes(options);
+	    		});
+
+	    		$(".btn-delete").click(function(el, ev) {
+	    			var id = $(this).attr("data-device-id");
+	    			jsRoutes.controllers.DeviceType.delete(id).ajax()
+	    			.done(function(data, txtStatus, jqXHR) {
+	    				location.reload(true);
+	    			})
+	    			.fail(function(data, txtStatus, jqXHR) {
+	    				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>×</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+	    				self.find(".alert_placeholder").html($alert);
+	    			});
+	    		});
+	    	});
+	    	$('tr:last-child').addClass("noRowSelected");
+			$('td:last-child').addClass("noClick");
+			//filter autocomplete
+			fnAutoComplete();
+	    },
 	} );
 	//init the table*****************************
 	
@@ -191,7 +303,7 @@ $(document).ready(function() {
     fnAddGlobalFunctions();
     //aggiunta selection buttons
     fnAddSelectionButtons();
-    //aggiunta clear filter button
+    //aggiunta searchbox
     fnAddTableFilter();
     //aggiunta selected info
 	fnAddSelectedInfo();
@@ -235,15 +347,6 @@ $(document).ready(function() {
 } );
 //Init***************************************************************************************************************
 
-//mostra/nasconde la collonna iCol
-function fnShowHide( iCol )
-{
-	/* Get the DataTables object again - this is not a recreation, just a get of the object */
-	var oTable = $('#example').dataTable();
-	
-	var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-	oTable.fnSetColumnVis( iCol, bVis ? false : true );
-}
 
 //elimina duplicati da array
 function unique(array) {
@@ -544,7 +647,7 @@ function fnAutoComplete(){
 	var wordlist = []; 
 	var table = oTable.$('tr');
 	var colonna = [];
-	for(var j=0; j<3; j++){	//per le prime 3 colonne //i<table[0].cells.length-1 per prendere tutta la riga meno la colonna action
+	for(var j=1; j<6; j++){	//per le prime 3 colonne //i<table[0].cells.length-1 per prendere tutta la riga meno la colonna action
 		colonna[j]=[];
 		for(var i=0; i<table.length; i++){
 			colonna[j].push(table[i].cells.item(j).innerHTML);
@@ -552,8 +655,9 @@ function fnAutoComplete(){
 		colonna[j] = unique( colonna[j] );	//elimina duplicati
 		$.merge(wordlist,colonna[j]);		//aggiunge la colonna alla wordlist
 	}
-	$.each(colonna[1], function( index, value ) { colonna[1][index] = value.replace(/\d|\+|\-|\.|\r|\n|\f|\t/g, '').trim(); });	//estrae i nomi dei browser (senza versione)
+	//$.each(colonna[1], function( index, value ) { colonna[1][index] = value.replace(/\d|\+|\-|\.|\r|\n|\f|\t/g, '').trim(); });	//estrae i nomi dei browser (senza versione)
 	$.merge(wordlist,unique(colonna[1]));	//li aggiunge alla wordlist (eliminando i duplicati)
+	wordlist = unique(wordlist); //elimina eventuali ducplicati (presenti nel caso in cui ci siano termini uguali in colonne diverse)
 	wordlist.sort();	
 	//attiva autocompletamento con la wordlist costruita
 	$('.tablefilter input').autocomplete({source: wordlist});

@@ -1,4 +1,4 @@
-@(devices: Seq[DeviceInfoPersisted], user: UserTrait)
+@(user: UserTrait)
 
 
 @header_more = {}
@@ -7,33 +7,10 @@
 <script type='text/javascript'>
 	steal('/assets/webapp/webapp_init.js')
 	.then('/assets/webapp/device/device.js')
-	.then(function() {
-		$("#create_device").click(function() {            	
-			var $el = $("<div></div>")
-			$('body').append($el);
-			$el.webapp_device();
-		});
-            		
-		$(".btn-edit").click(function(el, ev) {
-			var options = {};
-			options["id"] = $(this).attr("data-device-id");
-			var $el = $("<div></div>");
-			$('body').append($el);
-			$el.webapp_device(options);
-		});
-			
-		$(".btn-delete").click(function(el, ev) {
-			var id = $(this).attr("data-device-id");
-			jsRoutes.controllers.Device.delete(id).ajax()
-			.done(function(data, txtStatus, jqXHR) {
-				location.reload(true);
-			})
-			.fail(function(data, txtStatus, jqXHR) {
-				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-				self.find(".alert_placeholder").html($alert);
-			});
-		});
-	});
+	.then('/assets/DataTables-1.9.4/media/js/jquery.dataTables.min.js')
+	.then('/assets/javascripts/DataTableBootstrap/main.js')
+	.then('/assets/javascripts/DataTableBootstrap/devices.js').
+	then('/assets/javascripts/jquery-ui-1.10.3.custom.min.js');
 </script>
 }
 
@@ -43,56 +20,7 @@
 	
 	<div class="alert_placeholder"></div>
 
-	<table class="table table-condensed table-bordered table-striped">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Device ID</th>
-				<th>Display Name</th>
-				<th>Description</th>
-				<th>Simcard</th>
-				<th>Vehicle Installed</th>
-				<th>Enabled</th>
-				<th width="1%"></th>
-			</tr>
-		</thead>
-		<tbody>
-		@devices.map { d =>
-			<tr>
-				<td>@d.id
-				@if(!d.validationErrors.isEmpty){
-					<i class="icon-exclamation-sign"></i>
-				}
-				</td>
-				<td>@d.name</td>
-				<td>@d.displayName</td>
-				<td>@d.description</td>
-				<td>@d.simcardDisplayName</td>
-				<td>@d.vehicleDisplayName (@d.vehicleLicensePlate.getOrElse("none"))
-				</td>
-				<td>
-					<div class="switch">
-						<input type="checkbox" @if(d.enabled){ checked } disabled >
-					</div>
-				</td>
-				<td>
-					<nobr>					
-					    <div class="btn-group">
-						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
-						    	Actions
-						    	<span class="caret"></span>
-						    </a>
-						    <ul class="dropdown-menu pull-right">
-						    	<li><a tabindex="-1" href="#" class="btn-edit" data-device-id="@d.id">Edit</a></li>
-						    	<li><a tabindex="-1" href="#" class="btn-delete" data-device-id="@d.id">Delete</a></li>
-						    </ul>
-					    </div>
-					</nobr>
-				</td>
-			</tr>
-		}
-		</tbody>
+	<table class="table table-condensed table-bordered table-hover" cellpadding="0" cellspacing="0" border="0" id="device">
 	</table>
-	<button class="btn btn-primary" id="create_device">Create new device</button>
 	</div>
 }

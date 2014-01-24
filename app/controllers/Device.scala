@@ -45,13 +45,13 @@ object Device extends Secured {
       if (acceptsJson(request)) {
         Ok(Json.toJson(devices))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.device.index(devices, user))
+        Ok(views.html.aria.device.index(user))
       } else {
         BadRequest
       }
     }
   }
-
+  
   def get(id: Int) = WithCors("GET", "POST", "PUT", "DELETE") {
     WithAuthentication { (user, request) =>
       implicit val req = request
