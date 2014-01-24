@@ -41,39 +41,19 @@ $(document).ready(function() {
 								"sWidth": "1%",
 							},	
 		               ],
-		"fnDrawCallback": function( oSettings ) {
-			//funzioni chiamate ad ogni redraw della tabella
-				// Gestione selezione righe
-				fnActivateSelection();
-		    	//attiva switch
-		    	$('.switch:not(.has-switch)').bootstrapSwitch();
-				// local actions
-		    	fnLocalAction();
-				// (necessarie per bootstrap-select
-				$('.selectpicker').selectpicker();
-	    },
-	    "fnInitComplete": function(){
-	    	//predispone colonna local actions
-	    	$('tr:last-child').addClass("noRowSelected");
-			$('td:last-child').addClass("noClick");
-			//filter autocomplete (colonne 1-5, e aggiunge gli stati della checkbox se necessario)
-			if(window.location.search != "" && getQueryParam("all") == "false" ){
-				fnAutoComplete([0,1,2,3,4]);
-			}else{
-				fnAutoComplete([0,1,2,3,4],["enabled","disabled"]);
-			}
-	    },
-	} );
-	//init the table*****************************
-	
-	init();
-	
-	//aggiunta global functions
-    fnAddGlobalFunctions();
-    
-	//Event bindings*****************************
-	fnGlobalFunctions();
-} );
+	               "fnDrawCallback": function( oSettings ) {
+		       			//funzioni chiamate ad ogni redraw della tabella
+		       			fnReturnDrawCallback();
+		       	    },
+		       	    "fnInitComplete": function(){
+		       	    	//funzioni chiamate quando la tabella è stata inizializzata
+		       	    	fnReturnInitCallBack([0,1,2,3,4]);	//autocompletamento colonne 0-4 (più la colonna enabled)
+		       	    },
+		       	} );
+		       	//init the table*****************************
+		       	
+		       	init();
+   } );
 //Init***************************************************************************************************************
 
 //Local actions***********************************************************************************************************

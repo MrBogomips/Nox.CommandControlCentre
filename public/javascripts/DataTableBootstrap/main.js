@@ -5,13 +5,14 @@ $.extend( true, $.fn.dataTable.defaults, {
 	"sDom": "<'riga'<'half'<'tablefilter'>i><'half'<'selectionbuttons'>r>><'clear'>t<'riga'<'half'<'globalfunctions'>><'half'pl>><'clear'>",
 	"sPaginationType": "bootstrap",
 	"oLanguage": {
-		'sLengthMenu': "Show " +
-						"<select class='selectpicker' data-width='auto'>" +
-								"<option value='10'>10 elements </option>" +
-								"<option value='20'>20 elements </option>" +
-								"<option value='50'>50 elements </option>" +
-								"<option value='100'>100 elements </option>" +
-						"</select>",
+		'sLengthMenu': "Show \
+						<select class='selectpicker' data-width='auto' data-hide-disabled='true'> \
+								<option value='10'>10 elements </option> \
+								<option value='20'>20 elements </option> \
+								<option value='50'>50 elements </option> \
+								<option value='100'>100 elements </option> \
+								<option value='-1'>All elements</option> \
+						</select>",
 		"fnInfoCallback": function (oSettings, iStart, iEnd, iMax, iTotal, sPre) {
 						        if(iTotal == iMax){
 						            return "Found " + iTotal + " records";
@@ -178,9 +179,12 @@ function init(){
     fnAddTableFilter();
     //aggiunta selected info
 	fnAddSelectedInfo();
+	//aggiunta global functions
+    fnAddGlobalFunctions();		//definita per la singola tabella nel js specifico
 	//Aggiunte***********************************
     
 	//Event bindings*****************************
+	fnGlobalFunctions();		//definita per la singola tabella nel js specifico
 	//clear filter button
 	$(".tablefilter .clear").click(function( e ) {
 		$(".tablefilter input").val('');
@@ -204,7 +208,7 @@ function init(){
 	//Event bindings*****************************
 	
 	//Enable Bootstrap-Select
-	$('.selectpicker').selectpicker();
+//	$('.selectpicker').selectpicker();
 }
 //Init***************************************************************************************************************
 
@@ -390,6 +394,18 @@ function getQueryParam(param) {
     return result ? result[3] : false;
 }
 
+//Imposta il menù di paginazione
+function fnSetLengthMenu(){
+	menu = $('.selectpicker');
+	rowNumber = oTable.fnGetData().length;
+	//elimina le opzioni "inutili"
+	for(i in options=[10,20,50,100]){
+		val=options[i];
+		if(rowNumber < val) menu.find('option[value="'+val+'"]').attr('disabled', true).attr('selected', false);
+	}
+	$('.selectpicker').selectpicker('refresh');
+}
+
 //************************************************************************************************************************
 //funzioni di supporto per la definizione di una tabella datatable
 function fnReturnCheckbox( data, type, val ) {
@@ -417,17 +433,42 @@ function fnReturnCheckbox( data, type, val ) {
 }
 
 function fnReturnActionEditDelete( data, type, val ) {
-		return '<nobr>' +			
-			    '<div class="btn-group">' +
-				    '<a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-target="#">' +
-				    	'Actions' +
-				    	'<span class="caret"></span>' +
-				    '</a>' +
-				    '<ul class="dropdown-menu pull-right">' +
-				    	'<li><a tabindex="-1" data-target="#" class="btn-edit" data-device-id="@d.id">Edit</a></li>' +
-				    	'<li><a tabindex="-1" data-target="#" class="btn-delete" data-device-id="@d.id">Delete</a></li>' +
-				    '</ul>' +
-			    '</div>' +
-		    '</nobr>';
+	return '<nobr>' +			
+		    '<div class="btn-group">' +
+			    '<a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-target="#">' +
+			    	'Actions' +
+			    	'<span class="caret"></span>' +
+			    '</a>' +
+			    '<ul class="dropdown-menu pull-right">' +
+			    	'<li><a tabindex="-1" data-target="#" class="btn-edit" data-device-id="@d.id">Edit</a></li>' +
+			    	'<li><a tabindex="-1" data-target="#" class="btn-delete" data-device-id="@d.id">Delete</a></li>' +
+			    '</ul>' +
+		    '</div>' +
+	    '</nobr>';
+}
+
+function fnReturnDrawCallback(){
+	// Gestione selezione righe
+	fnActivateSelection();
+	//attiva switch
+	$('.switch:not(.has-switch)').bootstrapSwitch();
+	// local actions
+	fnLocalAction();	//definita per la singola tabella nel js specifico
+	// (necessarie per bootstrap-select
+	$('.selectpicker').selectpicker();
+}
+
+function fnReturnInitCallBack(columnlist){
+	//predispone colonna local actions
+	$('tr:last-child').addClass("noRowSelected");
+	$('td:last-child').addClass("noClick");
+	//imposta il menù di paginazione
+	fnSetLengthMenu();
+	//filter autocomplete (colonne 1-5, e aggiunge gli stati della checkbox se necessario)
+	if(window.location.search != "" && getQueryParam("all") == "false" ){
+		fnAutoComplete(columnlist);
+	}else{
+		fnAutoComplete(columnlist,["enabled","disabled"]);
 	}
+}
 //************************************************************************************************************************
