@@ -32,18 +32,34 @@ $(document).ready(function() {
 		                 	},
 		                 	{	"aTargets": [6],
 		                 		"sTitle": "enabled",
-		                 		"sSortDataType": "dom-checkbox",
-		                 		"mData": function ( source, type, val ) {
-		                 			var content = '<div class="switch"><input type="checkbox" ';
-		                 			if(source.enabled) content += 'checked';
-		                 			content += ' disabled ></div>';
-		                 			return content;
+		                 		"mData": function ( data, type, val ) {
+		                 			if (type === 'set') {
+		                 		        // Memorizza il valore base
+		                 		        data.enabled = val;
+		                 		 
+		                 		        // Mostra una checkbox switch
+		                 		        data.enabled_display = '<div class="switch"><input type="checkbox" ';
+		                 		        if(val) data.enabled_display += 'checked';
+		                 		        data.enabled_display += ' disabled ></div>';
+		                 		 
+		                 		        // Filtra in base allo stato (enabled/disabled)
+		                 		        data.enabled_filter = val ? "enabled" : "disabled";
+		                 		        return;
+		                 		    }
+		                 		    else if (type === 'display') {
+		                 		        return data.enabled_display;
+		                 		    }
+		                 		    else if (type === 'filter') {
+		                 		        return data.enabled_filter;
+		                 		    }
+		                 		    // 'sort', 'type' and undefined all just use the integer
+		                 		    return data.enabled;
 		                 		},
 		                 		"sWidth": "1%",
 		                 	},
 							{	"aTargets": [7],
 		                 		"sTitle": "",
-		                 		"mData": function ( source, type, val ) {
+		                 		"mData": function ( data, type, val ) {
 		                 			return '<nobr>' +			
 											    '<div class="btn-group">' +
 												    '<a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-target="#">' +
@@ -140,7 +156,7 @@ function fnAutoComplete(){
 	var wordlist = []; 
 	var table = oTable.$('tr');
 	var colonna = [];
-	for(var j=1; j<6; j++){	//per le colonne 2-5 //i<table[0].cells.length-1 per prendere tutta la riga meno la colonna action
+	for(var j=1; j<6; j++){	//per le colonne 2-6 //i<table[0].cells.length-1 per prendere tutta la riga meno la colonna action
 		colonna[j]=[];
 		for(var i=0; i<table.length; i++){
 			colonna[j].push(table[i].cells.item(j).innerHTML);
@@ -148,8 +164,7 @@ function fnAutoComplete(){
 		colonna[j] = unique( colonna[j] );	//elimina duplicati
 		$.merge(wordlist,colonna[j]);		//aggiunge la colonna alla wordlist
 	}
-	$.each(colonna[1], function( index, value ) { colonna[1][index] = value.replace(/\d|\+|\-|\.|\r|\n|\f|\t/g, '').trim(); });	//estrae i nomi dei browser (senza versione)
-	$.merge(wordlist,unique(colonna[1]));	//li aggiunge alla wordlist (eliminando i duplicati)
+	wordlist.push("enabled","disabled");	//aggiunge i due termini per la colonna delle checkbox
 	wordlist = unique(wordlist); //elimina eventuali ducplicati (presenti nel caso in cui ci siano termini uguali in colonne diverse)
 	wordlist.sort();	
 	//attiva autocompletamento con la wordlist costruita

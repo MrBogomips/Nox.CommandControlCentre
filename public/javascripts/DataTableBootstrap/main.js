@@ -127,16 +127,42 @@ $.extend( $.fn.dataTableExt.oPagination, {
 	}
 } );
 
-//ordinamento colonne checkbox
-$.fn.dataTableExt.afnSortData['dom-checkbox'] = function ( oSettings, iColumn )
-{
-    var aData = [];
-    $( 'td:eq('+iColumn+') input', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
-        aData.push( this.checked==true ? "1" : "0" );
-    } );
-    alert(aData);
-    return aData;
-};
+/*
+ * TableTools Bootstrap compatibility
+ * Required TableTools 2.1+
+ */
+if ( $.fn.DataTable.TableTools ) {
+	// Set the classes that TableTools uses to something suitable for Bootstrap
+	$.extend( true, $.fn.DataTable.TableTools.classes, {
+		"container": "DTTT btn-group",
+		"buttons": {
+			"normal": "btn",
+			"disabled": "disabled"
+		},
+		"collection": {
+			"container": "DTTT_dropdown dropdown-menu",
+			"buttons": {
+				"normal": "",
+				"disabled": "disabled"
+			}
+		},
+		"print": {
+			"info": "DTTT_print_info modal"
+		},
+		"select": {
+			"row": "active"
+		}
+	} );
+
+	// Have the collection use a bootstrap compatible dropdown
+	$.extend( true, $.fn.DataTable.TableTools.DEFAULTS.oTags, {
+		"collection": {
+			"container": "ul",
+			"button": "li",
+			"liner": "a"
+		}
+	} );
+}
 
 
 //Init***************************************************************************************************************
