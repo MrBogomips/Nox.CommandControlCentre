@@ -18,14 +18,14 @@ object Vehicle extends Secured {
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
       implicit val req = request
-      val vehicles = all match {
-        case false => Vehicles.findWithInfo(Some(true))
-        case true  => Vehicles.findWithInfo(None)
-      }
       if (acceptsJson(request)) {
+        val vehicles = all match {
+	      case false => Vehicles.findWithInfo(Some(true))
+	      case true  => Vehicles.findWithInfo(None)
+	    }
         Ok(Json.toJson(vehicles))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.vehicle.index(vehicles, user))
+        Ok(views.html.aria.vehicle.index(user))
       } else {
         BadRequest
       }

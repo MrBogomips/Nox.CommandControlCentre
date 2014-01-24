@@ -34,15 +34,14 @@ object Operator extends Secured {
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
       implicit val req = request
-
-      val operators = all match {
-        case false => Operators.find(Some(true))
-        case true  => Operators.find(None)
-      }
       if (acceptsJson(request)) {
+        val operators = all match {
+          case false => Operators.find(Some(true))
+          case true  => Operators.find(None)
+        }
         Ok(Json.toJson(operators))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.operator.index(operators, user))
+        Ok(views.html.aria.operator.index(user))
       } else {
         BadRequest
       }

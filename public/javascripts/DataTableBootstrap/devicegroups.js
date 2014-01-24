@@ -3,8 +3,6 @@ var oTable;
 /* Table initialisation */
 $(document).ready(function() {
 	oTable = $('#devicegroups').dataTable( {
-        "sAjaxSource": window.location.pathname+window.location.search,
-        "sAjaxDataProp": "",
 		"aoColumnDefs": [
 		                 	{	"aTargets": [0],
 		                 		"sTitle": "ID",

@@ -1,39 +1,16 @@
-@(vehicles: Seq[VehicleInfoPersisted], user: UserTrait)
+@(user: UserTrait)
 
 
 @header_more = {}
 
 @footer_scripts = {
 <script type='text/javascript'>
-	steal('/assets/webapp/webapp_init.js')
-	.then('/assets/webapp/vehicles/vehicles.js')
-	.then(function() {
-		$("#create_vehicle").click(function() {
-			var $el = $("<div></div>")
-			$('body').append($el);
-			$el.webapp_vehicles();
-		});
-
-		$(".btn-edit").click(function(el, ev) {
-			var options = {};
-			options["id"] = $(this).attr("data-vehicle-id");
-			var $el = $("<div></div>");
-			$('body').append($el);
-			$el.webapp_vehicles(options);
-		});
-
-		$(".btn-delete").click(function(el, ev) {
-			var id = $(this).attr("data-vehicle-id");
-			jsRoutes.controllers.Vehicle.delete(id).ajax()
-			.done(function(data, txtStatus, jqXHR) {
-				location.reload(true);
-			})
-			.fail(function(data, txtStatus, jqXHR) {
-				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-				$(".alert_placeholder").html($alert);
-			});
-		});
-	});
+steal('/assets/webapp/webapp_init.js')
+.then('/assets/webapp/vehicles/vehicles.js')
+.then('/assets/DataTables-1.9.4/media/js/jquery.dataTables.min.js')
+.then('/assets/javascripts/DataTableBootstrap/main.js')
+.then('/assets/javascripts/DataTableBootstrap/vehicles.js')
+.then('/assets/javascripts/jquery-ui-1.10.3.custom.min.js');
 </script>
 }
 
@@ -43,53 +20,8 @@
 	
 	<div class="alert_placeholder"></div>
 
-	<table class="table table-condensed table-bordered table-striped">
-		<thead>
-			<tr>
-				<th>Vehicle ID</th>
-				<th>Name</th>
-				<th>Display Name</th>
-				<th>Description</th>
-				<th>Model</th>
-				<th>License Plate</th>
-				<th>Enabled</th>
-				<th width="1%"></th>
-			</tr>
-		</thead>
-		<tbody>
-		@vehicles.map { v =>
-			<tr>
-				<td>@v.id</td>
-				<td>@v.name</td>
-				<td>@v.displayName</td>
-				<td>@v.description</td>
-				<td>@v.model</td>
-				<td>@v.licensePlate</td>
-				<td>
-					<div class="switch">
-					<input type="checkbox" @if(v.enabled){
-						checked
-					} disabled >
-					</div>
-				</td>
-				<td>
-					<nobr>					
-					    <div class="btn-group">
-						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
-						    	Actions
-						    	<span class="caret"></span>
-						    </a>
-						    <ul class="dropdown-menu pull-right">
-						    	<li><a tabindex="-1" href="#" class="btn-edit" data-vehicle-id="@v.id">Edit</a></li>
-						    	<li><a tabindex="-1" href="#" class="btn-delete" data-vehicle-id="@v.id">Delete</a></li>
-						    </ul>
-					    </div>
-					</nobr>
-				</td>
-			</tr>
-		}
-		</tbody>
-	</table>
-	<button class="btn btn-primary" id="create_vehicle">Create new vehicle</button>
+		<table class="table table-condensed table-bordered table-hover" id="vehicles">
+		</table>
+	
 	</div>
 }

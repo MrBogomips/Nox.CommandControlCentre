@@ -16,14 +16,15 @@ object Driver extends Secured {
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
       implicit val req = request
-      val drivers = all match {
-        case false => Drivers.find(Some(true))
-        case true  => Drivers.find(None)
-      }
+
       if (acceptsJson(request)) {
+        val drivers = all match {
+          case false => Drivers.find(Some(true))
+          case true  => Drivers.find(None)
+        }
         Ok(Json.toJson(drivers))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.driver.index(drivers, user))
+        Ok(views.html.aria.driver.index(user))
       } else {
         BadRequest
       }

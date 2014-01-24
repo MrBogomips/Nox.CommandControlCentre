@@ -41,15 +41,14 @@ object MaintenanceService extends Secured {
       Ok(Json.toJson(out))
     }
     * */
-
-      val services = all match {
-        case false => MaintenanceServices.find(Some(true))
-        case true  => MaintenanceServices.find(None)
-      }
       if (acceptsJson(request)) {
+        val services = all match {
+          case false => MaintenanceServices.find(Some(true))
+          case true  => MaintenanceServices.find(None)
+        }
         Ok(Json.toJson(services))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.maintenanceservice.index(services, user))
+        Ok(views.html.aria.maintenanceservice.index(user))
       } else {
         BadRequest
       }

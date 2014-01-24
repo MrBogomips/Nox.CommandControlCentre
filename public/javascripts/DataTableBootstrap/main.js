@@ -1,5 +1,7 @@
 /* Set the defaults for DataTables initialisation */
 $.extend( true, $.fn.dataTable.defaults, {
+    "sAjaxSource": window.location.pathname+window.location.search,
+    "sAjaxDataProp": "",
 	"sDom": "<'riga'<'half'<'tablefilter'>i><'half'<'selectionbuttons'>r>><'clear'>t<'riga'<'half'<'globalfunctions'>><'half'pl>><'clear'>",
 	"sPaginationType": "bootstrap",
 	"oLanguage": {
