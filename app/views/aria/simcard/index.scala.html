@@ -1,4 +1,4 @@
-@(simcards: Seq[SimcardPersisted], user: UserTrait)
+@(user: UserTrait)
 
 @header_more = {}
 
@@ -6,33 +6,10 @@
 <script type='text/javascript'>
 	steal('/assets/webapp/webapp_init.js')
 	.then('/assets/webapp/simcard/simcard.js')
-	.then(function() {
-		$("#create_simcard").click(function() {
-			var $el = $("<div></div>")
-			$('body').append($el);
-			$el.webapp_simcard();
-		});
-            		
-		$(".btn-edit").click(function(el, ev) {
-			var options = {};
-			options["id"] = $(this).attr("data-simcard-id");
-			var $el = $("<div></div>");
-			$('body').append($el);
-			$el.webapp_simcard(options);
-		});
-			
-		$(".btn-delete").click(function(el, ev) {
-			var id = $(this).attr("data-simcard-id");
-			jsRoutes.controllers.Simcard.delete(id).ajax()
-			.done(function(data, txtStatus, jqXHR) {
-				location.reload(true);
-			})
-			.fail(function(data, txtStatus, jqXHR) {
-				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>������</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-				self.find(".alert_placeholder").html($alert);
-			});
-		});
-	});
+	.then('/assets/DataTables-1.9.4/media/js/jquery.dataTables.min.js')
+	.then('/assets/javascripts/DataTableBootstrap/main.js')
+	.then('/assets/javascripts/DataTableBootstrap/simcards.js')
+	.then('/assets/javascripts/jquery-ui-1.10.3.custom.min.js');
 </script>
 }
 
@@ -42,56 +19,8 @@
 	
 	<div class="alert_placeholder"></div>
 
-	<table class="table table-condensed table-bordered table-striped simcards">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>IMEI</th>
-				<th>Display Name</th>
-				<th>Description</th>
-				<th>Mobile Number</th>
-				<th>Carrier ID</th>
-				<th>Enabled</th>
-				<th width="1%"></th>
-			</tr>
-		</thead>
-		<tbody>
-		@simcards.map { s =>
-			<tr>
-				<td>@s.id
-				@if(!s.validationErrors.isEmpty){
-					<i class="icon-exclamation-sign"></i>
-				}
-				</td>
-				<td>@s.imei</td>
-				<td>@s.displayName</td>
-				<td>@s.description</td>
-				<td>@s.mobileNumber</td>
-				<td>@s.carrierId</td>
-				<td><div class="switch">
-					<input type="checkbox" @if(s.enabled){
-						checked
-					} disabled >
-					</div>
-				</td>
-				<td>
-					<nobr>					
-					    <div class="btn-group">
-						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
-						    	Actions
-						    	<span class="caret"></span>
-						    </a>
-						    <ul class="dropdown-menu pull-right">
-						    	<li><a tabindex="-1" href="#" class="btn-edit" data-simcard-id="@s.id">Edit</a></li>
-						    	<li><a tabindex="-1" href="#" class="btn-delete" data-simcard-id="@s.id">Delete</a></li>
-						    </ul>
-					    </div>
-					</nobr>
-				</td>
-			</tr>
-		}
-		</tbody>
-	</table>
-	<button class="btn btn-primary" id="create_simcard">Create new simcard</button>
+		<table class="table table-condensed table-bordered table-striped" id="simcards">
+		</table>
+
 	</div>
 }

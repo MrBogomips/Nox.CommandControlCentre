@@ -15,15 +15,15 @@ object Simcard extends Secured {
 
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
-      implicit val req = request
-      val simcards = all match {
-        case false => Simcards.find(Some(true))
-        case true  => Simcards.find(None)
-      }
+      implicit val req = request  
       if (acceptsJson(request)) {
+        val simcards = all match {
+	      case false => Simcards.find(Some(true))
+	      case true  => Simcards.find(None)
+	    }
         Ok(Json.toJson(simcards))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.simcard.index(simcards, user))
+        Ok(views.html.aria.simcard.index(user))
       } else {
         BadRequest
       }

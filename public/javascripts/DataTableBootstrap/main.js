@@ -353,3 +353,79 @@ function unique(array) {
         return index == $.inArray(el, array);
     });
 }
+
+//************************************************************************************************************************
+//imposta e attiva l'autocompletamento sul campo di ricerca
+function fnAutoComplete(columnlist, wordlistAppend=[]){
+	var wordlist = []; 
+	var table = oTable.$('tr');
+	var colonna = [];
+	for(var j in columnlist){	//per le colonne 1-5 //i<table[0].cells.length-1 per prendere tutta la riga meno la colonna action
+		if (Object.prototype.hasOwnProperty.call(columnlist, j)) {	//controllo per evitare di aggiungere altre proprietà della classe Array
+			j=columnlist[j];	//prende l'indice effettivo e non l'index dell'indice all'interno di columnlist
+			colonna[j]=[];
+			for(var i=0; i<table.length; i++){
+				colonna[j].push(table[i].cells.item(j).innerHTML);
+			}
+			colonna[j] = unique( colonna[j] );	//elimina duplicati
+			$.merge(wordlist,colonna[j]);		//aggiunge la colonna alla wordlist
+		}
+	}
+	wordlist.push.apply(wordlist,wordlistAppend);	//aggiunge i termini in wordlistAppend alla wordlist
+	wordlist = unique(wordlist); //elimina eventuali ducplicati (presenti nel caso in cui ci siano termini uguali in colonne diverse)
+	wordlist.sort();	
+	//attiva autocompletamento con la wordlist costruita
+	$('.tablefilter input').autocomplete({source: wordlist});
+}
+//************************************************************************************************************************
+
+//prende parametro da querystring
+function getQueryParam(param) {
+    var result =  window.location.search.match(
+        new RegExp("(\\?|&)" + param + "(\\[\\])?=([^&]*)")
+    );
+
+    return result ? result[3] : false;
+}
+
+//************************************************************************************************************************
+//funzioni di supporto per la definizione di una tabella datatable
+function fnReturnCheckbox( data, type, val ) {
+	if (type === 'set') {
+        // Memorizza il valore base
+        data.enabled = val;
+ 
+        // Mostra una checkbox switch
+        data.enabled_display = '<div class="switch"><input type="checkbox" ';
+        if(val) data.enabled_display += 'checked';
+        data.enabled_display += ' disabled ></div>';
+ 
+        // Filtra in base allo stato (enabled/disabled)
+        data.enabled_filter = val ? "enabled" : "disabled";
+        return;
+    }
+    else if (type === 'display') {
+        return data.enabled_display;
+    }
+    else if (type === 'filter') {
+        return data.enabled_filter;
+    }
+    // 'sort', 'type' and undefined all just use the integer
+    return data.enabled;
+}
+
+function fnReturnActionEditDelete( data, type, val ) {
+		return '<nobr>' +			
+			    '<div class="btn-group">' +
+				    '<a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-target="#">' +
+				    	'Actions' +
+				    	'<span class="caret"></span>' +
+				    '</a>' +
+				    '<ul class="dropdown-menu pull-right">' +
+				    	'<li><a tabindex="-1" data-target="#" class="btn-edit" data-device-id="@d.id">Edit</a></li>' +
+				    	'<li><a tabindex="-1" data-target="#" class="btn-delete" data-device-id="@d.id">Delete</a></li>' +
+				    '</ul>' +
+			    '</div>' +
+		    '</nobr>';
+	}
+//************************************************************************************************************************

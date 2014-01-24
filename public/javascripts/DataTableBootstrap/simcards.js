@@ -2,7 +2,7 @@
 var oTable;
 /* Table initialisation */
 $(document).ready(function() {
-	oTable = $('#device').dataTable( {
+	oTable = $('#simcards').dataTable( {
         "sAjaxSource": window.location.pathname+window.location.search,
         "sAjaxDataProp": "",
 		"aoColumnDefs": [
@@ -11,8 +11,8 @@ $(document).ready(function() {
 		                 		"mData": "id"
 		                 	},
 		                 	{	"aTargets": [1],
-		                 		"sTitle": "Device ID",
-		                 		"mData": "name"
+		                 		"sTitle": "IMEI",
+		                 		"mData": "imei"
 		                 	},
 		                 	{	"aTargets": [2],
 		                 		"sTitle": "Display Name",
@@ -23,12 +23,12 @@ $(document).ready(function() {
 		                 		"mData": "description"
 		                 	},
 		                 	{	"aTargets": [4],
-		                 		"sTitle": "Simcard",
-		                 		"mData": "simcardDisplayName"
+		                 		"sTitle": "Mobile Number",
+		                 		"mData": "mobileNumber"
 		                 	},
 		                 	{	"aTargets": [5],
-		                 		"sTitle": "Vehicle Installed",
-		                 		"mData": "vehicleDisplayName"
+		                 		"sTitle": "Carrier ID",
+		                 		"mData": "carrierId"
 		                 	},
 		                 	{	"aTargets": [6],
 		                 		"sTitle": "enabled",
@@ -87,20 +87,20 @@ $(document).ready(function() {
 function fnLocalAction(){
 	$(".btn-edit").click(function(el, ev) {
 		var options = {};
-		options["id"] = $(this).attr("data-device-id");
+		options["id"] = $(this).attr("data-simcard-id");
 		var $el = $("<div></div>");
 		$('body').append($el);
-		$el.webapp_device(options);
+		$el.webapp_simcard(options);
 	});
 		
 	$(".btn-delete").click(function(el, ev) {
-		var id = $(this).attr("data-device-id");
-		jsRoutes.controllers.Device.delete(id).ajax()
+		var id = $(this).attr("data-simcard-id");
+		jsRoutes.controllers.Simcard.delete(id).ajax()
 		.done(function(data, txtStatus, jqXHR) {
 			location.reload(true);
 		})
 		.fail(function(data, txtStatus, jqXHR) {
-			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>������</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
 			self.find(".alert_placeholder").html($alert);
 		});
 	});
@@ -110,15 +110,15 @@ function fnLocalAction(){
 //Global Functions********************************************************************************************************
 //gestione global functions
 function fnGlobalFunctions(){
-	$("#create_device").click(function() {            	
+	$("#create_simcard").click(function() {
 		var $el = $("<div></div>")
 		$('body').append($el);
-		$el.webapp_device();
+		$el.webapp_simcard();
 	});
 }
 
 //aggiunta global actions
 function fnAddGlobalFunctions(){
-	$(".globalfunctions").html('<button class="btn btn-primary" id="create_device">Create new device</button>');
+	$(".globalfunctions").html('<button class="btn btn-primary" id="create_simcard">Create new simcard</button>');
 }
 //************************************************************************************************************************

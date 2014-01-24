@@ -1,11 +1,57 @@
-@(entities: Seq[NamedEntityPersisted[_]], user: UserTrait, ariaController: String, ariaControllerFile: String, pageTitle: String, playController: String)
+@(user: UserTrait, ariaController: String, ariaControllerFile: String, pageTitle: String, playController: String)
 
 
 @header_more = {}
 
 @footer_scripts = {
 <script type='text/javascript'>
+function fnLocalAction(){
+	$("#create_device").click(function() {
+		var $el = $("<div></div>")
+		$('body').append($el);
+		//$el.webapp_@{ariaController.toLowerCase}();
+		new Webapp.@{ariaController}($el)
+	});
+
+	$(".btn-edit").click(function(el, ev) {
+		var options = {};
+		options["id"] = $(this).attr("data-@{ariaController}-id");
+		var $el = $("<div></div>");
+		$('body').append($el);
+		//$el.webapp_@{ariaController.toLowerCase}(options);
+		new Webapp.@{ariaController}($el, options)
+	});
+}
+	
+function fnGlobalFunctions(){
+	$(".btn-delete").click(function(el, ev) {
+		var id = $(this).attr("data-@{ariaController}-id");
+		jsRoutes.controllers.@{playController}.delete(id).ajax()
+		.done(function(data, txtStatus, jqXHR) {
+			location.reload(true);
+		})
+		.fail(function(data, txtStatus, jqXHR) {
+			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+			self.find(".alert_placeholder").html($alert);
+		});
+	});
+
+}
+
+function fnAddGlobalFunctions(){
+	$(".globalfunctions").html('<button class="btn btn-primary" id="create_device">Create new @pageTitle.toLowerCase()</button>');
+}
+</script>
+<script type='text/javascript'>
 	steal('/assets/webapp/webapp_init.js')
+	.then('/assets/webapp/@ariaController/@{ariaController}.js')
+	.then('/assets/webapp/menu/menu.js')
+	.then('/assets/DataTables-1.9.4/media/js/jquery.dataTables.min.js')
+	.then('/assets/javascripts/DataTableBootstrap/main.js')
+	.then('/assets/javascripts/DataTableBootstrap/@{ariaController}.js')
+	.then('/assets/javascripts/jquery-ui-1.10.3.custom.min.js');
+	
+/*		steal('/assets/webapp/webapp_init.js')
 	.then('/assets/webapp/@ariaController/@{ariaController}.js')
 	.then('/assets/webapp/menu/menu.js')
 	.then(function() {
@@ -37,6 +83,7 @@
 			});
 		});
 	});
+*/
 </script>
 }
 
@@ -62,50 +109,8 @@
 	<h1>@pageTitle</h1>
 	
 	<div class="alert_placeholder"></div>
-
-	<table class="table table-condensed table-bordered table-striped">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Display Name</th>
-				<th>Description</th>
-				<th>Enabled</th>
-				<th width="1%"></th>
-			</tr>
-		</thead>
-		<tbody>
-		@entities.map { g =>
-			<tr>
-				<td>@g.id</td>
-				<td>@g.name</td>
-				<td>@g.displayName</td>
-				<td>@g.description</td>
-				<td><div class="switch">
-					<input type="checkbox" @if(g.enabled){
-						checked
-					} disabled >
-					</div>
-					</td>
-				<td>
-					<nobr>					
-					    <div class="btn-group">
-						    <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#">
-						    	Actions
-						    	<span class="caret"></span>
-						    </a>
-						    <ul class="dropdown-menu pull-right">
-						    	<li><a tabindex="-1" href="#" class="btn-edit" data-@{ariaController}-id="@g.id">Edit</a></li>
-						    	<li><a tabindex="-1" href="#" class="btn-delete" data-@{ariaController}-id="@g.id">Delete</a></li>
-						    </ul>
-					    </div>
-					</nobr>
-				</td>
-			</tr>
-		}
-		</tbody>
-	</table>
-	<button class="btn btn-primary" id="create_device">Create new @pageTitle.toLowerCase()</button>
+		<table class="table table-condensed table-bordered table-striped" id="@{ariaController}">
+		</table>
 	</div>
 
 }
