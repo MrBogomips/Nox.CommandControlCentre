@@ -274,7 +274,6 @@ function fnManageSelection(){
 	if(!cella.hasClass('noClick')){
 		if ( riga.hasClass('row_selected') ) {
 			riga.removeClass('row_selected');
-			oTable.fnDraw();	//ridisegna la tabella per visualizzare solo le righe selezionate (se abilitato)
 		}else {
 			//oTable.$('tr.row_selected').removeClass('row_selected');	//decommentare per settare il single-row selection
 			riga.addClass('row_selected');
@@ -408,46 +407,44 @@ function fnSetLengthMenu(){
 
 //************************************************************************************************************************
 //funzioni di supporto per la definizione di una tabella datatable
-function fnReturnCheckbox( data, type, val ) {
-	if (type === 'set') {
-        // Memorizza il valore base
-        data.enabled = val;
- 
+function fnReturnCheckbox( data, type, val, enabled ) {
+	if (type === 'display') {
         // Mostra una checkbox switch
-        data.enabled_display = '<div class="switch"><input type="checkbox" ';
-        if(val) data.enabled_display += 'checked';
-        data.enabled_display += ' disabled ></div>';
- 
-        // Filtra in base allo stato (enabled/disabled)
-        data.enabled_filter = val ? "enabled" : "disabled";
-        return;
+        var enabled_display = '<div class="switch"><input type="checkbox" ';
+        if(data) enabled_display += 'checked';
+        if(!enabled) enabled_display += ' disabled';
+        enabled_display += '></div>';
+        
+        return enabled_display;
+	}else if (type === 'filter') {
+        return (data ? "enabled" : "disabled");
+    }else{
+    // 'sort', 'type'
+    return data;
     }
-    else if (type === 'display') {
-        return data.enabled_display;
-    }
-    else if (type === 'filter') {
-        return data.enabled_filter;
-    }
-    // 'sort', 'type' and undefined all just use the integer
-    return data.enabled;
 }
 
-function fnReturnActionEditDelete( data, type, val ) {
-	return '<nobr>' +			
-		    '<div class="btn-group">' +
-			    '<a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-target="#">' +
-			    	'Actions' +
-			    	'<span class="caret"></span>' +
-			    '</a>' +
-			    '<ul class="dropdown-menu pull-right">' +
-			    	'<li><a tabindex="-1" data-target="#" class="btn-edit" data-device-id="@d.id">Edit</a></li>' +
-			    	'<li><a tabindex="-1" data-target="#" class="btn-delete" data-device-id="@d.id">Delete</a></li>' +
-			    '</ul>' +
-		    '</div>' +
-	    '</nobr>';
+function fnReturnActions( data, type, val, actions, controllername) {
+	var content = '<nobr> \
+				   <div class="btn-group"> \
+				   <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-target="#"> \
+				   Actions \
+				   <span class="caret"></span> \
+				   </a> \
+				   <ul class="dropdown-menu pull-right">';
+	for(i in actions){
+		content += '<li><a tabindex="-1" data-target="#" class="btn-'+actions[i].toLowerCase()+'" data-'+controllername+'-id="'+data+'">'+actions[i]+'</a></li>';
+	}
+	content += '</ul> \
+			    </div> \
+			    </nobr>';
+	return content;
 }
 
 function fnReturnDrawCallback(){
+	//predispone colonna local actions
+	$('tr:last-child').addClass("noRowSelected");
+	$('td:last-child').addClass("noClick");
 	// Gestione selezione righe
 	fnActivateSelection();
 	//attiva switch
@@ -459,9 +456,6 @@ function fnReturnDrawCallback(){
 }
 
 function fnReturnInitCallBack(columnlist){
-	//predispone colonna local actions
-	$('tr:last-child').addClass("noRowSelected");
-	$('td:last-child').addClass("noClick");
 	//imposta il menù di paginazione
 	fnSetLengthMenu();
 	//filter autocomplete (colonne 1-5, e aggiunge gli stati della checkbox se necessario)

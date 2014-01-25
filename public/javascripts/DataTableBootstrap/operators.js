@@ -17,16 +17,18 @@ $(document).ready(function() {
 		                 		"mData": "displayName"
 		                 	},
 		                 	{	"aTargets": [3],
-		                 		"sTitle": "enabled",
-		                 		"mData": function ( data, type, val ) {
-		                 			return fnReturnCheckbox( data, type, val );
+		                 		"sTitle": "Enabled",
+		                 		"mData": "enabled",
+		                 		"mRender": function ( data, type, val ) {
+		                 			return fnReturnCheckbox( data, type, val, false );
 		                 		},
 		                 		"sWidth": "1%",
 		                 	},
 							{	"aTargets": [4],
 		                 		"sTitle": "",
-		                 		"mData": function ( data, type, val ) {
-		                 			return fnReturnActionEditDelete( data, type, val );
+		                 		"mData": "id",	//passa l'id alle action
+		                 		"mRender": function ( data, type, val ) {
+		                 			return fnReturnActions( data, type, val, ["Edit","Delete"],"maintenance-operator" );
 		                 		},
 								"bSearchable": false,
 								"bSortable": false,
@@ -53,14 +55,14 @@ $(document).ready(function() {
 function fnLocalAction(){
 	$(".btn-edit").click(function(el, ev) {
 		var options = {};
-		options["id"] = $(this).attr("maintenance-operator-id");
+		options["id"] = $(this).attr("data-maintenance-operator-id");
 		var $el = $("<div></div>");
 		$('body').append($el);
 		$el.webapp_maintenanceoperators(options);
 	});
 		
 	$(".btn-delete").click(function(el, ev) {
-		var id = $(this).attr("maintenance-operator-id");
+		var id = $(this).attr("data-maintenance-operator-id");
 		jsRoutes.controllers.Operator.delete(id).ajax()
 		.done(function(data, txtStatus, jqXHR) {
 			location.reload(true);

@@ -21,16 +21,18 @@ $(document).ready(function() {
 		                 		"mData": "description"
 		                 	},
 		                 	{	"aTargets": [4],
-		                 		"sTitle": "enabled",
-		                 		"mData": function ( data, type, val ) {
-		                 			return fnReturnCheckbox( data, type, val );
+		                 		"sTitle": "Enabled",
+		                 		"mData": "enabled",
+		                 		"mRender": function ( data, type, val ) {
+		                 			return fnReturnCheckbox( data, type, val, false );
 		                 		},
 		                 		"sWidth": "1%",
 		                 	},
 							{	"aTargets": [5],
 		                 		"sTitle": "",
-		                 		"mData": function ( data, type, val ) {
-		                 			return fnReturnActionEditDelete( data, type, val );
+		                 		"mData": "id",	//passa l'id alle action
+		                 		"mRender": function ( data, type, val ) {
+		                 			return fnReturnActions( data, type, val, ["Edit","Delete"], "devicetypes" );
 		                 		},
 								"bSearchable": false,
 								"bSortable": false,

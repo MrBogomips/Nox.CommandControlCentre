@@ -25,17 +25,19 @@ $(document).ready(function() {
 								"mData": "monthsPeriod"
 							},
 							{	"aTargets": [5],
-								"sTitle": "enabled",
-								"mData": function ( data, type, val ) {
-									return fnReturnCheckbox( data, type, val );
-								},
-								"sWidth": "1%",
+								"sTitle": "Enabled",
+		                 		"mData": "enabled",
+		                 		"mRender": function ( data, type, val ) {
+		                 			return fnReturnCheckbox( data, type, val, false );
+		                 		},
+		                 		"sWidth": "1%",
 							},
 							{	"aTargets": [6],
-									"sTitle": "",
-									"mData": function ( data, type, val ) {
-										return fnReturnActionEditDelete( data, type, val );
-									},
+								"sTitle": "",
+								"mData": "id",	//passa l'id alle action
+		                 		"mRender": function ( data, type, val ) {
+									return fnReturnActions( data, type, val, ["Edit","Delete"], "maintenance-service" );
+								},
 								"bSearchable": false,
 								"bSortable": false,
 								"sWidth": "1%",
@@ -61,14 +63,14 @@ $(document).ready(function() {
 function fnLocalAction(){
 	$(".btn-edit").click(function(el, ev) {
 		var options = {};
-		options["id"] = $(this).attr("maintenance-service-id");
+		options["id"] = $(this).attr("data-maintenance-service-id");
 		var $el = $("<div></div>");
 		$('body').append($el);
 		$el.webapp_maintenanceservices(options);
 	});
 		
 	$(".btn-delete").click(function(el, ev) {
-		var id = $(this).attr("maintenance-service-id");
+		var id = $(this).attr("data-maintenance-service-id");
 		jsRoutes.controllers.MaintenanceService.delete(id).ajax()
 		.done(function(data, txtStatus, jqXHR) {
 			location.reload(true);

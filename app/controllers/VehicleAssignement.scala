@@ -30,6 +30,23 @@ object VehicleAssignement extends Secured {
       }
     }
   }
+  
+  def index2(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) ⇒
+      implicit val req = request
+      val vehicleAssignements = all match {
+        case false => VehicleAssignements.find(Some(true))
+        case true  => VehicleAssignements.find(None)
+      }
+      if (acceptsJson(request)) {
+        Ok(Json.toJson(vehicleAssignements))
+      } else if (acceptsHtml(request)) {
+        Ok(views.html.aria.vehicleassignement.index2(user))
+      } else {
+        BadRequest
+      }
+    }
+  }
 
   def get(id: Int) = WithCors("GET", "PUT", "DELETE") {
     WithAuthentication { (user, request) =>
