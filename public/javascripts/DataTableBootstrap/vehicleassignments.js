@@ -26,7 +26,10 @@ $(document).ready(function() {
 			"aoColumnDefs": [
 			                 	{	"aTargets": [0],
 			                 		"sTitle": "ID",
-			                 		"mData": "id"
+			                 		"mData": "id",
+			                 		"mRender": function ( data, type, val ) {
+			                 			return fnReturnId( data, type, val );
+			                 		},
 			                 	},
 			                 	{	"aTargets": [1],
 			                 		"sTitle": "Vehicle",
@@ -75,12 +78,12 @@ $(document).ready(function() {
 									"bSearchable": false,
 									"bSortable": false,
 									"sWidth": "1%",
-								},	
+								},
 			               ],
 			"fnDrawCallback": function( oSettings ) {
 				//funzioni chiamate ad ogni redraw della tabella
 				//selezione per colonne enable, vehicle e driver
-		    	$('td:nth-last-child(2)').addClass("noClick");
+		    	$('td:nth-child(6)').addClass("noClick");
 		    	$('td:nth-child(2)').addClass("noClick");
 		    	$('td:nth-child(3)').addClass("noClick");
 		    	//selezione per colonnem data
@@ -91,10 +94,21 @@ $(document).ready(function() {
 				fnReturnDrawCallback();
 				fnActivateSwitch();
 				fnManageDatapicker();
+				//disabilita update per le righe non modificate
+				$("[data-modified=false]").find(".btn-save").parent().addClass('disabled');
+				//riabilita l'update per le righe se cambia il valore delle select
+				$('.selectpicker').on('change',function(){
+					fnEnableLocalSave(this);
+				});
 		    },
 		    "fnInitComplete": function(){
 		    	//funzioni chiamate quando la tabella è stata inizializzata
 		    	fnReturnInitCallBack([0],wordlistAdd);	//autocompletamento colonne 0 più le colonne vehicle,driver e date (più la colonna enabled)
+		    },
+		    "fnCreatedRow": function( nRow, aData, iDataIndex){
+		    	$('td:last', nRow).attr('data-modified',false);
+		    	$('td:first', nRow).append('<input type="hidden" value="'+aData.id+'" name="id"> \
+		    								<input type="hidden" value="'+aData.version+'" name="version">');
 		    },
 		} );
 		//init the table*****************************
@@ -107,68 +121,64 @@ $(document).ready(function() {
 //gestione local actions
 function fnLocalAction(){
 	$(".btn-save").click(function(el, ev) {
-//		var options = {};
-//		options["id"] = $(this).attr("data-vehicleassignments-id");
-//		var $el = $("<div></div>");
-//		$('body').append($el);
-//		$el.webapp_vehicles(options);
-		
-		alert(el);
-		if (el.hasClass('disabled')) return;
-		var self = this;
-		
-		el.button('loading');
-		self.container.block();
-		
-		jsRoutes.controllers.VehicleAssignement.update(self.options.id).ajax({
-			data: self.element.find('select, input').serialize()
+		var self = $(this);
+		var row = self.closest('tr');
+		var container = self.closest('table').parent();	
+//		self.button('loading');
+		container.block();	
+		jsRoutes.controllers.VehicleAssignement.update($(this).attr("data-vehicleassignments-id")).ajax({
+			data: row.find('select, input').serialize()
 		})
 		.done(function(data, txtStatus, jqXHR) {
-			// SUCCESS
-			el.button('reset');
-			$version = self.element.find('input[name="version"]');
+//			// SUCCESS
+//			el.button('reset');
+			$version = row.find('input[name="version"]');
 			$version.attr('value', 1 + parseInt($version.attr('value')));
-			setTimeout(function() {
-			    el.addClass('disabled');
-			}, 0);
+			fnDisableLocalSave(self);
 		})
 		.fail(function() {
-			// FAILURE
-			el.button('reset');
+//			// FAILURE
+//			el.button('reset');
 		})
 		.always(function(){
-			self.container.unblock();
+			container.unblock();
 		});
 	});
 
-//	$(".btn-delete").click(function(el, ev) {
-//		var id = $(this).attr("data-vehicleassignments-id");
-//		jsRoutes.controllers.Vehicle.delete(id).ajax()
-//		.done(function(data, txtStatus, jqXHR) {
-//			location.reload(true);
-//		})
-//		.fail(function(data, txtStatus, jqXHR) {
-//			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-//			$(".alert_placeholder").html($alert);
-//		});
-//	});
+	$(".btn-delete").click(function(el, ev) {
+		var self = $(this);
+		var row = self.closest('tr').get(0);
+		var id = self.attr("data-vehicleassignments-id");
+		if(id != '?'){
+			jsRoutes.controllers.VehicleAssignement.delete(id).ajax()
+			.done(function(data, txtStatus, jqXHR) {
+				oTable.fnDeleteRow(row);
+			})
+			.fail(function(data, txtStatus, jqXHR) {
+				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+				$(".alert_placeholder").html($alert);
+			});
+		}else{
+			oTable.fnDeleteRow(row);
+			$('.btn.create').removeClass('disabled');
+		}	
+	});
 }
 //************************************************************************************************************************
 
 //Global Functions********************************************************************************************************
 //gestione global functions
 function fnGlobalFunctions(){
-//	$('.btn.create').click(function(el, ev) {
-//		if (el.hasClass('disabled')) return;
-//		var self = this;
-//		$tr=$("<tr></tr>")
-//		self.element.find('table').append($tr);
-//		$tr.webapp_vehicle_assignements_row(self.options);
-//		el.addClass('disabled')
-//	});
-//	$('.btn.save-all').click(function(el, ev) {
-//		this.element.find('button.update[disabled!=disabled], button.save').click();
-//	});
+	$('.btn.create').click(function(el, ev) {
+		var self = $(this);
+		if (self.hasClass('disabled')) return;
+		oTable.fnAddData([{"id":'?',"vehicleId":vehicleList[0].id,"driverId":driverList[0].id,"beginAssignement":"","endAssignement":"","enabled":true}]);
+		self.addClass('disabled');
+	});
+	$('.btn.save-all').click(function(el, ev) {
+		//trigger click event on changed rows (enabled save)
+		oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save").click();
+	});
 }
 
 //aggiunta global actions
@@ -179,6 +189,19 @@ function fnAddGlobalFunctions(){
 //************************************************************************************************************************
 
 //funzioni di supporto per la definizione della tabella vehicleassignment
+function fnReturnId( data, type, val ) {
+	if (type === 'sort') {
+		if(data == '?'){
+			return -1;
+		}else{
+			return data;
+		}
+    }else{
+    	//display, 'type' and filter
+        return data;
+    }
+}
+
 function fnReturnDataPicker( data, type, val, name ) {
 	wordlistAdd.push(data);
 	if (type === 'display') {
@@ -195,8 +218,12 @@ function fnReturnDataPicker( data, type, val, name ) {
 }
 
 function fnReturnList( data, type, val, listId, vector ){
-	var dispName = $.grep(vector, function(e){ return e.id == data; })[0].displayName;	//ritorna il displayName "selezionato"
-	wordlistAdd.push(dispName);
+	var dispName;	
+	var selected = $.grep(vector, function(e){ return e.id == data; })[0];	//individua l'elemento selezionato
+	if(typeof selected != 'undefined'){
+		dispName = selected.displayName;
+		wordlistAdd.push(dispName);
+	}	
 	if (type === 'display') {
 		var id; var name;
 		var content = '<select class="selectpicker span2" name="'+listId+'">';
@@ -224,6 +251,7 @@ function fnActivateSwitch(){
 
 function fnManageSwitch(){
 	$(this).bootstrapSwitch('toggleState');
+	fnEnableLocalSave(this);
 }
 
 //Gestione datapicker
@@ -248,6 +276,8 @@ function fnManageDatapicker(){
 			  endDate.setValue(endDate.date);  // force endDate redraw!!!
 		  }
 		beginDatePicker.datepicker('hide');
+		$(".btn-save").parent().addClass('disabled');
+		fnEnableLocalSave(this);
 	})
 	.data('datepicker');
 	endDate = endDatePicker.datepicker({
@@ -256,5 +286,19 @@ function fnManageDatapicker(){
 		}
 	}).on('changeDate', function(ev){
 		endDatePicker.datepicker('hide');
+		fnEnableLocalSave(this);
 	});
+}
+
+//abilitazione local save
+function fnEnableLocalSave(el){
+	var row = $(el).closest('tr');
+	row.find('td:last').attr('data-modified',true);
+	row.find(".btn-save").parent().removeClass('disabled');
+}
+//abilitazione local save
+function fnDisableLocalSave(el){
+	var row = $(el).closest('tr');
+	row.find('td:last').attr('data-modified',false);
+	row.find(".btn-save").parent().addClass('disabled');
 }

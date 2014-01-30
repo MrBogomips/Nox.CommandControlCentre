@@ -410,7 +410,7 @@ function fnSetLengthMenu(){
 function fnReturnCheckbox( data, type, val, enabled ) {
 	if (type === 'display') {
         // Mostra una checkbox switch
-        var enabled_display = '<div class="switch"><input type="checkbox" ';
+        var enabled_display = '<div class="switch"><input type="checkbox" name="enabled" ';
         if(data) enabled_display += 'checked';
         if(!enabled) enabled_display += ' disabled';
         enabled_display += '></div>';
@@ -425,8 +425,7 @@ function fnReturnCheckbox( data, type, val, enabled ) {
 }
 
 function fnReturnActions( data, type, val, actions, controllername) {
-	var content = '<nobr> \
-				   <div class="btn-group"> \
+	var content = '<div class="btn-group actions"> \
 				   <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-target="#"> \
 				   Actions \
 				   <span class="caret"></span> \
@@ -436,8 +435,7 @@ function fnReturnActions( data, type, val, actions, controllername) {
 		content += '<li><a tabindex="-1" data-target="#" class="btn-'+actions[i].toLowerCase()+'" data-'+controllername+'-id="'+data+'">'+actions[i]+'</a></li>';
 	}
 	content += '</ul> \
-			    </div> \
-			    </nobr>';
+			    </div>';
 	return content;
 }
 
