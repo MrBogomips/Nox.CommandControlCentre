@@ -455,14 +455,14 @@ function fnReturnDrawCallback(){
 	$('.selectpicker').selectpicker();
 }
 
-function fnReturnInitCallBack(columnlist){
+function fnReturnInitCallBack(columnlist, vector = ["enabled","disabled"]){
 	//imposta il menù di paginazione
 	fnSetLengthMenu();
 	//filter autocomplete (colonne 1-5, e aggiunge gli stati della checkbox se necessario)
 	if(window.location.search != "" && getQueryParam("all") == "false" ){
 		fnAutoComplete(columnlist);
 	}else{
-		fnAutoComplete(columnlist,["enabled","disabled"]);
+		fnAutoComplete(columnlist,vector);
 	}
 }
 //************************************************************************************************************************
