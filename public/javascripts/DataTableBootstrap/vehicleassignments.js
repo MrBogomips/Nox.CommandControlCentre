@@ -182,14 +182,20 @@ function fnGlobalFunctions(){
 	});
 	$('.btn.save-all').click(function(el, ev) {
 		//trigger click event on changed rows (enabled save)
-		oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save").click();
-//		var enabledButtons = oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save");
-//		for(i in enabledButtons){
-//			$(enabledButtons[i]).click();
-////			setTimeout(function(){enabledButtons[i].click()},500);
-//		}
+//		oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save").click();     
+		var enabledButtons = oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save");
+		var enabledButtonsCount = enabledButtons.length;
+		var counter = 0;	
+		while(counter < enabledButtonsCount){
+			setTimeout(clickEnableButton, 1000 * (counter), enabledButtons, counter);
+			counter += 1;
+		}
 	});
 }
+
+function clickEnableButton(enabledButtons, index){
+	$(enabledButtons[index]).click()
+};
 
 //aggiunta global actions
 function fnAddGlobalFunctions(){
