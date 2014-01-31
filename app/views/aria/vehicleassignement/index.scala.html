@@ -4,8 +4,8 @@
 
 @footer_scripts = {
 <script type='text/javascript'>
-	steal('/assets/webapp/webapp_init.js')
-	.then('/assets/webapp/vehicleassignements/vehicleassignements.js')
+	//steal('/assets/webapp/webapp_init.js')
+	//.then('/assets/webapp/vehicleassignements/vehicleassignements.js')
 	steal('/assets/DataTables-1.9.4/media/js/jquery.dataTables.min.js')
 	.then('/assets/javascripts/DataTableBootstrap/main.js')
 	.then('/assets/javascripts/DataTableBootstrap/vehicleassignments.js')
@@ -22,7 +22,9 @@
 	<h1>Vehicles Assignment</h1>
 	
 	<div class="alert_placeholder"></div>
-
+		
+		<div id="alert-box"></div>
+		
 		<table class="table table-condensed table-bordered table-hover" id="vehicleassignments">
 		</table>
 	

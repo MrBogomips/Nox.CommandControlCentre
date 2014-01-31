@@ -2,6 +2,7 @@
 var oTable;
 /* Table initialisation */
 $(document).ready(function() {
+	container.block();
 	oTable = $('#operators').dataTable( {
 		"aoColumnDefs": [
 		                 	{	"aTargets": [0],
@@ -42,6 +43,7 @@ $(document).ready(function() {
 		       	    "fnInitComplete": function(){
 		       	    	//funzioni chiamate quando la tabella è stata inizializzata
 		       	    	fnReturnInitCallBack([0,1,2]);	//autocompletamento colonne 0-2 (più la colonna enabled)
+		       	    	container.unblock();
 		       	    },
 		       	} );
 		       	//init the table*****************************

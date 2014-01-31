@@ -5,6 +5,7 @@ var driverList = [];
 var wordlistAdd = [];
 /* Table initialisation */
 $(document).ready(function() {
+	container.block();
 	//preleva dati su veicoli e piloti****************************************
 	var jsonReq = {
 		headers : { 
@@ -104,6 +105,7 @@ $(document).ready(function() {
 		    "fnInitComplete": function(){
 		    	//funzioni chiamate quando la tabella è stata inizializzata
 		    	fnReturnInitCallBack([0],wordlistAdd);	//autocompletamento colonne 0 più le colonne vehicle,driver e date (più la colonna enabled)
+		    	container.unblock();
 		    },
 		    "fnCreatedRow": function( nRow, aData, iDataIndex){
 		    	$('td:last', nRow).attr('data-modified',false);
@@ -132,6 +134,7 @@ function fnLocalAction(){
 		.done(function(data, txtStatus, jqXHR) {
 //			// SUCCESS
 //			el.button('reset');
+			setAlertSuccess("<strong>Data saved correctly.</strong>");
 			$version = row.find('input[name="version"]');
 			$version.attr('value', 1 + parseInt($version.attr('value')));
 			fnDisableLocalSave(self);
@@ -139,6 +142,7 @@ function fnLocalAction(){
 		.fail(function() {
 //			// FAILURE
 //			el.button('reset');
+			popAlertError("<strong>An error occurred.</strong>");
 		})
 		.always(function(){
 			container.unblock();

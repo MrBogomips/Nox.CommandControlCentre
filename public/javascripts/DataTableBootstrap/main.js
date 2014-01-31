@@ -170,6 +170,7 @@ if ( $.fn.DataTable.TableTools ) {
 
 //Init***************************************************************************************************************
 var oTable;
+var container = $('.page-container');
 
 function init(){
 	//Aggiunte***********************************
@@ -274,6 +275,9 @@ function fnManageSelection(){
 	if(!cella.hasClass('noClick')){
 		if ( riga.hasClass('row_selected') ) {
 			riga.removeClass('row_selected');
+			if(ShowSelected){	//ridisegna la tabella per eliminare le righe deselezionate in modalità visualizza selezionate
+				oTable.fnDraw();
+			}
 		}else {
 			//oTable.$('tr.row_selected').removeClass('row_selected');	//decommentare per settare il single-row selection
 			riga.addClass('row_selected');
@@ -464,3 +468,27 @@ function fnReturnInitCallBack(columnlist, vector = ["enabled","disabled"]){
 	}
 }
 //************************************************************************************************************************
+
+function popAlertError(message){
+	$("<div class='alert alert-danger fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
+	.appendTo("#alert-box")
+	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});
+}
+
+function popAlertSuccess(message){
+	$("<div class='alert alert-success fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
+	.appendTo("#alert-box")
+	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});
+}
+
+function setAlertError(message){
+	$("#alert-box").html("<div class='alert alert-danger fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
+	.find('.alert')
+	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});	
+}
+
+function setAlertSuccess(message){
+	$("#alert-box").html("<div class='alert alert-success fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
+	.find('.alert')
+	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});	
+}
