@@ -5,7 +5,6 @@ var driverList = [];
 var wordlistAdd = [];
 /* Table initialisation */
 $(document).ready(function() {
-	container.block();
 	//preleva dati su veicoli e piloti****************************************
 	var jsonReq = {
 		headers : { 
@@ -105,7 +104,8 @@ $(document).ready(function() {
 		    "fnInitComplete": function(){
 		    	//funzioni chiamate quando la tabella è stata inizializzata
 		    	fnReturnInitCallBack([0],wordlistAdd);	//autocompletamento colonne 0 più le colonne vehicle,driver e date (più la colonna enabled)
-		    	container.unblock();
+		    	//disabilita update per le righe non modificate
+		    	oTable.$("[data-modified=false]").find(".btn-save").parent().addClass('disabled');
 		    },
 		    "fnCreatedRow": function( nRow, aData, iDataIndex){
 		    	$('td:last', nRow).attr('data-modified',false);
@@ -115,6 +115,7 @@ $(document).ready(function() {
 		} );
 		//init the table*****************************
 		init();
+
 	});
 } );
 //Init***************************************************************************************************************
@@ -134,7 +135,7 @@ function fnLocalAction(){
 		.done(function(data, txtStatus, jqXHR) {
 //			// SUCCESS
 //			el.button('reset');
-			setAlertSuccess("<strong>Data saved correctly.</strong>");
+			popAlertSuccess("<strong>Data saved correctly.</strong>");
 			$version = row.find('input[name="version"]');
 			$version.attr('value', 1 + parseInt($version.attr('value')));
 			fnDisableLocalSave(self);
@@ -182,6 +183,11 @@ function fnGlobalFunctions(){
 	$('.btn.save-all').click(function(el, ev) {
 		//trigger click event on changed rows (enabled save)
 		oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save").click();
+//		var enabledButtons = oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save");
+//		for(i in enabledButtons){
+//			$(enabledButtons[i]).click();
+////			setTimeout(function(){enabledButtons[i].click()},500);
+//		}
 	});
 }
 

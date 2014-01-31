@@ -2,7 +2,6 @@
 var oTable;
 /* Table initialisation */
 $(document).ready(function() {
-	container.block();
 	oTable = $('#maintenanceservices').dataTable( {
 		"aoColumnDefs": [
 							{	"aTargets": [0],
@@ -51,7 +50,6 @@ $(document).ready(function() {
 		       	    "fnInitComplete": function(){
 		       	    	//funzioni chiamate quando la tabella è stata inizializzata
 		       	    	fnReturnInitCallBack([0,1,2,3,4]);	//autocompletamento colonne 0-4 (più la colonna enabled)
-		       	    	container.unblock();
 		       	    },
 		       	} );
 		       	//init the table*****************************

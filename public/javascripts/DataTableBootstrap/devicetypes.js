@@ -2,7 +2,6 @@
 var oTable;
 /* Table initialisation */
 $(document).ready(function() {
-	container.block();
 	oTable = $('#devicetypes').dataTable( {
 		"aoColumnDefs": [
 		                 	{	"aTargets": [0],
@@ -47,7 +46,6 @@ $(document).ready(function() {
        	    "fnInitComplete": function(){
        	    	//funzioni chiamate quando la tabella è stata inizializzata
        	    	fnReturnInitCallBack([1,2,3]);	//autocompletamento colonne 1-5 (più la colonna enabled)
-       	    	container.unblock();
        	    },
        	} );
        	//init the table*****************************

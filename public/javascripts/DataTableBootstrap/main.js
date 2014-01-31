@@ -171,6 +171,7 @@ if ( $.fn.DataTable.TableTools ) {
 //Init***************************************************************************************************************
 var oTable;
 var container = $('.page-container');
+container.block();
 
 function init(){
 	//Aggiunte***********************************
@@ -365,7 +366,8 @@ function unique(array) {
 
 //************************************************************************************************************************
 //imposta e attiva l'autocompletamento sul campo di ricerca
-function fnAutoComplete(columnlist, wordlistAppend=[]){
+function fnAutoComplete(columnlist, wordlistAppend){
+	wordlistAppend = (typeof wordlistAppend === "undefined") ? [] : wordlistAppend;
 	var wordlist = []; 
 	var table = oTable.$('tr');
 	var colonna = [];
@@ -457,7 +459,8 @@ function fnReturnDrawCallback(){
 	$('.selectpicker').selectpicker();
 }
 
-function fnReturnInitCallBack(columnlist, vector = ["enabled","disabled"]){
+function fnReturnInitCallBack(columnlist, vector ){
+	vector = (typeof vector === "undefined") ? ["enabled","disabled"] : vector;
 	//imposta il menù di paginazione
 	fnSetLengthMenu();
 	//filter autocomplete (colonne 1-5, e aggiunge gli stati della checkbox se necessario)
@@ -466,6 +469,7 @@ function fnReturnInitCallBack(columnlist, vector = ["enabled","disabled"]){
 	}else{
 		fnAutoComplete(columnlist,vector);
 	}
+	container.unblock();
 }
 //************************************************************************************************************************
 
@@ -479,16 +483,4 @@ function popAlertSuccess(message){
 	$("<div class='alert alert-success fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
 	.appendTo("#alert-box")
 	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});
-}
-
-function setAlertError(message){
-	$("#alert-box").html("<div class='alert alert-danger fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
-	.find('.alert')
-	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});	
-}
-
-function setAlertSuccess(message){
-	$("#alert-box").html("<div class='alert alert-success fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
-	.find('.alert')
-	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});	
 }
