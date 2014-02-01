@@ -125,22 +125,22 @@ $(document).ready(function() {
 function fnLocalAction(){
 	$(".btn-save").click(function(el, ev) {
 		var self = $(this);
-		var row = self.closest('tr');
+//		var nRow = self.closest('tr');
+		var nRow = self.parents('tr');
 		var container = self.closest('table').parent();	
 //		self.button('loading');
 		container.block();	
 		if(self.attr("data-vehicleassignments-id") != '?'){
 			jsRoutes.controllers.VehicleAssignement.update($(this).attr("data-vehicleassignments-id")).ajax({
-				data: row.find('select, input').serialize()
+				data: nRow.find('select, input').serialize()
 			})
 			.done(function(data, txtStatus, jqXHR) {
 	//			// SUCCESS
 	//			el.button('reset');
-//				popAlertSuccess("<strong>Data saved correctly.</strong>");
-//				$version = row.find('input[name="version"]');
-//				$version.attr('value', 1 + parseInt($version.attr('value')));
-//				fnDisableLocalSave(self);
-//				location.reload(true);
+				popAlertSuccess("<strong>Data saved correctly.</strong>");
+				$version = nRow.find('input[name="version"]');
+				$version.attr('value', 1 + parseInt($version.attr('value')));
+				fnDisableLocalSave(self);
 			})
 			.fail(function() {
 	//			// FAILURE
@@ -151,16 +151,20 @@ function fnLocalAction(){
 			.always(function(){
 				container.unblock();
 				$('.btn.create').removeClass('disabled');
+				oTable.fnReloadAjax();
+//				oTable.fnStandingRedraw();
 			});
 		}else{
 			jsRoutes.controllers.VehicleAssignement.create().ajax({
-				data: row.find('select, input').serialize()
+				data: nRow.find('select, input').serialize()
 			})
 			.done(function(data, txtStatus, jqXHR) {
-//				self.attr("data-vehicleassignments-id",data.id);
-//				row.find('td:first').html(data.id);
-//				fnDisableLocalSave(self);
-				location.reload(true);
+				popAlertSuccess("<strong>Record created successfully.</strong>");
+				self.attr("data-vehicleassignments-id",data.id);
+				nRow.find('td:first').html(data.id);
+				fnDisableLocalSave(self);
+//				oTable.fnReloadAjax();
+//				location.reload(true);
 			})
 			.fail(function(data, txtStatus, jqXHR) {
 				popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
@@ -168,19 +172,26 @@ function fnLocalAction(){
 			.always(function(){
 				container.unblock();
 				$('.btn.create').removeClass('disabled');
+//				oTable.fnStandingRedraw();
+				oTable.fnReloadAjax();
 			});
 		}
 	});
 
 	$(".btn-delete").click(function(el, ev) {
 		var self = $(this);
-		var row = self.closest('tr').get(0);
+//		var nRow = self.closest('tr').get(0);
+		var nRow = self.parents('tr')[0];
 		var id = self.attr("data-vehicleassignments-id");
 		if(id != '?'){
 			jsRoutes.controllers.VehicleAssignement.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
-//				oTable.fnDeleteRow( row  );
-				location.reload(true);
+				oTable.fnReloadAjax();
+//				oTable.fnDeleteRow( nRow  );
+//				oTable.fnStandingRedraw();
+//				oTable.fnDraw();
+				popAlertSuccess("<strong>Row deleted successfully.</strong>");
+//				location.reload(true);
 			})
 			.fail(function(data, txtStatus, jqXHR) {
 //				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
@@ -188,11 +199,15 @@ function fnLocalAction(){
 				popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
 			});
 		}else{
-//			oTable.fnDeleteRow( row );
+			oTable.fnReloadAjax();
+//			oTable.fnDeleteRow( nRow );
+//			oTable.fnDraw();
+//			oTable.fnStandingRedraw();
 //			$('.btn.create').removeClass('disabled');
-			location.reload(true);
+//			location.reload(true);
 		}	
 //		oTable.fnDraw();
+//		oTable.fnReloadAjax();
 	});
 }
 //************************************************************************************************************************
@@ -225,8 +240,9 @@ function clickEnableButton(enabledButtons, index){
 
 //aggiunta global actions
 function fnAddGlobalFunctions(){
-	$(".globalfunctions").html('<button class="btn btn-primary create">Create new vehicle assignment</button> \
-								<button class="btn btn-primary save-all">Save all</button>');
+//	$(".globalfunctions").html('<button class="btn btn-primary create">Create new vehicle assignment</button> \
+//								<button class="btn btn-primary save-all">Save all</button>');
+	$(".globalfunctions").html('<button class="btn btn-primary create">Create new vehicle assignment</button>');
 }
 //************************************************************************************************************************
 
