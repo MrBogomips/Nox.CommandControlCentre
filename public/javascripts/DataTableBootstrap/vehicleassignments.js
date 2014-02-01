@@ -124,12 +124,12 @@ $(document).ready(function() {
 //gestione local actions
 function fnLocalAction(){
 	$(".btn-save").click(function(el, ev) {
+//		container.block();
 		var self = $(this);
 //		var nRow = self.closest('tr');
 		var nRow = self.parents('tr');
 		var container = self.closest('table').parent();	
 //		self.button('loading');
-		container.block();	
 		if(self.attr("data-vehicleassignments-id") != '?'){
 			jsRoutes.controllers.VehicleAssignement.update($(this).attr("data-vehicleassignments-id")).ajax({
 				data: nRow.find('select, input').serialize()
@@ -174,20 +174,24 @@ function fnLocalAction(){
 				$('.btn.create').removeClass('disabled');
 //				oTable.fnStandingRedraw();
 				oTable.fnReloadAjax();
+//				oTable.fnDraw();
+//				location.reload(true);
 			});
 		}
 	});
 
 	$(".btn-delete").click(function(el, ev) {
+		container.block();
 		var self = $(this);
-//		var nRow = self.closest('tr').get(0);
-		var nRow = self.parents('tr')[0];
+		var nRow = self.closest('tr')[0];
+//		var nRow = self.parents('tr')[0];
 		var id = self.attr("data-vehicleassignments-id");
 		if(id != '?'){
 			jsRoutes.controllers.VehicleAssignement.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
 				oTable.fnReloadAjax();
-//				oTable.fnDeleteRow( nRow  );
+//				oTable.fnDeleteRow(oTable.fnGetPosition($(nRow).find('td')[0])[0]);
+//				oTable.fnDeleteRow( nRow, null, false  );
 //				oTable.fnStandingRedraw();
 //				oTable.fnDraw();
 				popAlertSuccess("<strong>Row deleted successfully.</strong>");
@@ -197,17 +201,18 @@ function fnLocalAction(){
 //				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
 //				$(".alert_placeholder").html($alert);
 				popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
+			})
+			.always(function(){
+				container.unblock();
 			});
 		}else{
-			oTable.fnReloadAjax();
-//			oTable.fnDeleteRow( nRow );
-//			oTable.fnDraw();
+			$('.btn.create').removeClass('disabled');
+//			oTable.fnReloadAjax();
+			oTable.fnDeleteRow( nRow );
 //			oTable.fnStandingRedraw();
-//			$('.btn.create').removeClass('disabled');
+			container.unblock();
 //			location.reload(true);
 		}	
-//		oTable.fnDraw();
-//		oTable.fnReloadAjax();
 	});
 }
 //************************************************************************************************************************
@@ -221,17 +226,17 @@ function fnGlobalFunctions(){
 		oTable.fnAddData([{"id":'?',"vehicleId":vehicleList[0].id,"driverId":driverList[0].id,"beginAssignement":"","endAssignement":"","enabled":true}]);
 		self.addClass('disabled');
 	});
-	$('.btn.save-all').click(function(el, ev) {
-		//trigger click event on changed rows (enabled save)
-//		oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save").click();     
-		var enabledButtons = oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save");
-		var enabledButtonsCount = enabledButtons.length;
-		var counter = 0;	
-		while(counter < enabledButtonsCount){
-			setTimeout(clickEnableButton, 1000 * counter, enabledButtons, counter);
-			counter += 1;
-		}
-	});
+//	$('.btn.save-all').click(function(el, ev) {
+//		//trigger click event on changed rows (enabled save)
+////		oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save").click();     
+//		var enabledButtons = oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save");
+//		var enabledButtonsCount = enabledButtons.length;
+//		var counter = 0;	
+//		while(counter < enabledButtonsCount){
+//			setTimeout(clickEnableButton, 1000 * counter, enabledButtons, counter);
+//			counter += 1;
+//		}
+//	});
 }
 
 function clickEnableButton(enabledButtons, index){

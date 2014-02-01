@@ -111,7 +111,8 @@ steal(
 //					alert( JSON.stringify(jsonData) );
 //					oTable.fnAddData( jsonData );
 //					popAlertSuccess("<strong>Record created successfully</strong>");
-					location = serverController.index().url;
+					/*location = serverController.index().url;*/
+					oTable.fnReloadAjax();
 				})
 				.fail(function(data, txtStatus, jqXHR) {
 					self.proxy(self._reportError(data, txtStatus, jqXHR));
@@ -131,13 +132,15 @@ steal(
 					data: self.element.find('form').serialize()
 				})
 				.done(function(data, txtStatus, jqXHR) {
-					location = serverController.index().url;
+//					location = serverController.index().url;
+					oTable.fnReloadAjax();
 				})
 				.fail(function(data, txtStatus, jqXHR) {
 					self.proxy(self._reportError(data, txtStatus, jqXHR));
 				})
 				.always(function(){
 					self.element.unblock();
+					self.element.modal('hide');
 				});
 			},
 

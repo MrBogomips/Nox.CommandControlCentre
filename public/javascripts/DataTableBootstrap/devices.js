@@ -57,7 +57,6 @@ $(document).ready(function() {
        	    },
        	} );
        	//init the table*****************************
-       	
        	init();
 } );
 //Init***************************************************************************************************************
@@ -77,7 +76,8 @@ function fnLocalAction(){
 		var id = $(this).attr("data-device-id");
 		jsRoutes.controllers.Device.delete(id).ajax()
 		.done(function(data, txtStatus, jqXHR) {
-			location.reload(true);
+//			location.reload(true);
+			oTable.fnReloadAjax();
 		})
 		.fail(function(data, txtStatus, jqXHR) {
 			//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
