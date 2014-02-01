@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.vehiclesassignements
 		 */
-		Aria.Controller('Webapp.VehicleAssignements',
+		Aria.Controller('Webapp.VehicleAssignement',
 		/** @Static */
 		{
 			defaults : {
@@ -24,14 +24,14 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_vehiclesassignements');
+				this.element.addClass('webapp_vehiclesassignement');
 				
 				var renderForm = function() {
 					var isModal = (self.options["idVehicle"] > 0) || (self.options["idDriver"] > 0);
-					var content = $.View(jsRoutes.controllers.Assets.at("webapp/vehicleassignements/views/index.ejs").url, self.options);
+					var content = $.View(jsRoutes.controllers.Assets.at("webapp/vehicleassignement/views/index.ejs").url, self.options);
 					//isModal = true;
 					if (isModal) {
-						self.element.html(jsRoutes.controllers.Assets.at("webapp/vehicleassignements/views/modal.ejs").url, self.options, function(el){
+						self.element.html(jsRoutes.controllers.Assets.at("webapp/vehicleassignement/views/modal.ejs").url, self.options, function(el){
 							//$(el).find('.content').html(content);
 							$(el).modal('hide');
 							$(el).modal('show');
@@ -82,4 +82,4 @@ steal(
 			
 		});
 
-}).then("/assets/webapp/vehicleassignements/row/row.js");
+}).then("/assets/webapp/vehicleassignement/row/row.js");

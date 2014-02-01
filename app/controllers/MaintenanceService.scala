@@ -14,6 +14,15 @@ object MaintenanceService extends Secured {
 
   import models.json.{ maintenanceServicePersistedJsonWriter }
 
+  
+  lazy val ariaController: String = getThisClassSimpleName
+  val pageTitle: String = "Maintenance Services"
+    
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
+  }
+  
   def index2(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
       implicit val req = request
@@ -48,7 +57,8 @@ object MaintenanceService extends Secured {
         }
         Ok(Json.toJson(services))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.maintenanceservice.index(user))
+//        Ok(views.html.aria.maintenanceservice.index(user))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
       } else {
         BadRequest
       }

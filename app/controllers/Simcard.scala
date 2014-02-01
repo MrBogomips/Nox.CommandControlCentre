@@ -13,6 +13,14 @@ import patterns.models.ValidationException
 
 object Simcard extends Secured {
 
+  lazy val ariaController: String = getThisClassSimpleName
+  val pageTitle: String = "Simcards"
+    
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
+  }
+  
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
       implicit val req = request  
@@ -23,7 +31,8 @@ object Simcard extends Secured {
 	    }
         Ok(Json.toJson(simcards))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.simcard.index(user))
+//        Ok(views.html.aria.simcard.index(user))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
       } else {
         BadRequest
       }

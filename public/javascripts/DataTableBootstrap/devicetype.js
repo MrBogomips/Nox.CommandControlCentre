@@ -2,7 +2,7 @@
 var oTable;
 /* Table initialisation */
 $(document).ready(function() {
-	oTable = $('#devicegroups').dataTable( {
+	oTable = $('#devicetype').dataTable( {
 		"aoColumnDefs": [
 		                 	{	"aTargets": [0],
 		                 		"sTitle": "ID",
@@ -32,7 +32,7 @@ $(document).ready(function() {
 		                 		"sTitle": "",
 		                 		"mData": "id",	//passa l'id alle action
 		                 		"mRender": function ( data, type, val ) {
-		                 			return fnReturnActions( data, type, val, ["Edit","Delete"], "devicegroups" );
+		                 			return fnReturnActions( data, type, val, ["Edit","Delete"], "devicetype" );
 		                 		},
 								"bSearchable": false,
 								"bSortable": false,
@@ -45,7 +45,7 @@ $(document).ready(function() {
        	    },
        	    "fnInitComplete": function(){
        	    	//funzioni chiamate quando la tabella è stata inizializzata
-       	    	fnReturnInitCallBack([1,2,3]);	//autocompletamento colonne 1-3 (più la colonna enabled)
+       	    	fnReturnInitCallBack([1,2,3]);	//autocompletamento colonne 1-5 (più la colonna enabled)
        	    },
        	} );
        	//init the table*****************************

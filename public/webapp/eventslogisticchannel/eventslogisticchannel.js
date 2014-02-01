@@ -4,7 +4,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 		/**
 		 * @class Webapp.devicegroups
 		 */
-		Webapp.NamedEntity('Webapp.EventsLogisticChannel',
+		Webapp.NamedEntity('Webapp.eventslogisticchannel',
 		/** @Static */
 		{
 			defaults : {

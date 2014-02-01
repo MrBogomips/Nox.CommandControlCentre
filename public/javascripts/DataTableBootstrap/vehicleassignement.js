@@ -1,5 +1,5 @@
 //Init***************************************************************************************************************
-var oTable;
+//var oTable;
 var vehicleList= [];
 var driverList = [];
 var wordlistAdd = [];
@@ -22,7 +22,7 @@ $(document).ready(function() {
 	})
 	.then(function(){
 		//init the table*****************************
-		oTable = $('#vehicleassignments').dataTable( {
+		oTable = $('#vehicleassignement').dataTable( {
 			"aoColumnDefs": [
 			                 	{	"aTargets": [0],
 			                 		"sTitle": "ID",
@@ -73,7 +73,7 @@ $(document).ready(function() {
 			                 		"sTitle": "",
 			                 		"mData": "id",	//passa l'id alle action
 			                 		"mRender": function ( data, type, val ) {
-			                 			return fnReturnActions( data, type, val, ["Save","Delete"], "vehicleassignments" );
+			                 			return fnReturnActions( data, type, val, ["Save","Delete"], "vehicleassignement" );
 			                 		},
 									"bSearchable": false,
 									"bSortable": false,
@@ -127,12 +127,12 @@ function fnLocalAction(){
 		container.block();
 		var self = $(this);
 //		var nRow = self.closest('tr');
-		var id = self.attr("data-vehicleassignments-id");
+		var id = self.attr("data-vehicleassignement-id");
 		var nRow = self.parents('tr');
 //		var container = self.closest('table').parent();	
 //		self.button('loading');
-		if(self.attr("data-vehicleassignments-id") != '?'){
-			jsRoutes.controllers.VehicleAssignement.update($(this).attr("data-vehicleassignments-id")).ajax({
+		if(self.attr("data-vehicleassignement-id") != '?'){
+			jsRoutes.controllers.VehicleAssignement.update($(this).attr("data-vehicleassignement-id")).ajax({
 				data: nRow.find('select, input').serialize()
 			})
 			.done(function(data, txtStatus, jqXHR) {
@@ -194,11 +194,11 @@ function fnLocalAction(){
 	$(".btn-delete").click(function(el, ev) {
 		container.block();
 		var self = $(this);
-		var id = self.attr("data-vehicleassignments-id");
+		var id = self.attr("data-vehicleassignement-id");
 		if(id != '?'){
 			jsRoutes.controllers.VehicleAssignement.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
-				oTable.fnDeleteRow( oTable.fnGetPosition( oTable.$('tr:has(td:has([data-vehicleassignments-id='+id+']))')[0] ) );
+				oTable.fnDeleteRow( oTable.fnGetPosition( oTable.$('tr:has(td:has([data-vehicleassignement-id='+id+']))')[0] ) );
 				popAlertSuccess("<strong>Row deleted successfully.</strong>");
 			})
 			.fail(function(data, txtStatus, jqXHR) {

@@ -61,59 +61,59 @@ $(document).ready(function() {
 } );
 //Init***************************************************************************************************************
 
-//Local actions***********************************************************************************************************
-//gestione local actions
-function fnLocalAction(){
-	$(".btn-edit").click(function(el, ev) {
-		var options = {};
-		options["idname"] = "data-device-id";
-		options["id"] = $(this).attr("data-device-id");
-		var $el = $("<div></div>");
-		$('body').append($el);
-		$el.webapp_device(options);
-	});
-		
+////Local actions***********************************************************************************************************
+////gestione local actions
+//function fnLocalAction(){
+//	$(".btn-edit").click(function(el, ev) {
+//		var options = {};
+//		options["idname"] = "data-device-id";
+//		options["id"] = $(this).attr("data-device-id");
+//		var $el = $("<div></div>");
+//		$('body').append($el);
+//		$el.webapp_device(options);
+//	});
+//		
+////	$(".btn-delete").click(function(el, ev) {
+////		var id = $(this).attr("data-device-id");
+////		jsRoutes.controllers.Device.delete(id).ajax()
+////		.done(function(data, txtStatus, jqXHR) {
+//////			location.reload(true);
+////			oTable.fnReloadAjax();
+////		})
+////		.fail(function(data, txtStatus, jqXHR) {
+////			//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+////			//self.find(".alert_placeholder").html($alert);
+////			popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
+////		});
+////	});
+//	
 //	$(".btn-delete").click(function(el, ev) {
 //		var id = $(this).attr("data-device-id");
 //		jsRoutes.controllers.Device.delete(id).ajax()
 //		.done(function(data, txtStatus, jqXHR) {
-////			location.reload(true);
-//			oTable.fnReloadAjax();
+////			popAlertSuccess("<h4 class='alert-heading'>Success</h4><p>"+data.responseText+"</p>");
+//			oTable.fnDeleteRow( oTable.fnGetPosition( oTable.$('tr:has(td:has([data-device-id='+id+']))')[0] ) );
+//			popAlertSuccess("<strong>Row "+id+" deleted successfully</strong>");
 //		})
 //		.fail(function(data, txtStatus, jqXHR) {
-//			//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-//			//self.find(".alert_placeholder").html($alert);
 //			popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
-//		});
+//		});	
 //	});
-	
-	$(".btn-delete").click(function(el, ev) {
-		var id = $(this).attr("data-device-id");
-		jsRoutes.controllers.Device.delete(id).ajax()
-		.done(function(data, txtStatus, jqXHR) {
-//			popAlertSuccess("<h4 class='alert-heading'>Success</h4><p>"+data.responseText+"</p>");
-			oTable.fnDeleteRow( oTable.fnGetPosition( oTable.$('tr:has(td:has([data-device-id='+id+']))')[0] ) );
-			popAlertSuccess("<strong>Row "+id+" deleted successfully</strong>");
-		})
-		.fail(function(data, txtStatus, jqXHR) {
-			popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
-		});	
-	});
-}
-//************************************************************************************************************************
-
-//Global Functions********************************************************************************************************
-//gestione global functions
-function fnGlobalFunctions(){
-	$("#create_device").click(function() {            	
-		var $el = $("<div></div>")
-		$('body').append($el);
-		$el.webapp_device();
-	});
-}
-
-//aggiunta global actions
-function fnAddGlobalFunctions(){
-	$(".globalfunctions").html('<button class="btn btn-primary" id="create_device">Create new device</button>');
-}
-//************************************************************************************************************************
+//}
+////************************************************************************************************************************
+//
+////Global Functions********************************************************************************************************
+////gestione global functions
+//function fnGlobalFunctions(){
+//	$("#create_device").click(function() {            	
+//		var $el = $("<div></div>")
+//		$('body').append($el);
+//		$el.webapp_device();
+//	});
+//}
+//
+////aggiunta global actions
+//function fnAddGlobalFunctions(){
+//	$(".globalfunctions").html('<button class="btn btn-primary" id="create_device">Create new device</button>');
+//}
+////************************************************************************************************************************

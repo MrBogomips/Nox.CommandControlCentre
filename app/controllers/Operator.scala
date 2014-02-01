@@ -13,6 +13,14 @@ import patterns.models.ValidationException
 object Operator extends Secured {
 
   import models.json.{ operatorPersistedJsonWriter }
+  
+  lazy val ariaController: String = getThisClassSimpleName
+  val pageTitle: String = "Maintenace Operators"
+    
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
+  }
 
   def index2(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
@@ -41,7 +49,8 @@ object Operator extends Secured {
         }
         Ok(Json.toJson(operators))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.operator.index(user))
+//        Ok(views.html.aria.operator.index(user))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
       } else {
         BadRequest
       }

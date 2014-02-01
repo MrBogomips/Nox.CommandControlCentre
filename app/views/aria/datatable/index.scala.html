@@ -5,14 +5,51 @@
 
 @footer_scripts = {
 <script type='text/javascript'>
+function fnLocalAction(){
+	$(".btn-edit").click(function(el, ev) {
+		var options = {};
+		options["idname"] = "data-@{ariaController.toLowerCase}-id";
+		options["id"] = $(this).attr("data-@{ariaController.toLowerCase}-id");
+		var $el = $("<div></div>");
+		$('body').append($el);
+		$el.webapp_@{ariaController.toLowerCase}(options);
+	});
+	
+	$(".btn-delete").click(function(el, ev) {
+		var id = $(this).attr("data-@{ariaController.toLowerCase}-id");
+		jsRoutes.controllers.@{ariaController}.delete(id).ajax()
+		.done(function(data, txtStatus, jqXHR) {
+//			popAlertSuccess("<h4 class='alert-heading'>Success</h4><p>"+data.responseText+"</p>");
+			oTable.fnDeleteRow( oTable.fnGetPosition( oTable.$('tr:has(td:has([data-@{ariaController.toLowerCase}-id='+id+']))')[0] ) );
+			popAlertSuccess("<strong>Row deleted successfully</strong>");
+		})
+		.fail(function(data, txtStatus, jqXHR) {
+			popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
+		});	
+	});
+}
+	
+function fnGlobalFunctions(){
+	$("#create_@{ariaController.toLowerCase}").click(function() {
+		var $el = $("<div></div>")
+		$('body').append($el);
+		$el.webapp_@{ariaController.toLowerCase}();
+	});
+}
+
+function fnAddGlobalFunctions(){
+	$(".globalfunctions").html('<button class="btn btn-primary" id="create_@{ariaController.toLowerCase}">Create new @{ariaController.toLowerCase}</button>');
+}
+</script>
+<script type='text/javascript'>
 	steal('/assets/webapp/webapp_init.js')
 	.then('/assets/webapp/@{ariaController.toLowerCase}/@{ariaController.toLowerCase}.js')
 	.then('/assets/webapp/menu/menu.js')
 	.then('/assets/javascripts/jquery-ui-1.10.3.custom.min.js')
 	.then('/assets/DataTables-1.9.4/media/js/jquery.dataTables.min.js')
 	.then('/assets/javascripts/DataTableBootstrap/main.js')
-	.then('/assets/javascripts/DataTableBootstrap/@{ariaController.toLowerCase}s.js');
-</script>
+	.then('/assets/javascripts/DataTableBootstrap/@{ariaController.toLowerCase}.js');
+</script>	
 }
 
 @aria.master.authenticated(pageTitle, user, header_more = header_more, footer_more = footer_scripts) {

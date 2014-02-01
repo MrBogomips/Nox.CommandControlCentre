@@ -2,7 +2,7 @@
 var oTable;
 /* Table initialisation */
 $(document).ready(function() {
-	oTable = $('#simcards').dataTable( {
+	oTable = $('#simcard').dataTable( {
 		"aoColumnDefs": [
 		                 	{	"aTargets": [0],
 		                 		"sTitle": "ID",
@@ -62,44 +62,44 @@ $(document).ready(function() {
    } );
 //Init***************************************************************************************************************
 
-//Local actions***********************************************************************************************************
-//gestione local actions
-function fnLocalAction(){
-	$(".btn-edit").click(function(el, ev) {
-		var options = {};
-		options["idname"] = "data-simcard-id";
-		options["id"] = $(this).attr("data-simcard-id");
-		var $el = $("<div></div>");
-		$('body').append($el);
-		$el.webapp_simcard(options);
-	});
-		
-	$(".btn-delete").click(function(el, ev) {
-		var id = $(this).attr("data-simcard-id");
-		jsRoutes.controllers.Simcard.delete(id).ajax()
-		.done(function(data, txtStatus, jqXHR) {
-			location.reload(true);
-		})
-		.fail(function(data, txtStatus, jqXHR) {
-			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>������</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-			self.find(".alert_placeholder").html($alert);
-		});
-	});
-}
-//************************************************************************************************************************
-
-//Global Functions********************************************************************************************************
-//gestione global functions
-function fnGlobalFunctions(){
-	$("#create_simcard").click(function() {
-		var $el = $("<div></div>")
-		$('body').append($el);
-		$el.webapp_simcard();
-	});
-}
-
-//aggiunta global actions
-function fnAddGlobalFunctions(){
-	$(".globalfunctions").html('<button class="btn btn-primary" id="create_simcard">Create new simcard</button>');
-}
-//************************************************************************************************************************
+////Local actions***********************************************************************************************************
+////gestione local actions
+//function fnLocalAction(){
+//	$(".btn-edit").click(function(el, ev) {
+//		var options = {};
+//		options["idname"] = "data-simcard-id";
+//		options["id"] = $(this).attr("data-simcard-id");
+//		var $el = $("<div></div>");
+//		$('body').append($el);
+//		$el.webapp_simcard(options);
+//	});
+//		
+//	$(".btn-delete").click(function(el, ev) {
+//		var id = $(this).attr("data-simcard-id");
+//		jsRoutes.controllers.Simcard.delete(id).ajax()
+//		.done(function(data, txtStatus, jqXHR) {
+//			location.reload(true);
+//		})
+//		.fail(function(data, txtStatus, jqXHR) {
+//			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>������</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+//			self.find(".alert_placeholder").html($alert);
+//		});
+//	});
+//}
+////************************************************************************************************************************
+//
+////Global Functions********************************************************************************************************
+////gestione global functions
+//function fnGlobalFunctions(){
+//	$("#create_simcard").click(function() {
+//		var $el = $("<div></div>")
+//		$('body').append($el);
+//		$el.webapp_simcard();
+//	});
+//}
+//
+////aggiunta global actions
+//function fnAddGlobalFunctions(){
+//	$(".globalfunctions").html('<button class="btn btn-primary" id="create_simcard">Create new simcard</button>');
+//}
+////************************************************************************************************************************

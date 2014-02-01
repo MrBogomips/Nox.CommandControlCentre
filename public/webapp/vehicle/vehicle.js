@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.vehicles
 		 */
-		Webapp.ModalForm('Webapp.vehicles',
+		Webapp.ModalForm('Webapp.vehicle',
 		/** @Static */
 		{
 			defaults : {
@@ -28,8 +28,8 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_vehicles modal hide fade');
-				var view = jsRoutes.controllers.Assets.at("webapp/vehicles/views/default.ejs").url;
+				this.element.addClass('webapp_vehicle modal hide fade');
+				var view = jsRoutes.controllers.Assets.at("webapp/vehicle/views/default.ejs").url;
 				
 				if (parseInt(self.options["id"]) > 0) {
 

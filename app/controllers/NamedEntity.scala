@@ -50,7 +50,8 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
 	    }
         Ok(jsonSerializer.jsonWriter.writesSeq(entities))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.namedentity.index(user, ariaController, ariaControllerFile, pageTitle, playController))
+//        Ok(views.html.aria.namedentity.index(user, ariaController, ariaControllerFile, pageTitle, playController))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
       } else {
         BadRequest
       }
