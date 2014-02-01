@@ -124,11 +124,12 @@ $(document).ready(function() {
 //gestione local actions
 function fnLocalAction(){
 	$(".btn-save").click(function(el, ev) {
-//		container.block();
+		container.block();
 		var self = $(this);
 //		var nRow = self.closest('tr');
+		var id = self.attr("data-vehicleassignments-id");
 		var nRow = self.parents('tr');
-		var container = self.closest('table').parent();	
+//		var container = self.closest('table').parent();	
 //		self.button('loading');
 		if(self.attr("data-vehicleassignments-id") != '?'){
 			jsRoutes.controllers.VehicleAssignement.update($(this).attr("data-vehicleassignments-id")).ajax({
@@ -137,34 +138,48 @@ function fnLocalAction(){
 			.done(function(data, txtStatus, jqXHR) {
 	//			// SUCCESS
 	//			el.button('reset');
-				popAlertSuccess("<strong>Data saved correctly.</strong>");
 				$version = nRow.find('input[name="version"]');
 				$version.attr('value', 1 + parseInt($version.attr('value')));
 				fnDisableLocalSave(self);
+				//aggiorna riga con l'id specificato
+//				var jsonData = {};
+//				nRow.find('select, input').serializeArray().map(function(x){
+//					jsonData[x.name] = x.value;
+//				});
+//				alert(JSON.stringify(jsonData));
+//				oTable.fnUpdate(jsonData, oTable.fnGetPosition( oTable.$('tr:has(td:has([data-vehicleassignments-id='+id+']))')[0] ));
+				popAlertSuccess("<strong>Data saved correctly.</strong>");
 			})
 			.fail(function() {
 	//			// FAILURE
 	//			el.button('reset');
 //				popAlertError("<strong>An error occurred.</strong>");
-				popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
+				oTable.fnReloadAjax();
+				popAlertError("<h4 class='alert-heading'>An error occurred</h4>");
 			})
 			.always(function(){
 				container.unblock();
 				$('.btn.create').removeClass('disabled');
-				oTable.fnReloadAjax();
-//				oTable.fnStandingRedraw();
 			});
 		}else{
 			jsRoutes.controllers.VehicleAssignement.create().ajax({
 				data: nRow.find('select, input').serialize()
 			})
 			.done(function(data, txtStatus, jqXHR) {
-				popAlertSuccess("<strong>Record created successfully.</strong>");
-				self.attr("data-vehicleassignments-id",data.id);
-				nRow.find('td:first').html(data.id);
 				fnDisableLocalSave(self);
-//				oTable.fnReloadAjax();
-//				location.reload(true);
+				//aggiorna l'id di riga con quello ritornato dal server
+				var jsonData = {};
+				nRow.find('select, input').serializeArray().map(function(x){
+					jsonData[x.name] = x.value;
+				});
+				//aggiunge campi mancanti
+				jsonData["id"] = data.id;
+				jsonData["version"] = 0;
+				jsonData["enabled"] = (jsonData["enabled"] == undefined) ? false : jsonData["enabled"];
+				oTable.fnUpdate( jsonData , nRow[0]);
+				$('td:first', nRow).append('<input type="hidden" value="'+jsonData.id+'" name="id"> \
+											<input type="hidden" value="'+jsonData.version+'" name="version">');
+				popAlertSuccess("<strong>Record created successfully.</strong>");
 			})
 			.fail(function(data, txtStatus, jqXHR) {
 				popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
@@ -172,10 +187,6 @@ function fnLocalAction(){
 			.always(function(){
 				container.unblock();
 				$('.btn.create').removeClass('disabled');
-//				oTable.fnStandingRedraw();
-				oTable.fnReloadAjax();
-//				oTable.fnDraw();
-//				location.reload(true);
 			});
 		}
 	});
@@ -216,17 +227,17 @@ function fnGlobalFunctions(){
 		oTable.fnAddData([{"id":'?',"vehicleId":vehicleList[0].id,"driverId":driverList[0].id,"beginAssignement":"","endAssignement":"","enabled":true}]);
 		self.addClass('disabled');
 	});
-//	$('.btn.save-all').click(function(el, ev) {
-//		//trigger click event on changed rows (enabled save)
-////		oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save").click();     
-//		var enabledButtons = oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save");
-//		var enabledButtonsCount = enabledButtons.length;
-//		var counter = 0;	
-//		while(counter < enabledButtonsCount){
-//			setTimeout(clickEnableButton, 1000 * counter, enabledButtons, counter);
-//			counter += 1;
-//		}
-//	});
+	$('.btn.save-all').click(function(el, ev) {
+		//trigger click event on changed rows (enabled save)
+//		oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save").click();     
+		var enabledButtons = oTable.$(".btn-group.actions > ul > li:not(.disabled) > .btn-save");
+		var enabledButtonsCount = enabledButtons.length;
+		var counter = 0;	
+		while(counter < enabledButtonsCount){
+			setTimeout(clickEnableButton, 1000 * counter, enabledButtons, counter);
+			counter += 1;
+		}
+	});
 }
 
 function clickEnableButton(enabledButtons, index){
@@ -235,9 +246,8 @@ function clickEnableButton(enabledButtons, index){
 
 //aggiunta global actions
 function fnAddGlobalFunctions(){
-//	$(".globalfunctions").html('<button class="btn btn-primary create">Create new vehicle assignment</button> \
-//								<button class="btn btn-primary save-all">Save all</button>');
-	$(".globalfunctions").html('<button class="btn btn-primary create">Create new vehicle assignment</button>');
+	$(".globalfunctions").html('<button class="btn btn-primary create">Create new vehicle assignment</button> \
+								<button class="btn btn-primary save-all">Save all</button>');
 }
 //************************************************************************************************************************
 
