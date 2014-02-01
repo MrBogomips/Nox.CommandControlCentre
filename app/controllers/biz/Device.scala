@@ -17,20 +17,20 @@ object Device extends ControllerBase {
   def index(all: Boolean = false) = Action { implicit request ⇒
     implicit val req = request
     val devices = all match {
-      case false ⇒ Devices.find(Some(true))
-      case true ⇒ Devices.find(None)
+      case false => Devices.find(Some(true))
+      case true => Devices.find(None)
     }
       Ok(Json.toJson(devices))
   }
-  def get(id: Int) = Action { implicit request ⇒
+  def get(id: Int) = Action { implicit request =>
     implicit val req = request
-    Devices.findById(id).map { d ⇒
+    Devices.findById(id).map { d =>
         Ok(Json.toJson(d))
     }.getOrElse(NotFound);
   }
-  def getByName(name: String) = Action { implicit request ⇒
+  def getByName(name: String) = Action { implicit request =>
     implicit val req = request
-    Devices.findByName(name).map { d ⇒
+    Devices.findByName(name).map { d =>
         Ok(Json.toJson(d))
     }.getOrElse(NotFound);
   }
