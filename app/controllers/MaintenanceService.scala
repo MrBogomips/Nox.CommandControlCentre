@@ -17,6 +17,7 @@ object MaintenanceService extends Secured {
   
   lazy val ariaController: String = getThisClassSimpleName
   val pageTitle: String = "Maintenance Services"
+  val createButton : String = "service"
     
   private def getThisClassSimpleName: String = {
     val s = this.getClass.getSimpleName()
@@ -58,7 +59,7 @@ object MaintenanceService extends Secured {
         Ok(Json.toJson(services))
       } else if (acceptsHtml(request)) {
 //        Ok(views.html.aria.maintenanceservice.index(user))
-        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle,createButton))
       } else {
         BadRequest
       }

@@ -4,7 +4,8 @@ import models.{ MaintenanceActivityOutcomeTrait, MaintenanceActivityOutcome => M
 import models.json.MaintenanceActivityOutcomePersistedSerializer
 
 object MaintenanceActivityOutcome extends NamedEntityController[MaintenanceActivityOutcomeTrait, MaintenanceActivityOutcomeModel, MaintenanceActivityOutcomePersisted] {
-  val pageTitle = "Maintenance Activity Outcome"
+  val pageTitle = "Maintenance Activity Outcomes"
+  override lazy val createButton = "outcome"
 
   val dataAccessObject = MaintenanceActivityOutcomes
   implicit val jsonSerializer = MaintenanceActivityOutcomePersistedSerializer

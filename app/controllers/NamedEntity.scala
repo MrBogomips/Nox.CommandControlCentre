@@ -17,6 +17,7 @@ import org.joda.time.format.ISODateTimeFormat
 trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel[TRAIT], PERSISTED <: NamedEntityPersisted[MODEL]] extends Secured {
   val pageTitle: String // = "Device Group"
   lazy val formTitle: String = pageTitle.toLowerCase
+  lazy val createButton : String = pageTitle.toLowerCase
   lazy val playController: String = getThisClassSimpleName
   lazy val ariaController: String = playController
   lazy val ariaControllerFile: String = ariaController.toLowerCase()
@@ -51,7 +52,7 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
         Ok(jsonSerializer.jsonWriter.writesSeq(entities))
       } else if (acceptsHtml(request)) {
 //        Ok(views.html.aria.namedentity.index(user, ariaController, ariaControllerFile, pageTitle, playController))
-        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle,createButton))
       } else {
         BadRequest
       }

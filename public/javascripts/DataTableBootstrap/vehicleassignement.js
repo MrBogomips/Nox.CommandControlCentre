@@ -245,7 +245,7 @@ function clickEnableButton(enabledButtons, index){
 
 //aggiunta global actions
 function fnAddGlobalFunctions(){
-	$(".globalfunctions").html('<button class="btn btn-primary create">Create new vehicle assignment</button> \
+	$(".globalfunctions").html('<button class="btn btn-primary create">Create new assignment</button> \
 								<button class="btn btn-primary save-all">Save all</button>');
 }
 //************************************************************************************************************************

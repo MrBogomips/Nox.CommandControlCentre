@@ -18,6 +18,7 @@ object Vehicle extends Secured {
   
   lazy val ariaController: String = getThisClassSimpleName
   val pageTitle: String = "Vehicles"
+  val createButton : String = "vehicle"
     
   private def getThisClassSimpleName: String = {
     val s = this.getClass.getSimpleName()
@@ -35,7 +36,7 @@ object Vehicle extends Secured {
         Ok(Json.toJson(vehicles))
       } else if (acceptsHtml(request)) {
 //        Ok(views.html.aria.vehicle.index(user))
-        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle,createButton))
       } else {
         BadRequest
       }
