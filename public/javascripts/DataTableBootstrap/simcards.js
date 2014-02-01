@@ -67,6 +67,7 @@ $(document).ready(function() {
 function fnLocalAction(){
 	$(".btn-edit").click(function(el, ev) {
 		var options = {};
+		options["idname"] = "data-simcard-id";
 		options["id"] = $(this).attr("data-simcard-id");
 		var $el = $("<div></div>");
 		$('body').append($el);

@@ -8,6 +8,7 @@
 function fnLocalAction(){
 	$(".btn-edit").click(function(el, ev) {
 		var options = {};
+		options["idname"] = "data-@{ariaController.toLowerCase}-id";
 		options["id"] = $(this).attr("data-@{ariaController.toLowerCase}-id");
 		var $el = $("<div></div>");
 		$('body').append($el);
@@ -74,6 +75,7 @@ function fnAddGlobalFunctions(){
 	<h1>@pageTitle</h1>
 	
 	<div class="alert_placeholder"></div>
+		<div id="alert-box"></div>
 		<table class="table table-condensed table-bordered table-striped" id="@{ariaController.toLowerCase}">
 		</table>
 	</div>

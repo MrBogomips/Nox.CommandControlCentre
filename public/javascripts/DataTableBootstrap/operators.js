@@ -55,6 +55,7 @@ $(document).ready(function() {
 function fnLocalAction(){
 	$(".btn-edit").click(function(el, ev) {
 		var options = {};
+		options["idname"] = "data-maintenance-operator-id";
 		options["id"] = $(this).attr("data-maintenance-operator-id");
 		var $el = $("<div></div>");
 		$('body').append($el);

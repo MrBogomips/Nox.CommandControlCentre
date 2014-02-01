@@ -59,6 +59,7 @@ $(document).ready(function() {
 function fnLocalAction(){
 	$(".btn-edit").click(function(el, ev) {
 		var options = {};
+		options["idname"] = "data-driver-id";
 		options["id"] = $(this).attr("data-driver-id");
 		var $el = $("<div></div>");
 	$('body').append($el);

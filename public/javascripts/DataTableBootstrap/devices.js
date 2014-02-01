@@ -66,6 +66,7 @@ $(document).ready(function() {
 function fnLocalAction(){
 	$(".btn-edit").click(function(el, ev) {
 		var options = {};
+		options["idname"] = "data-device-id";
 		options["id"] = $(this).attr("data-device-id");
 		var $el = $("<div></div>");
 		$('body').append($el);
