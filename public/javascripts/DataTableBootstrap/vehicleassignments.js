@@ -183,19 +183,12 @@ function fnLocalAction(){
 	$(".btn-delete").click(function(el, ev) {
 		container.block();
 		var self = $(this);
-		var nRow = self.closest('tr')[0];
-//		var nRow = self.parents('tr')[0];
 		var id = self.attr("data-vehicleassignments-id");
 		if(id != '?'){
 			jsRoutes.controllers.VehicleAssignement.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
-				oTable.fnReloadAjax();
-//				oTable.fnDeleteRow(oTable.fnGetPosition($(nRow).find('td')[0])[0]);
-//				oTable.fnDeleteRow( nRow, null, false  );
-//				oTable.fnStandingRedraw();
-//				oTable.fnDraw();
+				oTable.fnDeleteRow( oTable.fnGetPosition( oTable.$('tr:has(td:has([data-vehicleassignments-id='+id+']))')[0] ) );
 				popAlertSuccess("<strong>Row deleted successfully.</strong>");
-//				location.reload(true);
 			})
 			.fail(function(data, txtStatus, jqXHR) {
 //				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
@@ -207,11 +200,8 @@ function fnLocalAction(){
 			});
 		}else{
 			$('.btn.create').removeClass('disabled');
-//			oTable.fnReloadAjax();
-			oTable.fnDeleteRow( nRow );
-//			oTable.fnStandingRedraw();
+			oTable.fnDeleteRow( self.closest('tr')[0] );
 			container.unblock();
-//			location.reload(true);
 		}	
 	});
 }

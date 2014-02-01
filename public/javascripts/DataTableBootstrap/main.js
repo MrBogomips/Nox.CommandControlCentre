@@ -29,7 +29,7 @@ $.extend( true, $.fn.dataTable.defaults, {
 	},
 	"bDestroy": true,
 //	"bAutoWidth": false,
-	"bDeferRender": false,
+	"bDeferRender": true,
 } );
 
 /* Default class modification */
