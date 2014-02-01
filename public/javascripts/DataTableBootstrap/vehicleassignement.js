@@ -141,13 +141,12 @@ function fnLocalAction(){
 				$version = nRow.find('input[name="version"]');
 				$version.attr('value', 1 + parseInt($version.attr('value')));
 				fnDisableLocalSave(self);
-				//aggiorna riga con l'id specificato
 //				var jsonData = {};
 //				nRow.find('select, input').serializeArray().map(function(x){
 //					jsonData[x.name] = x.value;
 //				});
-//				alert(JSON.stringify(jsonData));
-//				oTable.fnUpdate(jsonData, oTable.fnGetPosition( oTable.$('tr:has(td:has([data-vehicleassignments-id='+id+']))')[0] ));
+////				alert(JSON.stringify(jsonData));
+//				oTable.fnUpdate(jsonData, nRow[0] );
 				popAlertSuccess("<strong>Data saved correctly.</strong>");
 			})
 			.fail(function() {
