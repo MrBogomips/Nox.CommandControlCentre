@@ -35,6 +35,14 @@ object Device extends Secured {
 
   import models.UserPersisted
 
+  lazy val ariaController: String = getThisClassSimpleName
+  val pageTitle: String = "Devices"
+    
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
+  }
+  
   def index(all: Boolean = false) = WithCors("GET", "OPTIONS") {
     WithAuthentication { (user: UserPersisted, request: Request[AnyContent]) =>
       implicit val req = request
@@ -45,7 +53,8 @@ object Device extends Secured {
 	    }
         Ok(Json.toJson(devices))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.device.index(user))
+//        Ok(views.html.aria.device.index(user))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
       } else {
         BadRequest
       }
@@ -104,7 +113,7 @@ object Device extends Secured {
           case (name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId, deviceManagerId) =>
             val d = DeviceModel(name, displayName, description, deviceTypeId, deviceGroupId, vehicle_id, enabled, simcardId, deviceManagerId)
             val id = Devices.insert(d)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

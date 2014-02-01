@@ -40,7 +40,13 @@ $(document).ready(function() {
 		                 		"sTitle": "",
 		                 		"mData": "id",	//passa l'id alle action
 		                 		"mRender": function ( data, type, val ) {
-		                 			return fnReturnActions( data, type, val, ["Edit","Delete"], "vehicle" );
+		                 			return fnReturnActions( data, type, val, 
+		                 					["Edit",
+		                 					 "Delete",
+		                 					 "New maintenance",
+		                 					 "Last maintenance events",
+		                 					 "Edit maintenance duties"],
+		                 					"vehicle" );
 		                 		},
 								"bSearchable": false,
 								"bSortable": false,
@@ -83,6 +89,18 @@ function fnLocalAction(){
 			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
 			$(".alert_placeholder").html($alert);
 		});
+	});
+	
+	$(".btn-new-maintenance").click(function(el, ev) {
+		alert('TODO');
+	});
+	
+	$(".btn-last-maintenance-events").click(function(el, ev) {
+		alert('TODO');
+	});
+	
+	$(".btn-edit-maintenance-duties").click(function(el, ev) {
+		alert('TODO');
 	});
 }
 //************************************************************************************************************************

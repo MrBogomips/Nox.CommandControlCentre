@@ -78,7 +78,7 @@ object VehicleAssignement extends Secured {
       "enabled" -> boolean,
       "version" -> number))
 
-  def create = WithCors("PSOT") {
+  def create = WithCors("POST") {
     WithAuthentication { implicit request =>
       createForm.bindFromRequest.fold(
         errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),

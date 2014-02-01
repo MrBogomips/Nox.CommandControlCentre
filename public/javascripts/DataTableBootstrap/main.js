@@ -438,7 +438,7 @@ function fnReturnActions( data, type, val, actions, controllername) {
 				   </a> \
 				   <ul class="dropdown-menu pull-right">';
 	for(i in actions){
-		content += '<li><a tabindex="-1" data-target="#" class="btn-'+actions[i].toLowerCase()+'" data-'+controllername+'-id="'+data+'">'+actions[i]+'</a></li>';
+		content += '<li><a tabindex="-1" data-target="#" class="btn-'+actions[i].toLowerCase().replace(/ /g,"-")+'" data-'+controllername+'-id="'+data+'">'+actions[i]+'</a></li>';
 	}
 	content += '</ul> \
 			    </div>';
@@ -480,7 +480,12 @@ function popAlertError(message){
 }
 
 function popAlertSuccess(message){
+//	$("<div class='alert alert-success fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
+//	.appendTo("#alert-box")
+//	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});
 	$("<div class='alert alert-success fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
 	.appendTo("#alert-box")
-	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});
+	.delay(1000).fadeTo(500, 0).slideUp(500, function(){
+        $(this).alert('close');
+	});
 }

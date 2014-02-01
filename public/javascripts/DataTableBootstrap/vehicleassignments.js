@@ -129,25 +129,47 @@ function fnLocalAction(){
 		var container = self.closest('table').parent();	
 //		self.button('loading');
 		container.block();	
-		jsRoutes.controllers.VehicleAssignement.update($(this).attr("data-vehicleassignments-id")).ajax({
-			data: row.find('select, input').serialize()
-		})
-		.done(function(data, txtStatus, jqXHR) {
-//			// SUCCESS
-//			el.button('reset');
-			popAlertSuccess("<strong>Data saved correctly.</strong>");
-			$version = row.find('input[name="version"]');
-			$version.attr('value', 1 + parseInt($version.attr('value')));
-			fnDisableLocalSave(self);
-		})
-		.fail(function() {
-//			// FAILURE
-//			el.button('reset');
-			popAlertError("<strong>An error occurred.</strong>");
-		})
-		.always(function(){
-			container.unblock();
-		});
+		if(self.attr("data-vehicleassignments-id") != '?'){
+			jsRoutes.controllers.VehicleAssignement.update($(this).attr("data-vehicleassignments-id")).ajax({
+				data: row.find('select, input').serialize()
+			})
+			.done(function(data, txtStatus, jqXHR) {
+	//			// SUCCESS
+	//			el.button('reset');
+//				popAlertSuccess("<strong>Data saved correctly.</strong>");
+//				$version = row.find('input[name="version"]');
+//				$version.attr('value', 1 + parseInt($version.attr('value')));
+//				fnDisableLocalSave(self);
+//				location.reload(true);
+			})
+			.fail(function() {
+	//			// FAILURE
+	//			el.button('reset');
+//				popAlertError("<strong>An error occurred.</strong>");
+				popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
+			})
+			.always(function(){
+				container.unblock();
+				$('.btn.create').removeClass('disabled');
+			});
+		}else{
+			jsRoutes.controllers.VehicleAssignement.create().ajax({
+				data: row.find('select, input').serialize()
+			})
+			.done(function(data, txtStatus, jqXHR) {
+//				self.attr("data-vehicleassignments-id",data.id);
+//				row.find('td:first').html(data.id);
+//				fnDisableLocalSave(self);
+				location.reload(true);
+			})
+			.fail(function(data, txtStatus, jqXHR) {
+				popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
+			})
+			.always(function(){
+				container.unblock();
+				$('.btn.create').removeClass('disabled');
+			});
+		}
 	});
 
 	$(".btn-delete").click(function(el, ev) {
@@ -157,16 +179,20 @@ function fnLocalAction(){
 		if(id != '?'){
 			jsRoutes.controllers.VehicleAssignement.delete(id).ajax()
 			.done(function(data, txtStatus, jqXHR) {
-				oTable.fnDeleteRow(row);
+//				oTable.fnDeleteRow( row  );
+				location.reload(true);
 			})
 			.fail(function(data, txtStatus, jqXHR) {
-				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-				$(".alert_placeholder").html($alert);
+//				var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+//				$(".alert_placeholder").html($alert);
+				popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
 			});
 		}else{
-			oTable.fnDeleteRow(row);
-			$('.btn.create').removeClass('disabled');
+//			oTable.fnDeleteRow( row );
+//			$('.btn.create').removeClass('disabled');
+			location.reload(true);
 		}	
+//		oTable.fnDraw();
 	});
 }
 //************************************************************************************************************************
@@ -187,7 +213,7 @@ function fnGlobalFunctions(){
 		var enabledButtonsCount = enabledButtons.length;
 		var counter = 0;	
 		while(counter < enabledButtonsCount){
-			setTimeout(clickEnableButton, 1000 * (counter), enabledButtons, counter);
+			setTimeout(clickEnableButton, 1000 * counter, enabledButtons, counter);
 			counter += 1;
 		}
 	});

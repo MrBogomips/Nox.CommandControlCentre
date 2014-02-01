@@ -80,10 +80,26 @@ function fnLocalAction(){
 			location.reload(true);
 		})
 		.fail(function(data, txtStatus, jqXHR) {
-			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-			self.find(".alert_placeholder").html($alert);
+			//var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
+			//self.find(".alert_placeholder").html($alert);
+			popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
 		});
 	});
+	
+//	$(".btn-delete").click(function(el, ev) {
+//		var self = $(this);
+//		var row = self.closest('tr').get(0);
+//		var id = self.attr("data-device-id");
+//		jsRoutes.controllers.Device.delete(id).ajax()
+//		.done(function(data, txtStatus, jqXHR) {
+////			popAlertSuccess("<h4 class='alert-heading'>Success</h4><p>"+data.responseText+"</p>");
+//			popAlertSuccess("<strong>Row "+id+" deleted successfully</strong>");
+//			oTable.fnDeleteRow(row,true);
+//		})
+//		.fail(function(data, txtStatus, jqXHR) {
+//			popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
+//		});	
+//	});
 }
 //************************************************************************************************************************
 

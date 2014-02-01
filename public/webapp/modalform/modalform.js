@@ -86,10 +86,31 @@ steal(
 				self._cancelErrors();
 				self.element.block();
 				
+				var jsonData = self.element.find('form').serialize();
+				
 				serverController.create().ajax({
-					data: self.element.find('form').serialize()
+					data: jsonData
 				})
 				.done(function(data, txtStatus, jqXHR) {
+//					var jsonData = {};
+//					var myForm = self.element.find('form');
+//					//mette i dati del form in un json object 
+//					myForm.serializeArray().map(function(x){
+//						jsonData[x.name] = x.value;
+//					});
+//					//aggiunge l'id dell'oggetto creato
+//					jsonData.id = data.id;
+//					//aggiunge i displayName delle option selezionate
+//					alert(myForm.find('.btn.selectpicker'));
+//					myForm.find('.btn.selectpicker').each(function( selectedOption ) {
+//						alert(selectedOption.attr('data-id'));
+//						alert(selectedOption.children().first().text());
+//						
+////						jsonData[ selectElement.name.substring(0,selectElement.name.length - 2) + "DisplayName"] = selectElement.options[selectElement.selectedIndex].text;
+//					});
+//					alert( JSON.stringify(jsonData) );
+//					oTable.fnAddData( jsonData );
+//					popAlertSuccess("<strong>Record created successfully</strong>");
 					location = serverController.index().url;
 				})
 				.fail(function(data, txtStatus, jqXHR) {
@@ -97,6 +118,7 @@ steal(
 				})
 				.always(function(){
 					self.element.unblock();
+					self.element.modal('hide');
 				});
 			},
 
