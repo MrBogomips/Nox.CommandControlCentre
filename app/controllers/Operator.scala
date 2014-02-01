@@ -85,7 +85,7 @@ object Operator extends Secured {
           case (name, surname, displayName, enabled) =>
             val d = OperatorModel(name, surname, displayName, enabled)
             val id = Operators.insert(d)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

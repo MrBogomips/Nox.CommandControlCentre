@@ -173,9 +173,9 @@ function fnLocalAction(){
 					jsonData[x.name] = x.value;
 				});
 				//aggiunge campi mancanti
-				jsonData["id"] = data.id;
-				jsonData["version"] = 0;
-				jsonData["enabled"] = (jsonData["enabled"] == undefined) ? false : jsonData["enabled"];
+				jsonData.id = data.id;
+				jsonData.version = 0;
+				jsonData.enabled = (jsonData.enabled == undefined) ? false : jsonData.enabled;
 				oTable.fnUpdate( jsonData , nRow[0]);
 				$('td:first', nRow).append('<input type="hidden" value="'+jsonData.id+'" name="id"> \
 											<input type="hidden" value="'+jsonData.version+'" name="version">');

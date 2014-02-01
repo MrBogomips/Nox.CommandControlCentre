@@ -74,7 +74,7 @@ object Vehicle extends Secured {
           case (name, displayName, description, model, licensePlate, vehicleTypeId, enabled) =>
             val v = VehicleModel(name, displayName, description, enabled, model, licensePlate, vehicleTypeId)
             val id = Vehicles.insert(v)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

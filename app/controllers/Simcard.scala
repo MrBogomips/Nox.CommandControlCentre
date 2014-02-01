@@ -70,7 +70,7 @@ object Simcard extends Secured {
           case (imei, displayName0, description, mobileNumber, carrierId, enabled) =>
             val sc = SimcardModel(imei, displayName0, description, enabled, mobileNumber, carrierId)
             val id = Simcards.insert(sc)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

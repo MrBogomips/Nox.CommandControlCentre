@@ -67,7 +67,7 @@ object Driver extends Secured {
           case (name, surname, displayName, enabled) =>
             val dt = DriverModel(name, surname, displayName, enabled)
             val id = Drivers.insert(dt)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

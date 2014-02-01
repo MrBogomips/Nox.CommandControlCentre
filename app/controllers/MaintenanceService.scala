@@ -97,7 +97,7 @@ object MaintenanceService extends Secured {
           case (name, displayName, description, odometer, monthsPeriod, enabled) =>
             val d = MaintenanceServiceModel(name, displayName, description, odometer, monthsPeriod, enabled)
             val id = MaintenanceServices.insert(d)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

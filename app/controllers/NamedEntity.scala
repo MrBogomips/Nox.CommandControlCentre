@@ -93,7 +93,7 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
           case (name, displayName, description, enabled) =>
             val dt: MODEL = modelBuilder(name, displayName, description, enabled)
             val id = dataAccessObject.insert(dt)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

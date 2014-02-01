@@ -86,40 +86,35 @@ steal(
 				self._cancelErrors();
 				self.element.block();
 				
-				var jsonData = self.element.find('form').serialize();
-				
 				serverController.create().ajax({
-					data: jsonData
+					data: self.element.find('form').serialize()
 				})
 				.done(function(data, txtStatus, jqXHR) {
-//					var jsonData = {};
-//					var myForm = self.element.find('form');
-//					//mette i dati del form in un json object 
-//					myForm.serializeArray().map(function(x){
-//						jsonData[x.name] = x.value;
-//					});
-//					//aggiunge l'id dell'oggetto creato
-//					jsonData.id = data.id;
-//					//aggiunge i displayName delle option selezionate
-//					alert(myForm.find('.btn.selectpicker'));
-//					myForm.find('.btn.selectpicker').each(function( selectedOption ) {
-//						alert(selectedOption.attr('data-id'));
-//						alert(selectedOption.children().first().text());
-//						
-////						jsonData[ selectElement.name.substring(0,selectElement.name.length - 2) + "DisplayName"] = selectElement.options[selectElement.selectedIndex].text;
-//					});
-//					alert( JSON.stringify(jsonData) );
-//					oTable.fnAddData( jsonData );
-//					popAlertSuccess("<strong>Record created successfully</strong>");
-					/*location = serverController.index().url;*/
-					oTable.fnReloadAjax();
+					var jsonData = {};
+					self.element.find('select, input').serializeArray().map(function(x){
+						jsonData[x.name] = x.value;
+					});
+					//aggiunge campi mancanti
+					jsonData.id = data.id;
+					jsonData.version = 0;
+					jsonData.enabled = (jsonData.enabled == undefined) ? false : jsonData.enabled;	
+					//aggiunge i displayName delle option selezionate
+					var selectControl = self.element.find('.controls:has(.selectpicker)');
+					var len = selectControl.length;
+					for(var i=0; i<len; i++){
+						var campo = $(selectControl[i]).find('.selectpicker').attr('name').slice(0,-2).concat("DisplayName");
+						var valore = $(selectControl[i]).find('.selected .text').text().replace("[None]","");
+						jsonData[campo] = valore;
+					}
+					oTable.fnAddData( jsonData );
+					self.element.modal('hide');
+					popAlertSuccess("<strong>Record created successfully.</strong>");
 				})
 				.fail(function(data, txtStatus, jqXHR) {
 					self.proxy(self._reportError(data, txtStatus, jqXHR));
 				})
 				.always(function(){
 					self.element.unblock();
-					self.element.modal('hide');
 				});
 			},
 
