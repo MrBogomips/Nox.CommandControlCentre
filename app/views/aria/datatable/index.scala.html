@@ -6,7 +6,7 @@
 @footer_scripts = {
 <script type='text/javascript'>
 function fnLocalAction(){
-	$(".btn-edit").click(function(el, ev) {
+	$(".btn-edit").off('click').click(function(el, ev) {
 		var options = {};
 		options["idname"] = "data-@{ariaController.toLowerCase}-id";
 		options["id"] = $(this).attr("data-@{ariaController.toLowerCase}-id");
@@ -15,7 +15,7 @@ function fnLocalAction(){
 		$el.webapp_@{ariaController.toLowerCase}(options);
 	});
 	
-	$(".btn-delete").click(function(el, ev) {
+	$(".btn-delete").off('click').click(function(el, ev) {
 		var id = $(this).attr("data-@{ariaController.toLowerCase}-id");
 		jsRoutes.controllers.@{ariaController}.delete(id).ajax()
 		.done(function(data, txtStatus, jqXHR) {

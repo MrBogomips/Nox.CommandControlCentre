@@ -123,7 +123,7 @@ $(document).ready(function() {
 //Local actions***********************************************************************************************************
 //gestione local actions
 function fnLocalAction(){
-	$(".btn-save").click(function(el, ev) {
+	$(".btn-save").off('click').click(function(el, ev) {
 		container.block();
 		var self = $(this);
 //		var nRow = self.closest('tr');
@@ -190,7 +190,7 @@ function fnLocalAction(){
 		}
 	});
 
-	$(".btn-delete").click(function(el, ev) {
+	$(".btn-delete").off('click').click(function(el, ev) {
 		container.block();
 		var self = $(this);
 		var id = self.attr("data-vehicleassignement-id");

@@ -19,7 +19,11 @@ import play.modules.reactivemongo._
 import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.api._
 
+//<<<<<<< HEAD
 import ExecutionContext.Implicits.global
+//=======
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+//>>>>>>> origin/develop
 
 object PositionPlayer extends Secured with MongoController {
 
