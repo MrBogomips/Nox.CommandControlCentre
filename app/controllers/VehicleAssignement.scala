@@ -14,13 +14,13 @@ import models.json.vehicleAssignementPersistedJsonWriter
 
 object VehicleAssignement extends Secured {
   
-//  lazy val ariaController: String = getThisClassSimpleName
-//  val pageTitle: String = "Vehicle Assignements"
-//    
-//  private def getThisClassSimpleName: String = {
-//    val s = this.getClass.getSimpleName()
-//    s.substring(0, s.length() - 1)
-//  }
+  lazy val ariaController: String = getThisClassSimpleName
+  val pageTitle: String = "Vehicle Assignements"
+    
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
+  }
 
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) ⇒
@@ -32,8 +32,8 @@ object VehicleAssignement extends Secured {
       if (acceptsJson(request)) {
         Ok(Json.toJson(vehicleAssignements))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.vehicleassignement.index(user))
-//        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+//        Ok(views.html.aria.vehicleassignement.index(user))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
       } else {
         BadRequest
       }
