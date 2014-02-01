@@ -4,7 +4,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 		/**
 		 * @class Webapp.devicegroups
 		 */
-		Webapp.NamedEntity('Webapp.EventsFunctionalChannel',
+		Webapp.NamedEntity('Webapp.eventsfunctionalchannel',
 		/** @Static */
 		{
 			defaults : {

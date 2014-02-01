@@ -4,7 +4,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 		/**
 		 * @class Webapp.devicetypes
 		 */
-		Webapp.NamedEntity('Webapp.devicetypes',
+		Webapp.NamedEntity('Webapp.devicetype',
 		/** @Static */
 		{
 			defaults : {
@@ -18,8 +18,8 @@ steal('/assets/webapp/namedentity/namedentity.js',
 				modificationTime: '',
 				version: -1,
 				serverController: jsRoutes.controllers.DeviceType,
-				className: 'devicetypes',
-				formTitle: 'device types'
+				className: 'devicetype',
+				formTitle: 'device type'
 			}
 		},
 		/** @Prototype */

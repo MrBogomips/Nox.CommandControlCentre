@@ -4,7 +4,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 		/**
 		 * @class Webapp.devicegroups
 		 */
-		Webapp.NamedEntity('Webapp.EventsLogisticChannel',
+		Webapp.NamedEntity('Webapp.devicegroup',
 		/** @Static */
 		{
 			defaults : {
@@ -17,9 +17,9 @@ steal('/assets/webapp/namedentity/namedentity.js',
 				enabled: true,
 				modificationTime: '',
 				version: -1,
-				serverController: jsRoutes.controllers.EventsLogisticChannel,
-				className: 'EventsLogisticChannel',
-				formTitle: 'logistic channel'
+				serverController: jsRoutes.controllers.DeviceGroup,
+				className: 'devicegroup',
+				formTitle: 'device group'
 			}
 		},
 		/** @Prototype */
@@ -28,4 +28,5 @@ steal('/assets/webapp/namedentity/namedentity.js',
 				this._super();
 			}
 		});
+
 });

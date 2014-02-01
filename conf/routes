@@ -111,6 +111,7 @@ OPTIONS  /driver                               controllers.Driver.create
 
 # Vechicle Assignement
 GET      /vehicle_assignement/index            controllers.VehicleAssignement.index(all: Boolean ?= true)
+GET      /vehicle_assignement/index2           controllers.VehicleAssignement.index2(all: Boolean ?= true)
 GET      /vehicle_assignement/:id              controllers.VehicleAssignement.get(id: Int)
 PUT      /vehicle_assignement/:id              controllers.VehicleAssignement.update(id: Int)
 DELETE   /vehicle_assignement/:id              controllers.VehicleAssignement.delete(id: Int)

@@ -13,6 +13,14 @@ import org.joda.time.format.ISODateTimeFormat
 import models.json.vehicleAssignementPersistedJsonWriter
 
 object VehicleAssignement extends Secured {
+  
+//  lazy val ariaController: String = getThisClassSimpleName
+//  val pageTitle: String = "Vehicle Assignements"
+//    
+//  private def getThisClassSimpleName: String = {
+//    val s = this.getClass.getSimpleName()
+//    s.substring(0, s.length() - 1)
+//  }
 
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) ⇒
@@ -25,6 +33,24 @@ object VehicleAssignement extends Secured {
         Ok(Json.toJson(vehicleAssignements))
       } else if (acceptsHtml(request)) {
         Ok(views.html.aria.vehicleassignement.index(user))
+//        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+      } else {
+        BadRequest
+      }
+    }
+  }
+  
+  def index2(all: Boolean = false) = WithCors("GET") {
+    WithAuthentication { (user, request) ⇒
+      implicit val req = request
+      val vehicleAssignements = all match {
+        case false => VehicleAssignements.find(Some(true))
+        case true  => VehicleAssignements.find(None)
+      }
+      if (acceptsJson(request)) {
+        Ok(Json.toJson(vehicleAssignements))
+      } else if (acceptsHtml(request)) {
+        Ok(views.html.aria.vehicleassignement.index2(user))
       } else {
         BadRequest
       }
@@ -61,7 +87,7 @@ object VehicleAssignement extends Secured {
       "enabled" -> boolean,
       "version" -> number))
 
-  def create = WithCors("PSOT") {
+  def create = WithCors("POST") {
     WithAuthentication { implicit request =>
       createForm.bindFromRequest.fold(
         errors ⇒ BadRequest(errors.errorsAsJson).as("application/json"),

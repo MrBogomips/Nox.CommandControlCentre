@@ -13,17 +13,28 @@ import org.joda.time.format.ISODateTimeFormat
 import models.json.driverPersistedJsonWriter
 
 object Driver extends Secured {
+  
+  lazy val ariaController: String = getThisClassSimpleName
+  val pageTitle: String = "Devices"
+    
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
+  }
+  
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
       implicit val req = request
-      val drivers = all match {
-        case false => Drivers.find(Some(true))
-        case true  => Drivers.find(None)
-      }
+
       if (acceptsJson(request)) {
+        val drivers = all match {
+          case false => Drivers.find(Some(true))
+          case true  => Drivers.find(None)
+        }
         Ok(Json.toJson(drivers))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.driver.index(drivers, user))
+//        Ok(views.html.aria.driver.index(user))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
       } else {
         BadRequest
       }
@@ -66,7 +77,7 @@ object Driver extends Secured {
           case (name, surname, displayName, enabled) =>
             val dt = DriverModel(name, surname, displayName, enabled)
             val id = Drivers.insert(dt)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

@@ -4,7 +4,7 @@ steal('/assets/webapp/namedentity/namedentity.js',
 		/**
 		 * @class Webapp.devicegroups
 		 */
-		Webapp.NamedEntity('Webapp.MaintenanceActivityOutcome',
+		Webapp.NamedEntity('Webapp.maintenanceactivityoutcome',
 		/** @Static */
 		{
 			defaults : {

@@ -13,6 +13,14 @@ import models.{ MaintenanceDuties, MaintenanceDuty => MaintenanceDutyModel, Main
 object MaintenanceDuty extends Secured {
 
   import models.json.{ maintenanceDutyPersistedJsonWriter, maintenanceDutyInfoPersistedJsonWriter }
+  
+  lazy val ariaController: String = getThisClassSimpleName
+  val pageTitle: String = "Maintenance Duties"
+    
+  private def getThisClassSimpleName: String = {
+    val s = this.getClass.getSimpleName()
+    s.substring(0, s.length() - 1)
+  }
 
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
@@ -22,7 +30,7 @@ object MaintenanceDuty extends Secured {
       if (acceptsJson(request)) {
         Ok(Json.toJson(duties))
       } else if (acceptsHtml(request)) {
-        ???
+        Ok(Json.toJson(duties))
       } else {
         BadRequest
       }
@@ -37,7 +45,8 @@ object MaintenanceDuty extends Secured {
       if (acceptsJson(request)) {
         Ok(Json.toJson(duties))
       } else if (acceptsHtml(request)) {
-        ???
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+//        Ok(Json.toJson(duties))
       } else {
         BadRequest
       }

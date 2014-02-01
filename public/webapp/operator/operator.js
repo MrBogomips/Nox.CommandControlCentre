@@ -4,7 +4,7 @@ steal(
 		/**
 		 * @class Webapp.Maintenanceoperators
 		 */
-		Webapp.ModalForm('Webapp.Maintenanceoperators',
+		Webapp.ModalForm('Webapp.Operator',
 		/** @Static */
 		{
 			defaults : {
@@ -24,8 +24,8 @@ steal(
 			init : function() {
 				var self = this;
 				this._super();
-				this.element.addClass('webapp_maintenanceservices modal hide fade');
-				var view = jsRoutes.controllers.Assets.at("webapp/maintenanceoperators/views/maintenanceoperators.ejs").url;
+				this.element.addClass('webapp_maintenanceoperator modal hide fade');
+				var view = jsRoutes.controllers.Assets.at("webapp/operator/views/maintenanceoperators.ejs").url;
 				
 				if (parseInt(self.options["id"]) > 0) {
 					jsRoutes.controllers.Operator.get(self.options["id"]).ajax({

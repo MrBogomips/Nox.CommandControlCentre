@@ -42,16 +42,16 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
   def index(all: Boolean = false) = WithCors("GET") {
     WithAuthentication { (user, request) =>
       implicit val req = request
-
-      val entities: Seq[PERSISTED] = all match {
-        case false => dataAccessObject.find(Some(true))
-        case true  => dataAccessObject.find(None)
-      }
       if (acceptsJson(request)) {
         import scala.language.reflectiveCalls
+	    val entities: Seq[PERSISTED] = all match {
+	      case false => dataAccessObject.find(Some(true))
+	      case true  => dataAccessObject.find(None)
+	    }
         Ok(jsonSerializer.jsonWriter.writesSeq(entities))
       } else if (acceptsHtml(request)) {
-        Ok(views.html.aria.namedentity.index(entities, user, ariaController, ariaControllerFile, pageTitle, playController))
+//        Ok(views.html.aria.namedentity.index(user, ariaController, ariaControllerFile, pageTitle, playController))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
       } else {
         BadRequest
       }
@@ -94,7 +94,7 @@ trait NamedEntityController[TRAIT <: NamedEntityTrait, MODEL <: NamedEntityModel
           case (name, displayName, description, enabled) =>
             val dt: MODEL = modelBuilder(name, displayName, description, enabled)
             val id = dataAccessObject.insert(dt)
-            Ok(s"""{"id"=id}""")
+            Ok(s"""{"id":$id}""").as("application/json")
         })
     }
   }

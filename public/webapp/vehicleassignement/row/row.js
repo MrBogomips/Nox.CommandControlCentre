@@ -169,6 +169,7 @@ steal(
 				el.button('loading');
 				self.container.block();
 				
+				alert(self.element.find('select, input').serialize());
 				jsRoutes.controllers.VehicleAssignement.update(self.options.id).ajax({
 					data: self.element.find('select, input').serialize()
 				})

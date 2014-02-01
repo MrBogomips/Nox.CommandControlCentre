@@ -90,7 +90,25 @@ steal(
 					data: self.element.find('form').serialize()
 				})
 				.done(function(data, txtStatus, jqXHR) {
-					location = serverController.index().url;
+					var jsonData = {};
+					self.element.find('select, input').serializeArray().map(function(x){
+						jsonData[x.name] = x.value;
+					});
+					//aggiunge campi mancanti
+					jsonData.id = data.id;
+					jsonData.version = 0;
+					jsonData.enabled = (jsonData.enabled == undefined) ? false : jsonData.enabled;	
+					//aggiunge i displayName delle option selezionate
+					var selectControl = self.element.find('.controls:has(.selectpicker)');
+					var len = selectControl.length;
+					for(var i=0; i<len; i++){
+						var campo = $(selectControl[i]).find('.selectpicker').attr('name').slice(0,-2).concat("DisplayName");
+						var valore = $(selectControl[i]).find('.selected .text').text().replace("[None]","");
+						jsonData[campo] = valore;
+					}
+					oTable.fnAddData( jsonData );
+					self.element.modal('hide');
+					popAlertSuccess("<strong>Record created successfully.</strong>");
 				})
 				.fail(function(data, txtStatus, jqXHR) {
 					self.proxy(self._reportError(data, txtStatus, jqXHR));
@@ -109,7 +127,28 @@ steal(
 					data: self.element.find('form').serialize()
 				})
 				.done(function(data, txtStatus, jqXHR) {
-					location = serverController.index().url;
+//					location = serverController.index().url;
+//					oTable.fnReloadAjax();
+					var jsonData = {};
+					self.element.find('select, input').serializeArray().map(function(x){
+						jsonData[x.name] = x.value;
+					});
+					//aggiunge campi mancanti
+					jsonData.id = self.options.id;
+//					jsonData.version = 0;
+					jsonData.enabled = (jsonData.enabled == undefined) ? false : jsonData.enabled;	
+					//aggiunge i displayName delle option selezionate
+					var selectControl = self.element.find('.controls:has(.selectpicker)');
+					var len = selectControl.length;
+					for(var i=0; i<len; i++){
+						var campo = $(selectControl[i]).find('.selectpicker').attr('name').slice(0,-2).concat("DisplayName");
+						var valore = $(selectControl[i]).find('.selected .text').text().replace("[None]","");
+						jsonData[campo] = valore;
+					}
+					oTable.fnUpdate( jsonData , oTable.fnGetPosition( oTable.$('tr:has(td:has(['+self.options.idname+'='+jsonData.id+']))')[0] ), undefined, false);
+					oTable.fnStandingRedraw();
+					self.element.modal('hide');
+					popAlertSuccess("<strong>Record updated successfully.</strong>");
 				})
 				.fail(function(data, txtStatus, jqXHR) {
 					self.proxy(self._reportError(data, txtStatus, jqXHR));

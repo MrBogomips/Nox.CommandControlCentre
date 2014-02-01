@@ -1,16 +1,15 @@
 @(user: UserTrait)
 
-
 @header_more = {}
 
 @footer_scripts = {
 <script type='text/javascript'>
-	steal('/assets/webapp/webapp_init.js')
+	 steal('/assets/webapp/webapp_init.js')
 	.then('/assets/webapp/device/device.js')
+	.then('/assets/javascripts/jquery-ui-1.10.3.custom.min.js')
 	.then('/assets/DataTables-1.9.4/media/js/jquery.dataTables.min.js')
 	.then('/assets/javascripts/DataTableBootstrap/main.js')
-	.then('/assets/javascripts/DataTableBootstrap/devices.js').
-	then('/assets/javascripts/jquery-ui-1.10.3.custom.min.js');
+	.then('/assets/javascripts/DataTableBootstrap/devices.js');
 </script>
 }
 
@@ -19,8 +18,11 @@
 	<h1>Devices</h1>
 	
 	<div class="alert_placeholder"></div>
+	
+		<div id="alert-box"></div>
 
-	<table class="table table-condensed table-bordered table-hover" cellpadding="0" cellspacing="0" border="0" id="device">
-	</table>
+		<table class="table table-condensed table-bordered table-hover" id="device">
+		</table>
+	
 	</div>
 }

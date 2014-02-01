@@ -1,4 +1,4 @@
-@(user: UserTrait, ariaController: String, ariaControllerFile: String, pageTitle: String, playController: String)
+@(user: UserTrait, ariaController: String, pageTitle: String)
 
 
 @header_more = {}
@@ -12,34 +12,33 @@ function fnLocalAction(){
 		options["id"] = $(this).attr("data-@{ariaController.toLowerCase}-id");
 		var $el = $("<div></div>");
 		$('body').append($el);
-		//$el.webapp_@{ariaController.toLowerCase}(options);
-		new Webapp.@{ariaController}($el, options)
+		$el.webapp_@{ariaController.toLowerCase}(options);
 	});
 	
 	$(".btn-delete").click(function(el, ev) {
 		var id = $(this).attr("data-@{ariaController.toLowerCase}-id");
-		jsRoutes.controllers.@{playController}.delete(id).ajax()
+		jsRoutes.controllers.@{ariaController}.delete(id).ajax()
 		.done(function(data, txtStatus, jqXHR) {
-			location.reload(true);
+//			popAlertSuccess("<h4 class='alert-heading'>Success</h4><p>"+data.responseText+"</p>");
+			oTable.fnDeleteRow( oTable.fnGetPosition( oTable.$('tr:has(td:has([data-@{ariaController.toLowerCase}-id='+id+']))')[0] ) );
+			popAlertSuccess("<strong>Row deleted successfully</strong>");
 		})
 		.fail(function(data, txtStatus, jqXHR) {
-			var $alert= $("<div class='alert alert-block alert-error'><button type='button' class='close' data-dismiss='alert'>��</button><h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p></div>");
-			self.find(".alert_placeholder").html($alert);
-		});
+			popAlertError("<h4 class='alert-heading'>An error occurred</h4><p>"+data.responseText+"</p>");
+		});	
 	});
 }
 	
 function fnGlobalFunctions(){
-	$("#create_device").click(function() {
+	$("#create_@{ariaController.toLowerCase}").click(function() {
 		var $el = $("<div></div>")
 		$('body').append($el);
-		//$el.webapp_@{ariaController.toLowerCase}();
-		new Webapp.@{ariaController}($el)
+		$el.webapp_@{ariaController.toLowerCase}();
 	});
 }
 
 function fnAddGlobalFunctions(){
-	$(".globalfunctions").html('<button class="btn btn-primary" id="create_device">Create new @pageTitle.toLowerCase()</button>');
+	$(".globalfunctions").html('<button class="btn btn-primary" id="create_@{ariaController.toLowerCase}">Create new @{ariaController.toLowerCase}</button>');
 }
 </script>
 <script type='text/javascript'>
@@ -50,34 +49,21 @@ function fnAddGlobalFunctions(){
 	.then('/assets/DataTables-1.9.4/media/js/jquery.dataTables.min.js')
 	.then('/assets/javascripts/DataTableBootstrap/main.js')
 	.then('/assets/javascripts/DataTableBootstrap/@{ariaController.toLowerCase}.js');
-</script>
+</script>	
 }
 
 @aria.master.authenticated(pageTitle, user, header_more = header_more, footer_more = footer_scripts) {
 
-<div style="display: none;"
-	<br/>
-	<button class="btn createmenu" data-@{ariaController}-id="x">create</button>
-	<br/>
-	<div class="navbar">
-		<div class="navbar navbar-static">
-			<div class="navbar-inner">
-				<div class="container" style="width: auto;" id="containerProva">
-					<a class="brand" href="#">NoxST::CCC</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<br/>
-</div>
-
-<div class="ana-devices entities">
+<div class="ana-devices">
 	<h1>@pageTitle</h1>
 	
 	<div class="alert_placeholder"></div>
+
 		<div id="alert-box"></div>
-		<table class="table table-condensed table-bordered table-striped" id="@{ariaController.toLowerCase}">
+		
+		<table class="table table-condensed table-bordered table-hover" id="@{ariaController.toLowerCase}">
 		</table>
+	
 	</div>
 
 }

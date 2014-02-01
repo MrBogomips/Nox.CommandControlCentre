@@ -1,15 +1,18 @@
 /* Set the defaults for DataTables initialisation */
 $.extend( true, $.fn.dataTable.defaults, {
+    "sAjaxSource": window.location.pathname+window.location.search,
+    "sAjaxDataProp": "",
 	"sDom": "<'riga'<'half'<'tablefilter'>i><'half'<'selectionbuttons'>r>><'clear'>t<'riga'<'half'<'globalfunctions'>><'half'pl>><'clear'>",
 	"sPaginationType": "bootstrap",
 	"oLanguage": {
-		'sLengthMenu': "Show " +
-						"<select class='selectpicker' data-width='auto'>" +
-								"<option value='10'>10 elements </option>" +
-								"<option value='20'>20 elements </option>" +
-								"<option value='50'>50 elements </option>" +
-								"<option value='100'>100 elements </option>" +
-						"</select>",
+		'sLengthMenu': "Show \
+						<select class='selectpicker' data-width='auto' data-hide-disabled='true'> \
+								<option value='10'>10 elements </option> \
+								<option value='20'>20 elements </option> \
+								<option value='50'>50 elements </option> \
+								<option value='100'>100 elements </option> \
+								<option value='-1'>All elements</option> \
+						</select>",
 		"fnInfoCallback": function (oSettings, iStart, iEnd, iMax, iTotal, sPre) {
 						        if(iTotal == iMax){
 						            return "Found " + iTotal + " records";
@@ -25,8 +28,8 @@ $.extend( true, $.fn.dataTable.defaults, {
 	      }
 	},
 	"bDestroy": true,
-	"bAutoWidth": false,
-	"bDeferRender": false,
+//	"bAutoWidth": false,
+	"bDeferRender": true,
 } );
 
 /* Default class modification */
@@ -127,8 +130,133 @@ $.extend( $.fn.dataTableExt.oPagination, {
 	}
 } );
 
+/*
+ * TableTools Bootstrap compatibility
+ * Required TableTools 2.1+
+ */
+if ( $.fn.DataTable.TableTools ) {
+	// Set the classes that TableTools uses to something suitable for Bootstrap
+	$.extend( true, $.fn.DataTable.TableTools.classes, {
+		"container": "DTTT btn-group",
+		"buttons": {
+			"normal": "btn",
+			"disabled": "disabled"
+		},
+		"collection": {
+			"container": "DTTT_dropdown dropdown-menu",
+			"buttons": {
+				"normal": "",
+				"disabled": "disabled"
+			}
+		},
+		"print": {
+			"info": "DTTT_print_info modal"
+		},
+		"select": {
+			"row": "active"
+		}
+	} );
+
+	// Have the collection use a bootstrap compatible dropdown
+	$.extend( true, $.fn.DataTable.TableTools.DEFAULTS.oTags, {
+		"collection": {
+			"container": "ul",
+			"button": "li",
+			"liner": "a"
+		}
+	} );
+}
+
+//Redraw the table (i.e. fnDraw) to take account of sorting and filtering, but retain the current pagination settings.
+$.fn.dataTableExt.oApi.fnStandingRedraw = function(oSettings) {
+    if(oSettings.oFeatures.bServerSide === false){
+        var before = oSettings._iDisplayStart;
+ 
+        oSettings.oApi._fnReDraw(oSettings);
+ 
+        // iDisplayStart has been reset to zero - so lets change it back
+        oSettings._iDisplayStart = before;
+        oSettings.oApi._fnCalculateEnd(oSettings);
+    }
+      
+    // draw the 'current' page
+    oSettings.oApi._fnDraw(oSettings);
+};
+
+
+//By default DataTables only uses the sAjaxSource variable at initialisation time, however it can be useful to re-read an Ajax source and have the table update. Typically you would need to use the fnClearTable() and fnAddData() functions, however this wraps it all up in a single function call.
+$.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, fnCallback, bStandingRedraw )
+{
+    // DataTables 1.10 compatibility - if 1.10 then versionCheck exists.
+    // 1.10s API has ajax reloading built in, so we use those abilities
+    // directly.
+    if ( $.fn.dataTable.versionCheck ) {
+        var api = new $.fn.dataTable.Api( oSettings );
+ 
+        if ( sNewSource ) {
+            api.ajax.url( sNewSource ).load( fnCallback, !bStandingRedraw );
+        }
+        else {
+            api.ajax.reload( fnCallback, !bStandingRedraw );
+        }
+        return;
+    }
+ 
+    if ( sNewSource !== undefined && sNewSource !== null ) {
+        oSettings.sAjaxSource = sNewSource;
+    }
+ 
+    // Server-side processing should just call fnDraw
+    if ( oSettings.oFeatures.bServerSide ) {
+        this.fnDraw();
+        return;
+    }
+ 
+    this.oApi._fnProcessingDisplay( oSettings, true );
+    var that = this;
+    var iStart = oSettings._iDisplayStart;
+    var aData = [];
+ 
+    this.oApi._fnServerParams( oSettings, aData );
+ 
+    oSettings.fnServerData.call( oSettings.oInstance, oSettings.sAjaxSource, aData, function(json) {
+        /* Clear the old information from the table */
+        that.oApi._fnClearTable( oSettings );
+ 
+        /* Got the data - add it to the table */
+        var aData =  (oSettings.sAjaxDataProp !== "") ?
+            that.oApi._fnGetObjectDataFn( oSettings.sAjaxDataProp )( json ) : json;
+ 
+        for ( var i=0 ; i<aData.length ; i++ )
+        {
+            that.oApi._fnAddData( oSettings, aData[i] );
+        }
+         
+        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+ 
+        that.fnDraw();
+ 
+        if ( bStandingRedraw === true )
+        {
+            oSettings._iDisplayStart = iStart;
+            that.oApi._fnCalculateEnd( oSettings );
+            that.fnDraw( false );
+        }
+ 
+        that.oApi._fnProcessingDisplay( oSettings, false );
+ 
+        /* Callback user function - for event handlers etc */
+        if ( typeof fnCallback == 'function' && fnCallback !== null )
+        {
+            fnCallback( oSettings );
+        }
+    }, oSettings );
+};
+
 //Init***************************************************************************************************************
 var oTable;
+var container = $('.page-container');
+container.block();
 
 function init(){
 	//Aggiunte***********************************
@@ -138,9 +266,12 @@ function init(){
     fnAddTableFilter();
     //aggiunta selected info
 	fnAddSelectedInfo();
+	//aggiunta global functions
+    fnAddGlobalFunctions();		//definita per la singola tabella nel js specifico
 	//Aggiunte***********************************
     
 	//Event bindings*****************************
+	fnGlobalFunctions();		//definita per la singola tabella nel js specifico
 	//clear filter button
 	$(".tablefilter .clear").click(function( e ) {
 		$(".tablefilter input").val('');
@@ -159,14 +290,12 @@ function init(){
 	$('.selectionbuttons .deselPage').click(function(){ fnDeselectPage(); });
 	$('.selectionbuttons .deselAll').click(function(){ fnDeselectAll(); });
 	$('.selectionbuttons .showSel').click(function(){ fnShowSelected(); });
-	//aggiorna i contatori righe selezionate dopo il filtering
-	$('#example').bind('filter', function () {fnUpdateNumSelected(); });
 	//Miglioria gui su firefox
 	$('th').attr('unselectable', 'on').css('user-select', 'none').on('selectstart', false);
 	//Event bindings*****************************
 	
 	//Enable Bootstrap-Select
-	$('.selectpicker').selectpicker();
+//	$('.selectpicker').selectpicker();
 }
 //Init***************************************************************************************************************
 
@@ -232,7 +361,9 @@ function fnManageSelection(){
 	if(!cella.hasClass('noClick')){
 		if ( riga.hasClass('row_selected') ) {
 			riga.removeClass('row_selected');
-			oTable.fnDraw();	//ridisegna la tabella per visualizzare solo le righe selezionate (se abilitato)
+			if(ShowSelected){	//ridisegna la tabella per eliminare le righe deselezionate in modalità visualizza selezionate
+				oTable.fnDraw();
+			}
 		}else {
 			//oTable.$('tr.row_selected').removeClass('row_selected');	//decommentare per settare il single-row selection
 			riga.addClass('row_selected');
@@ -246,7 +377,7 @@ function fnUpdateNumSelected(){
 	var div = $(".selectedinfo");
 	var totSelected = fnGetSelected(oTable).length;
 	div.children(".total").text(totSelected);
-	div.children(".number").text( oTable.$('tr.row_selected', {"filter": "applied"}).length );
+//	div.children(".number").text( oTable.$('tr.row_selected', {"filter": "applied"}).length );
 	if(totSelected > 0){
 		div.show();
 	}else{
@@ -316,4 +447,130 @@ function unique(array) {
     return $.grep(array, function(el, index){
         return index == $.inArray(el, array);
     });
+}
+
+//************************************************************************************************************************
+//imposta e attiva l'autocompletamento sul campo di ricerca
+function fnAutoComplete(columnlist, wordlistAppend){
+	wordlistAppend = (typeof wordlistAppend === "undefined") ? [] : wordlistAppend;
+	var wordlist = []; 
+	var table = oTable.$('tr');
+	var colonna = [];
+	for(var j in columnlist){	//per le colonne 1-5 //i<table[0].cells.length-1 per prendere tutta la riga meno la colonna action
+		if (Object.prototype.hasOwnProperty.call(columnlist, j)) {	//controllo per evitare di aggiungere altre proprietà della classe Array
+			j=columnlist[j];	//prende l'indice effettivo e non l'index dell'indice all'interno di columnlist
+			colonna[j]=[];
+			for(var i=0; i<table.length; i++){
+				colonna[j].push(table[i].cells.item(j).innerHTML);
+			}
+			colonna[j] = unique( colonna[j] );	//elimina duplicati
+			$.merge(wordlist,colonna[j]);		//aggiunge la colonna alla wordlist
+		}
+	}
+	wordlist.push.apply(wordlist,wordlistAppend);	//aggiunge i termini in wordlistAppend alla wordlist
+	wordlist = unique(wordlist); //elimina eventuali ducplicati (presenti nel caso in cui ci siano termini uguali in colonne diverse)
+	wordlist.sort();	
+	//attiva autocompletamento con la wordlist costruita
+	$('.tablefilter input').autocomplete({source: wordlist});
+}
+//************************************************************************************************************************
+
+//prende parametro da querystring
+function getQueryParam(param) {
+    var result =  window.location.search.match(
+        new RegExp("(\\?|&)" + param + "(\\[\\])?=([^&]*)")
+    );
+
+    return result ? result[3] : false;
+}
+
+//Imposta il menù di paginazione
+function fnSetLengthMenu(){
+	menu = $('.selectpicker');
+	rowNumber = oTable.fnGetData().length;
+	//elimina le opzioni "inutili"
+	for(i in options=[10,20,50,100]){
+		val=options[i];
+		if(rowNumber < val) menu.find('option[value="'+val+'"]').attr('disabled', true).attr('selected', false);
+	}
+	$('.selectpicker').selectpicker('refresh');
+}
+
+//************************************************************************************************************************
+//funzioni di supporto per la definizione di una tabella datatable
+function fnReturnCheckbox( data, type, val, enabled ) {
+	if (type === 'display') {
+        // Mostra una checkbox switch
+        var enabled_display = '<div class="switch"><input type="checkbox" name="enabled" ';
+        if(data) enabled_display += 'checked';
+        if(!enabled) enabled_display += ' disabled';
+        enabled_display += '></div>';
+        
+        return enabled_display;
+	}else if (type === 'filter') {
+        return (data ? "enabled" : "disabled");
+    }else{
+    // 'sort', 'type'
+    return data;
+    }
+}
+
+function fnReturnActions( data, type, val, actions, controllername) {
+	var content = '<div class="btn-group actions"> \
+				   <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" data-target="#"> \
+				   Actions \
+				   <span class="caret"></span> \
+				   </a> \
+				   <ul class="dropdown-menu pull-right">';
+	for(i in actions){
+		content += '<li><a tabindex="-1" data-target="#" class="btn-'+actions[i].toLowerCase().replace(/ /g,"-")+'" data-'+controllername+'-id="'+data+'">'+actions[i]+'</a></li>';
+	}
+	content += '</ul> \
+			    </div>';
+	return content;
+}
+
+function fnReturnDrawCallback(){
+	//predispone colonna local actions
+	$('tr:last-child').addClass("noRowSelected");
+	$('td:last-child').addClass("noClick");
+	// Gestione selezione righe
+	fnActivateSelection();
+	//attiva switch
+	$('.switch:not(.has-switch)').bootstrapSwitch();
+	// local actions
+	fnLocalAction();	//definita per la singola tabella nel js specifico
+	// (necessarie per bootstrap-select
+	$('.selectpicker').selectpicker();
+}
+
+function fnReturnInitCallBack(columnlist, vector ){
+	vector = (typeof vector === "undefined") ? ["enabled","disabled"] : vector;
+	//imposta il menù di paginazione
+	fnSetLengthMenu();
+	//filter autocomplete (colonne 1-5, e aggiunge gli stati della checkbox se necessario)
+	if(window.location.search != "" && getQueryParam("all") == "false" ){
+		fnAutoComplete(columnlist);
+	}else{
+		fnAutoComplete(columnlist,vector);
+	}
+	container.unblock();
+}
+//************************************************************************************************************************
+
+function popAlertError(message){
+	$("<div class='alert alert-danger fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
+	.appendTo("#alert-box")
+	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});
+}
+
+function popAlertSuccess(message){
+//	$("<div class='alert alert-success fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
+//	.appendTo("#alert-box")
+//	.delay(1000).fadeTo(500, 0).slideUp(500, function(){$(this).alert('close');});
+	$("<div class='alert alert-success fade in'><a class='close' data-dismiss='alert'>x</a>"+message+"</div>")
+	.appendTo("#alert-box")
+	.delay(1000).fadeTo(500, 0).slideUp(500, function(){
+        $(this).alert('close');
+	});
 }
