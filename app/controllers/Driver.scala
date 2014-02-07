@@ -15,7 +15,8 @@ import models.json.driverPersistedJsonWriter
 object Driver extends Secured {
   
   lazy val ariaController: String = getThisClassSimpleName
-  val pageTitle: String = "Devices"
+  val pageTitle: String = "Drivers"
+  val createButton : String = "driver"
     
   private def getThisClassSimpleName: String = {
     val s = this.getClass.getSimpleName()
@@ -34,7 +35,7 @@ object Driver extends Secured {
         Ok(Json.toJson(drivers))
       } else if (acceptsHtml(request)) {
 //        Ok(views.html.aria.driver.index(user))
-        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle,createButton))
       } else {
         BadRequest
       }

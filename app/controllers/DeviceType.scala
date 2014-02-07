@@ -5,8 +5,9 @@ import models.json.DeviceTypePersistedSerializer
 
 object DeviceType extends NamedEntityController[DeviceTypeTrait, DeviceTypeModel, DeviceTypePersisted] {
   override lazy val ariaController = "DeviceType"
-  val pageTitle = "Device Type"
+  val pageTitle = "Device Types"
   override lazy val playController = "DeviceType" // match the object name
+  override lazy val createButton = "type"
 
   val dataAccessObject = DeviceTypes
   implicit val jsonSerializer = DeviceTypePersistedSerializer

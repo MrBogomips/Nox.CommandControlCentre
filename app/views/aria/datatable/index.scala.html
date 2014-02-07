@@ -1,4 +1,4 @@
-@(user: UserTrait, ariaController: String, pageTitle: String)
+@(user: UserTrait, ariaController: String, pageTitle: String, createButton: String)
 
 
 @header_more = {}
@@ -38,7 +38,7 @@ function fnGlobalFunctions(){
 }
 
 function fnAddGlobalFunctions(){
-	$(".globalfunctions").html('<button class="btn btn-primary" id="create_@{ariaController.toLowerCase}">Create new @{ariaController.toLowerCase}</button>');
+	$(".globalfunctions").html('<button class="btn btn-primary" id="create_@{ariaController.toLowerCase}">Create new @createButton</button>');
 }
 </script>
 <script type='text/javascript'>

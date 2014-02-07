@@ -16,6 +16,7 @@ object Operator extends Secured {
   
   lazy val ariaController: String = getThisClassSimpleName
   val pageTitle: String = "Maintenace Operators"
+  val createButton : String = "operator"
     
   private def getThisClassSimpleName: String = {
     val s = this.getClass.getSimpleName()
@@ -50,7 +51,7 @@ object Operator extends Secured {
         Ok(Json.toJson(operators))
       } else if (acceptsHtml(request)) {
 //        Ok(views.html.aria.operator.index(user))
-        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle,createButton))
       } else {
         BadRequest
       }

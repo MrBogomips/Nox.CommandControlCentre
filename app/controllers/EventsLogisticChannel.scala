@@ -4,7 +4,8 @@ import models.{ MqttLogisticChannelTrait, MqttLogisticChannel => MqttLogisticCha
 import models.json.MqttLogisticChannelPersistedSerializer
 
 object EventsLogisticChannel extends NamedEntityController[MqttLogisticChannelTrait, MqttLogisticChannelModel, MqttLogisticChannelPersisted] {
-  val pageTitle = "Logistic Channel"
+  val pageTitle = "Logistic Channels"
+  override lazy val createButton = "channel"
 
   val dataAccessObject = MqttLogisticChannels
   implicit val jsonSerializer = MqttLogisticChannelPersistedSerializer

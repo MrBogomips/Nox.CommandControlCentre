@@ -15,7 +15,8 @@ import models.json.vehicleAssignementPersistedJsonWriter
 object VehicleAssignement extends Secured {
   
   lazy val ariaController: String = getThisClassSimpleName
-  val pageTitle: String = "Vehicle Assignements"
+  val pageTitle: String = "Vehicle Assignments"
+  val createButton : String = "assignment"
     
   private def getThisClassSimpleName: String = {
     val s = this.getClass.getSimpleName()
@@ -33,7 +34,7 @@ object VehicleAssignement extends Secured {
         Ok(Json.toJson(vehicleAssignements))
       } else if (acceptsHtml(request)) {
 //        Ok(views.html.aria.vehicleassignement.index(user))
-        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle))
+        Ok(views.html.aria.datatable.index(user,ariaController,pageTitle,createButton))
       } else {
         BadRequest
       }

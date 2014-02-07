@@ -99,6 +99,7 @@ $(document).ready(function() {
 				//riabilita l'update per le righe se cambia il valore delle select
 				$('.selectpicker').on('change',function(){
 					fnEnableLocalSave(this);
+					fnEnableDisableGlobalSave();
 				});
 		    },
 		    "fnInitComplete": function(){
@@ -141,6 +142,7 @@ function fnLocalAction(){
 				$version = nRow.find('input[name="version"]');
 				$version.attr('value', 1 + parseInt($version.attr('value')));
 				fnDisableLocalSave(self);
+				fnEnableDisableGlobalSave();
 //				var jsonData = {};
 //				nRow.find('select, input').serializeArray().map(function(x){
 //					jsonData[x.name] = x.value;
@@ -166,6 +168,7 @@ function fnLocalAction(){
 			})
 			.done(function(data, txtStatus, jqXHR) {
 				fnDisableLocalSave(self);
+				fnEnableDisableGlobalSave();
 				//aggiorna l'id di riga con quello ritornato dal server
 				var jsonData = {};
 				nRow.find('select, input').serializeArray().map(function(x){
@@ -236,6 +239,7 @@ function fnGlobalFunctions(){
 			setTimeout(clickEnableButton, 1000 * counter, enabledButtons, counter);
 			counter += 1;
 		}
+		fnEnableDisableGlobalSave();
 	});
 }
 
@@ -245,8 +249,8 @@ function clickEnableButton(enabledButtons, index){
 
 //aggiunta global actions
 function fnAddGlobalFunctions(){
-	$(".globalfunctions").html('<button class="btn btn-primary create">Create new vehicle assignment</button> \
-								<button class="btn btn-primary save-all">Save all</button>');
+	$(".globalfunctions").html('<button class="btn btn-primary create">Create new assignment</button> \
+								<button class="btn btn-primary save-all disabled">Save all <span class="modifiedinfo"></span></button>');
 }
 //************************************************************************************************************************
 
@@ -314,6 +318,7 @@ function fnActivateSwitch(){
 function fnManageSwitch(){
 	$(this).bootstrapSwitch('toggleState');
 	fnEnableLocalSave(this);
+	fnEnableDisableGlobalSave();
 }
 
 //Gestione datapicker
@@ -340,6 +345,7 @@ function fnManageDatapicker(){
 		beginDatePicker.datepicker('hide');
 		$(".btn-save").parent().addClass('disabled');
 		fnEnableLocalSave(this);
+		fnEnableDisableGlobalSave();
 	})
 	.data('datepicker');
 	endDate = endDatePicker.datepicker({
@@ -349,6 +355,7 @@ function fnManageDatapicker(){
 	}).on('changeDate', function(ev){
 		endDatePicker.datepicker('hide');
 		fnEnableLocalSave(this);
+		fnEnableDisableGlobalSave();
 	});
 }
 
@@ -363,4 +370,17 @@ function fnDisableLocalSave(el){
 	var row = $(el).closest('tr');
 	row.find('td:last').attr('data-modified',false);
 	row.find(".btn-save").parent().addClass('disabled');
+}
+
+//gestione abilitazione global save
+function fnEnableDisableGlobalSave(){
+	var modifiedElementsNum = oTable.$('[data-modified=true]').length;
+	var button = $('.btn.save-all');
+	if( modifiedElementsNum == 0){
+		button.find('.modifiedinfo').text("");
+		button.addClass('disabled');
+	}else{
+		button.find('.modifiedinfo').text("("+modifiedElementsNum+")");
+		button.removeClass('disabled');
+	}
 }
