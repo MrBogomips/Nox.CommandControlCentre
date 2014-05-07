@@ -31,7 +31,9 @@ object Events extends Controller with Secured {
     override def preStart = {
       //(serverUri: String, clientId: String, persistence: MqttClientPersistence = null)
       mqttActor = context.actorOf(Props(classOf[MqttActor], serverUri, clientId, null))
+      log.debug("Before connecting…")
       mqttActor ! Connect()
+      log.debug("After connecting…")
     }
 
     def receive = {
