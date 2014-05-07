@@ -96,6 +96,8 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					var e = $(this.element.find(".counter:eq(0)"));
 					e.html(parseInt(e.html()) + 1);
 					// ignition
+					if (!("objs" in data.data))
+						data.data.objs = {};
 					var e = $(this.element.find(".ignition:eq(0)"));
 					if (data.data.objs.ignition == 1) {
 						e.html("on")
