@@ -100,6 +100,7 @@ class MqttActor(serverUri: String, clientId: String, persistence: MqttClientPers
       log.debug(s"SUBSCRIBING TO CHANNEL $channelFilter")
       if (!mqttClient.isConnected())
         mqttClient.connect();
+      Thread.sleep(500)
       mqttClient.subscribe(topics.toArray, qoss.toArray)
     }
     case Unsubscribe(topicFilters) => if (!topicFilters.isEmpty) {
