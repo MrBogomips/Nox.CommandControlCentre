@@ -87,6 +87,7 @@ class MqttActor(serverUri: String, clientId: String, persistence: MqttClientPers
     case Connect() => {
       log.debug("CONNNECTING TO MQTT BUS...")
       mqttClient.connect()
+      Thread.sleep(800)
       log.debug("CONNECTED")
     }
     case Close() => mqttClient.close()
@@ -98,9 +99,10 @@ class MqttActor(serverUri: String, clientId: String, persistence: MqttClientPers
       val topics = channelFilter.map(_.topicFilter)
       val qoss = channelFilter.map(_.qos)
       log.debug(s"SUBSCRIBING TO CHANNEL $channelFilter")
-      if (!mqttClient.isConnected())
-        mqttClient.connect();
-      Thread.sleep(500)
+      if (!mqttClient.isConnected()) {
+        mqttClient.connect()
+        Thread.sleep(500)
+      }
       mqttClient.subscribe(topics.toArray, qoss.toArray)
     }
     case Unsubscribe(topicFilters) => if (!topicFilters.isEmpty) {
