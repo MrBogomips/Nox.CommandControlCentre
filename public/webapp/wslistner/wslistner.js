@@ -46,6 +46,13 @@ steal('/assets/webapp/models/device.js')
 				try {
 			        var payload = $.parseJSON(msg.data);
 			        var channel = this.app.getChannelByName(payload.message_type);  // es.: tracking, chat, …
+			        // Workaoround for uncompliant client (Android implementation)
+			        if (!("objs" in payload.data))
+			        	payload.data.objs = {
+			        		ignition: 0,
+			        		moving: 0,
+			        		speed: 0
+			        	};
 			        channel.trigger(payload.message_subtype, payload); // es.: position, info, beginchat, …
 			        if (payload.message_subtype == "commandResponse") {
 			        	console.log(payload);
