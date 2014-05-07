@@ -84,7 +84,11 @@ class MqttActor(serverUri: String, clientId: String, persistence: MqttClientPers
   def deliveryComplete(token: IMqttDeliveryToken) = context.parent ! DeliveryComplete(token)
 
   def receive = {
-    case Connect() => mqttClient.connect()
+    case Connect() => {
+      log.debug("CONNNECTING TO MQTT BUS...")
+      mqttClient.connect()
+      log.debug("CONNECTED")
+    }
     case Close() => mqttClient.close()
     case Disconnect(qTimeout) => qTimeout match {
       case Some(t) => mqttClient.disconnect(t)
@@ -93,6 +97,7 @@ class MqttActor(serverUri: String, clientId: String, persistence: MqttClientPers
     case Subscribe(channelFilter) => if (!channelFilter.isEmpty) {
       val topics = channelFilter.map(_.topicFilter)
       val qoss = channelFilter.map(_.qos)
+      log.debug(s"SUBSCRIBING TO CHANNEL $channelFilter")
       mqttClient.subscribe(topics.toArray, qoss.toArray)
     }
     case Unsubscribe(topicFilters) => if (!topicFilters.isEmpty) {
