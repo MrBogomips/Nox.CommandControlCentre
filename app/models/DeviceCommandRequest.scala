@@ -29,7 +29,29 @@ case class DeviceCommandRequest(val device: String, /*val tranId: String, */ val
 
   def sendToDevice(): DeviceCommandResponse = {
     import globals._
-    val cmdReqEnh = new DeviceCommandRequestEnhanced(this, Application.applicationId, Demo.userId, Demo.sessionId, List(replyTopic));
+
+    // ZUZZIMMA PER STREAMS: BEGIN
+    var streamDevice = device
+    var effectiveCommand = command
+    var effectiveArguments = arguments
+    if (command.startsWith("CHANNEL_")) {
+      val commandLen = command.length
+      streamDevice = command.substring(commandLen-7, commandLen)
+      if (command.startsWith("CHANNEL_START"))
+        effectiveCommand = "CHANNEL_START"
+      else if (command.startsWith("CHANNEL_STOP"))
+        effectiveCommand = "CHANNEL_STOP"
+      else
+        effectiveCommand = "CHANNEL_MERDA"
+
+      effectiveArguments ++= Seq(DeviceCommandArgument("device", streamDevice))
+    }
+
+    val effectiveDeviceCommandRequest = this.copy(command = effectiveCommand, arguments = effectiveArguments)
+    // ZUZZIMMA END
+
+
+    val cmdReqEnh = new DeviceCommandRequestEnhanced(effectiveDeviceCommandRequest /* this */, Application.applicationId, Demo.userId, Demo.sessionId, List(replyTopic));
     implicit val fmt = DeviceCommandRequestEnhanced.jsonFormat
 
     def publishOnMqttBus(d: DeviceInfoPersisted): DeviceCommandResponse = {
