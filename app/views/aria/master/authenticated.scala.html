@@ -1,9 +1,9 @@
 @(title: String, user: UserTrait, header_more: Html = Html(""), footer_more: Html = Html(""))(content: Html)
 
 <!DOCTYPE html>
-<!-- @@author: Giovanni Costagliola <giovanni.costagliola@@gmail.com> -->
+<!-- @@author: MrBagoo -->
 <html lang="en">
-@header(title, user, header_more)
+@aria.master.header(title, user, header_more)
 <body>
 <div class="navbar">
 	@aria.navbar.top(user)
@@ -14,7 +14,7 @@
 </div>
 
 <div class="page-footer">
-@footer(user, footer_more)
+@aria.master.footer(user, footer_more)
 </div>
 </body>
 </html>	

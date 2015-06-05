@@ -53,7 +53,7 @@ steal('aria/page')
 		    	Aria.Page.getInstance().configuration = json;
 		    },
 		    error: function(e) {
-		       alert("FATAL ERROR: unable to retrieve application configuration");
+		       console.log("FATAL ERROR: unable to retrieve application configuration");
 		    }
 		});
 });

@@ -53,7 +53,8 @@ steal( '/assets/webapp/models/channels.js',
 			
 			_updateInfo : function(event, data) {
 				var self = this;
-				var row = this.element.find("[data-device-id='" + data.device + "']")[0];
+				var ele = this.element;
+				var row = ele.find("[data-device-id='" + data.device + "']")[0];
 				var discard = false;
 				if (row) {
 					if (Aria.Page.getInstance().configuration.eventsOutOfSequencePolicy == "DISCARD") {

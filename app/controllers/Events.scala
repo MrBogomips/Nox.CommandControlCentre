@@ -51,7 +51,7 @@ object Events extends Controller with Secured {
           log.debug(s"subscribe to topic $topic")
           val payload = (json \ "payload").as[JsValue]
           EventMessage.parse(topic, payload) match {
-            case Success(message) => mqttActor ! message
+            case Success(message: EventMessage) => mqttActor ! message
             case Failure(error) => outChannel push Json.obj() // TODO
           }
         case "ping" => // just for diagnostic

@@ -1,9 +1,15 @@
 @(title: String, header_more: Html = Html(""), footer_more: Html = Html(""))(content: Html)
 
-@header(title, Anonymous, header_more)
+<!DOCTYPE html>
+<!-- @@author: MrBagoo -->
+<html lang="en">
+@aria.master.header(title, Anonymous, header_more)
+<body>
 <div class="content">
 	<div >
 		@content
 	</div>
 </div>
-@footer(Anonymous, footer_more)
+@aria.master.footer(Anonymous, footer_more)
+</body>
+</html>
