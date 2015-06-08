@@ -73,13 +73,11 @@ steal( '/assets/webapp/models/channels.js',
 					else {
 						$.extend(data.times, { 'sessionstart' : now });
 					}
-					// Andrea Ciardi - valore di default
-					if (true || data.device == 'dev_0') {
-						data.webcams = [ { 'id' : 1 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream1?sarg=2' } , { 'id' : 2 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream2?sarg=2' } , { 'id' : 3 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream3?sarg=2' } , { 'id' : 4 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream4?sarg=2' } ];
-					}
-					else {
-						data.webcams = [ { 'id' : 1 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream3?sarg=2' } ];
-					}
+
+					// PEZZO WEBCAM
+					data.webcams = [ { 'id' : 1 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream1?sarg=2' } , { 'id' : 2 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream2?sarg=2' } , { 'id' : 3 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream3?sarg=2' } , { 'id' : 4 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream4?sarg=2' } ];
+
+					$('<tr data-device-id="' + data.device + '"></tr>').appendTo(self.element.find('tbody'));//.webapp_row(data);
 
 					jsRoutes.controllers.Device.getByName(data.device).ajax({
 						headers: { 
@@ -97,7 +95,8 @@ steal( '/assets/webapp/models/channels.js',
 					).always(
 						function() {
 							$.extend(data, { 'show_tools' : self.options.show_tools, 'show_webcam' : self.options.show_webcam });
-							$('<tr data-device-id="' + data.device + '"></tr>').appendTo(self.element.find('tbody')).webapp_row(data);
+							self.element.find('tbody tr[data-device-id="' + data.device + '"]').webapp_row(data);
+							//$('<tr data-device-id="' + data.device + '"></tr>').appendTo(self.element.find('tbody')).webapp_row(data);
 							self._notDiscard(discard, data);
 						}
 					);
