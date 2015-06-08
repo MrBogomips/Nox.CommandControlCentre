@@ -1,3 +1,6 @@
+var GLOBAL_Webcam_LastId = 0;
+
+
 steal('./jwplayer.js',
 	  './jwplayerhead.js')
 .then(
@@ -15,7 +18,8 @@ steal('./jwplayer.js',
 				height: 396,
 				image: 'bg.jpg',
 				autostart: true,
-				file: 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream3?sarg=2'
+				file: 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream3?sarg=2',
+				lastId : 0
 			}
 		},
 		/** @Prototype */
@@ -24,11 +28,15 @@ steal('./jwplayer.js',
 				var self = this;
 				this._super();
 				this.element.addClass('webcam');
+
+                self.options.id = self._getWebcamId();
+                /*
 				if (self.options.id == -1) {
 					self.options.id = self._getWebcamId();
 				}
+				*/
 				
-				self.element.html('/assets/webapp/webcam/views/webcam.ejs' , { 'id' : self.options.id } , 
+				self.element.html('/assets/webapp/webcam/views/webcam.ejs' , { 'id' : self.options.id } ,
 					function() {
 						jwplayer('containerWebcam' + self.options.id).setup({
 						    sources: [
@@ -50,11 +58,13 @@ steal('./jwplayer.js',
 			} ,
 
 			_getWebcamId : function() {
-				var i = 0;
+				/*var i = 0;
 				while($('#containerWebcam' + i).length > 0) {
 					i += 1;
 				}
-				return i;
+				*/
+                //self.defaults.lastId = self.defaults.lastId + 1;
+				return "XXX" + GLOBAL_Webcam_LastId++;
 			}
 
 		});

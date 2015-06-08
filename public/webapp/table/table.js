@@ -74,7 +74,7 @@ steal( '/assets/webapp/models/channels.js',
 						$.extend(data.times, { 'sessionstart' : now });
 					}
 					// Andrea Ciardi - valore di default
-					if (data.device == 'dev_0') {
+					if (true || data.device == 'dev_0') {
 						data.webcams = [ { 'id' : 1 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream1?sarg=2' } , { 'id' : 2 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream2?sarg=2' } , { 'id' : 3 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream3?sarg=2' } , { 'id' : 4 , 'file' : 'rtmp://nox02.prod.nexusat.it/myapp?carg=1/mystream4?sarg=2' } ];
 					}
 					else {
