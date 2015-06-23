@@ -46,7 +46,11 @@
                     $("#map").webapp_map(map_opts);
 
                     var WS_Channel = Aria.Page.getInstance().getChannelByName("WS_EVENTS");
-                    WS_Channel.trigger("new_topic", {topic: "@channel"});
+                    WS_Channel.subscribeOne("socket_ready", function() {
+                        WS_Channel.trigger("new_topic", {topic: "@channel"});
+                    });
+
+
             });
 </script>
 }

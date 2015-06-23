@@ -18,12 +18,17 @@ steal('/assets/webapp/models/device.js')
 				devices = {};
 				var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
 				//var chatSocket = new WS("@routes.Application.chat(username).webSocketURL()")
+
+				self.WS_Channel = self.app.getChannelByName("WS_EVENTS");
 				
 				var initializeClientChannels = function () {
 					self._onNewSubscription(null, {topic: self.app.configuration.eventClientTopic}, true);
 					self._onNewSubscription(null, {topic: self.app.configuration.eventApplicationTopic}, true);
 					self._onNewSubscription(null, {topic: self.app.configuration.eventUserTopic}, true);
 					self._onNewSubscription(null, {topic: self.app.configuration.eventSessionTopic}, true);
+
+					self.WS_Channel.subscribe("new_topic", self.proxy(self._onNewSubscription));
+					self.WS_Channel.trigger("socket_ready", "");
 				}
 				
 				self.socket = new WS(jsRoutes.controllers.Events.channel().webSocketURL());  // events_ws_uri
@@ -36,10 +41,6 @@ steal('/assets/webapp/models/device.js')
 				self.socket.onclose = function () {
 					console.log("websocket close");
 				}
-				
-				self.WS_Channel = self.app.getChannelByName("WS_EVENTS");
-				self.WS_Channel.subscribe("new_topic", self.proxy(self._onNewSubscription));
-				
 			},
 			
 			_onNewMsg: function(msg) {

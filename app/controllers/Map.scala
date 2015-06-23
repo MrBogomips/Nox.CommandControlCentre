@@ -16,7 +16,7 @@ object Map extends Secured {
   val rule3 = Allow // Custom rule
 
   private def getEffectiveChannel(channel: Option[String]) = channel.getOrElse(conf.getString("nox.ccc.map.default_channel"))
-  def cesium(channel: Option[String]) = Action {
+  def cesium(channel: Option[String]) = WithAuthentication {
     Ok(views.html.aria.map.cesium(getEffectiveChannel(channel)))
   }
 

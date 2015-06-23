@@ -33,12 +33,21 @@
 @footer_scripts = {
 <script type='text/javascript'>
  var viewer = new Cesium.Viewer('cesiumContainer');
+
+ // Open Websocket
+
+ //
 </script>
 }
 
 <html lang="en">
     <head>
-        <title>Hello World!</title>
+        <title>@Configuration.getString("nox.ccc.page_title_prefix") Fullmap</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
         <script src="/assets/Cesium/Cesium.js"></script>
         <style>
             @@import url(/assets/Cesium/Widgets/widgets.css);
@@ -73,8 +82,3 @@
   </script>
     </body>
 </html>
-
-
-@aria.master.public("Realtime Map", header_more = header_more, footer_more = footer_scripts) {
-    <div id="cesiumContainer"></div>
-}
