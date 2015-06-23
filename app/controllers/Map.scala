@@ -15,10 +15,13 @@ object Map extends Secured {
   val rule2 = Allow // Custom rule
   val rule3 = Allow // Custom rule
 
-  def fullmap(channel: Option[String]) = Action {
-    val effectiveChannel = channel.getOrElse(conf.getString("nox.ccc.map.default_channel"))
+  private def getEffectiveChannel(channel: Option[String]) = channel.getOrElse(conf.getString("nox.ccc.map.default_channel"))
+  def cesium(channel: Option[String]) = Action {
+    Ok(views.html.aria.map.cesium(getEffectiveChannel(channel)))
+  }
 
-    Ok(views.html.aria.map.full(effectiveChannel))
+  def fullmap(channel: Option[String]) = WithAuthentication {
+    Ok(views.html.aria.map.full(getEffectiveChannel(channel)))
   }
 
   def index = WithAuthentication {  (user, request) =>

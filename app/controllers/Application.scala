@@ -19,7 +19,8 @@ object Application extends Secured {
   }
 
   // -- Javascript routing
-  def javascriptRoutes = WithAuthentication { implicit request =>
+  def javascriptRoutes = WithAuthentication {
+    implicit request =>
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(

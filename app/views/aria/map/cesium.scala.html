@@ -1,0 +1,80 @@
+@(channel: String)
+
+
+@header_more = {
+    <script src="/assets/Cesium/Cesium.js"></script>
+    <style>
+        @@import url(/assets/Cesium/Widgets/widgets.css);
+    #cesiumContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    font-family: sans-serif;
+    }
+
+    html {
+    height: 100%;
+    }
+
+    body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    height: 100%;
+    }
+    </style>
+}
+
+@footer_scripts = {
+<script type='text/javascript'>
+ var viewer = new Cesium.Viewer('cesiumContainer');
+</script>
+}
+
+<html lang="en">
+    <head>
+        <title>Hello World!</title>
+        <script src="/assets/Cesium/Cesium.js"></script>
+        <style>
+            @@import url(/assets/Cesium/Widgets/widgets.css);
+        #cesiumContainer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        overflow: hidden;
+        padding: 0;
+        font-family: sans-serif;
+        }
+
+        html {
+        height: 100%;
+        }
+
+        body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        height: 100%;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="cesiumContainer"></div>
+        <script>
+    var viewer = new Cesium.Viewer('cesiumContainer');
+  </script>
+    </body>
+</html>
+
+
+@aria.master.public("Realtime Map", header_more = header_more, footer_more = footer_scripts) {
+    <div id="cesiumContainer"></div>
+}

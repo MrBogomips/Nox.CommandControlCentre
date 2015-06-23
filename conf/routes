@@ -27,6 +27,7 @@ OPTIONS        /logout                                    controllers.Applicatio
 # Maps
 GET            /map                                       controllers.Map.index
 GET            /fullmap                                   controllers.Map.fullmap(channel: Option[String])
+GET            /fullmap/cesium                            controllers.Map.cesium(channel: Option[String])
 GET            /map/history                               controllers.Map.history
 
 # Client configuration
