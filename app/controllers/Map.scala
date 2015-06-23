@@ -1,5 +1,6 @@
 package controllers
 
+import play.Logger
 import play.api._
 import play.api.mvc._
 import controllers._
@@ -13,7 +14,13 @@ object Map extends Secured {
   val rule1 = Allow	// Custom rule
   val rule2 = Allow // Custom rule
   val rule3 = Allow // Custom rule
-  
+
+  def fullmap(channel: Option[String]) = Action {
+    val effectiveChannel = channel.getOrElse(conf.getString("nox.ccc.map.default_channel"))
+
+    Ok(views.html.aria.map.full(effectiveChannel))
+  }
+
   def index = WithAuthentication {  (user, request) =>
     implicit val u = user
     implicit val r = request
@@ -36,7 +43,9 @@ object Map extends Secured {
 	
     Ok(views.html.aria.map.index(user))
   }
-  
+
+
+
   def history = WithAuthentication {  (user, request) =>
     implicit val u = user
     implicit val r = request
