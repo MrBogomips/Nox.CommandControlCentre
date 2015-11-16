@@ -38,7 +38,7 @@ steal(
 								});
 							});
 						
-						//	self.device = self.options.device;
+						//	self.device = self.options.device;zz
 						}
 					)
 				
@@ -137,6 +137,11 @@ steal(
 				  sent_time: new Date(),
 				  arguments : args === undefined ? [] : args
 				};
+			},
+			
+			destroy : function(){
+				var self = this;
+			    this._super();
 			}
 		});
 
