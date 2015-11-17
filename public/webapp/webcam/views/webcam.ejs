@@ -1,1 +1,84 @@
 <div id="containerWebcam<%= id %>">Loading the player ...</div>
+<% 	
+	if ((id % 4) == 0) { 
+%>
+	<table class="table table-condensed table-bordered table-striped">
+		<tbody>
+			<tr>
+				<td><em>Recording</em></td>
+				<td><button class="btn btn-mini command" data-command-name="CHANNEL_START_stream0">Start</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="CHANNEL_STOP_stream0">Stop</button></td>
+			</tr>
+			<tr>
+				<td><em>Live streaming</em></td>
+				<td><button class="btn btn-mini command" data-command-name="CHANNEL_START_stream1">Start</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="CHANNEL_STOP_stream1">Stop</button></td>
+			</tr>
+		</tbody>
+	</table>		
+<%
+  	}
+%>
+                
+<% 	
+	if ((id % 4) == 1) { 
+%>
+	<table class="table table-condensed table-bordered table-striped">
+		<tbody>
+			<tr>
+				<td><em>Recording</em></td>
+				<td><button class="btn btn-mini command" data-command-name="CHANNEL_START_stream2">Start</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="CHANNEL_STOP_stream2">Stop</button></td>
+			</tr>
+			<tr>
+				<td><em>Live streaming</em></td>
+				<td><button class="btn btn-mini command" data-command-name="CHANNEL_START_stream3">Start</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="CHANNEL_STOP_stream3">Stop</button></td>
+			</tr>
+		</tbody>
+	</table>		
+<%
+  	}
+%>
+                
+<% 	
+	if ((id % 4) == 2) { 
+%>
+	<table class="table table-condensed table-bordered table-striped">
+		<tbody>
+			<tr>
+				<td><em>Recording</em></td>
+				<td><button class="btn btn-mini command" data-command-name="CHANNEL_START_stream4">Start</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="CHANNEL_STOP_stream4">Stop</button></td>
+			</tr>
+			<tr>
+				<td><em>Live streaming</em></td>
+				<td><button class="btn btn-mini command" data-command-name="CHANNEL_START_stream5">Start</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="CHANNEL_STOP_stream5">Stop</button></td>
+			</tr>
+		</tbody>
+	</table>		
+<%
+	}
+%>
+                
+<% 	
+	if ((id % 4) == 3) { 
+%>
+	<table class="table table-condensed table-bordered table-striped">
+		<tbody>
+			<tr>
+				<td><em>Recording</em></td>
+				<td><button class="btn btn-mini command" data-command-name="CHANNEL_START_stream6">Start</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="CHANNEL_STOP_stream6">Stop</button></td>
+			</tr>
+			<tr>
+				<td><em>Live streaming</em></td>
+				<td><button class="btn btn-mini command" data-command-name="CHANNEL_START_stream7">Start</button></td>
+				<td><button class="btn btn-mini btn-danger command" data-command-name="CHANNEL_STOP_stream7">Stop</button></td>
+			</tr>
+		</tbody>
+	</table>		
+<%
+  	}
+%>
