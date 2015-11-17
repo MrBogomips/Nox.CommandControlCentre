@@ -40,7 +40,8 @@ steal('aria/page')
 	  '/assets/javascripts/bootstrap-select.min.js')
 .then('/assets/javascripts/bootstrap-modal.js',
 	  '/assets/webapp/modalform/modalform.js',
-	  '/assets/javascripts/jquery-blockui.js')
+	  '/assets/javascripts/jquery-blockui.js',
+	  '/assets/javascripts/jquery-ui-1.10.3.custom.min.js')
 .then('/assets/javascripts/defaults.js',
 	function() {
 	$.ajax({

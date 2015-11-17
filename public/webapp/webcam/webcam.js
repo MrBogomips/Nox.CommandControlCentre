@@ -47,6 +47,7 @@ steal('./jwplayer.js',
 						//    image: self.options.image,
 						    autostart: self.options.autostart,
 						    width: self.options.width,
+						    controls: false,
 						    height: self.options.height,
 						    primary: 'flash'
 						});
