@@ -1,7 +1,6 @@
 <div id="containerWebcam<%= id %>">Loading the player ...</div>
-
 <% 	
-	if (id == 1) { 
+	if ((id % 4) == 0) { 
 %>
 	<table class="table table-condensed table-bordered table-striped">
 		<tbody>
@@ -22,7 +21,7 @@
 %>
                 
 <% 	
-	if (id == 2) { 
+	if ((id % 4) == 1) { 
 %>
 	<table class="table table-condensed table-bordered table-striped">
 		<tbody>
@@ -43,7 +42,7 @@
 %>
                 
 <% 	
-	if (id == 3) { 
+	if ((id % 4) == 2) { 
 %>
 	<table class="table table-condensed table-bordered table-striped">
 		<tbody>
@@ -64,7 +63,7 @@
 %>
                 
 <% 	
-	if (id == 4) { 
+	if ((id % 4) == 3) { 
 %>
 	<table class="table table-condensed table-bordered table-striped">
 		<tbody>

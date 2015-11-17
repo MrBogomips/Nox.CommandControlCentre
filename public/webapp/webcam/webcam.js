@@ -29,7 +29,7 @@ steal('./jwplayer.js',
 				this._super();
 				this.element.addClass('webcam');
 
-                //self.options.id = self._getWebcamId();
+                self.options.id = self._getWebcamId();
                 /*
 				if (self.options.id == -1) {
 					self.options.id = self._getWebcamId();
@@ -91,13 +91,13 @@ steal('./jwplayer.js',
 						 data: JSON.stringify(command),
 						 success: function(data,textStatus,jqXHR){
 							 showAlertInfo(data.status != "ERR", "Command ["+data.tranId+"]: " + data.description );
-							 /*data.device = self.options.device;
+							 data.device = self.options.device;
 							 data.message_type = "tracking";
 							 data.message_subtype = "commandRequest";
 							 data.command = command;
 							 var app = Aria.Page.getInstance();
 							 var ch = app.getChannelByName("tracking");
-							 ch.trigger(data.message_subtype, data);*/
+							 ch.trigger(data.message_subtype, data);
 						},
 						error: function(jqXHR,textStatus,errorThrown){
 							var msg = "HTTP-" + jqXHR.status;
@@ -131,13 +131,7 @@ steal('./jwplayer.js',
 			},
 
 			_getWebcamId : function() {
-				/*var i = 0;
-				while($('#containerWebcam' + i).length > 0) {
-					i += 1;
-				}
-				*/
-                //self.defaults.lastId = self.defaults.lastId + 1;
-				return "XXX" + GLOBAL_Webcam_LastId++;
+				return parseInt(GLOBAL_Webcam_LastId++);
 			}
 
 		});
