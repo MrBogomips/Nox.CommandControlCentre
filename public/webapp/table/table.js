@@ -141,7 +141,17 @@ steal( '/assets/webapp/models/channels.js',
 						$(arrRows[i]).remove();
 					}
 				}
-			}
+			},
+			
+			'#devices .updown click' : function(el, ev) {
+				var rows = this.element.find(".table tbody");
+				rows.toggle();
+			}, 
+			
+			'#devices .leftright click' : function(el, ev) {
+				var elem = this.element.find(".table .collapse");
+				elem.toggle();
+			} 
 
 		});
 

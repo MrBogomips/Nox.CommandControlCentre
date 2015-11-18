@@ -83,6 +83,11 @@ steal('/assets/leaflet/leaflet.js',
 					}
 					
 				}
+			},
+			
+			destroy : function(){
+				var self = this;
+			    this._super();
 			}
 		});
 

@@ -5,8 +5,8 @@
  	"message_type":"tracking",
  	"data":{
  		"coords":{
- 			"lat":"-20.304873",
- 			"lon":"-40.285162"
+ 			"lat":"45.4773", //milano centro
+ 			"lon":"9.1815"
  		},
  		"objs":{
  			"input2":1,
