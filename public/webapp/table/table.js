@@ -150,15 +150,15 @@ steal( '/assets/webapp/models/channels.js',
 				if (e.hasClass("closeRows")) {
 					//rows.show();
 					rows.fadeIn("fast", function() {
-						e.removeClass("closeRows").addClass("openRows");
-						e.html("#");
+						e.removeClass("closeRows").removeClass("icon-arrow-down").addClass("openRows").addClass("icon-arrow-up");
+						//e.html("#");
 					});
 					
 				} else {
 					//rows.hide();
 					rows.fadeOut("fast", function() {
-						e.removeClass("openRows").addClass("closeRows");
-						e.html("# <span class='badge'>" + self.element.find(".table tbody tr").not('.noresults').length + "</span>");
+						e.removeClass("openRows").removeClass("icon-arrow-up").addClass("closeRows").addClass("icon-arrow-down");
+						//e.html("# <span class='badge'>" + self.element.find(".table tbody tr").not('.noresults').length + "</span>");
 					});
 				}
 			}, 
