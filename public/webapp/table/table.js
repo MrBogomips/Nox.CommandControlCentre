@@ -144,22 +144,39 @@ steal( '/assets/webapp/models/channels.js',
 			},
 			
 			'#devices .updown click' : function(el, ev) {
-				var e = this.element.find(".updown");
-				var rows = this.element.find(".table tbody");
+				var self = this;
+				var e = self.element.find(".updown");
+				var rows = self.element.find(".table tbody");
 				if (e.hasClass("closeRows")) {
-					rows.show();
-					e.removeClass("closeRows").addClass("openRows");
-					e.html("#");
+					//rows.show();
+					rows.fadeIn("fast", function() {
+						e.removeClass("closeRows").addClass("openRows");
+						e.html("#");
+					});
+					
 				} else {
-					rows.hide();
-					e.removeClass("openRows").addClass("closeRows");
-					e.html("# <span class='badge'>" + this.element.find(".table tbody tr").not('.noresults').length + "</span>");
+					//rows.hide();
+					rows.fadeOut("fast", function() {
+						e.removeClass("openRows").addClass("closeRows");
+						e.html("# <span class='badge'>" + self.element.find(".table tbody tr").not('.noresults').length + "</span>");
+					});
 				}
 			}, 
 			
 			'#devices .leftright click' : function(el, ev) {
-				var elem = this.element.find(".table .collapse");
-				elem.toggle();
+				var columns = this.element.find(".table .collapse");
+				var e = this.element;
+				if (e.find('.leftright').hasClass("closeColumns")) {
+					e.find('.leftright').removeClass("closeColumns").removeClass("icon-plus").addClass("openColumns").addClass("icon-minus");
+					e.parent().css("min-width", "650px");
+					columns.show();
+				} else {
+					e.find('.leftright').removeClass("openColumns").removeClass("icon-minus").addClass("closeColumns").addClass("icon-plus");
+					e.parent().css("min-width", "450px");
+					columns.hide();
+				}
+				
+
 			} 
 
 		});

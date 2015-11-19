@@ -8,7 +8,8 @@ steal( '/assets/webapp/models/channels.js',
 	   )
 .then( '/assets/leaflet/Bing.js',
 	   '/assets/leaflet/Google.js',
-	   '/assets/leaflet/Yandex.js', function($){
+	   '/assets/leaflet/Yandex.js',
+	   '/assets/leaflet/Marker.Rotate.js', function($){
 
 		/**
 		 * @class Webapp.table
@@ -58,11 +59,11 @@ steal( '/assets/webapp/models/channels.js',
 	            	
 	            	var bingCode = "LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc"; 
 	                var bing1 = new L.BingLayer(bingCode, {type: "Aerial"});// AerialWithLabels | Birdseye | BirdseyeWithLabels | Road
+	                var bing2 = new L.BingLayer(bingCode, {type: "Road"});
 	            	
 	            	var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 	            	
 	            	var yndx1 = new L.Yandex();
-	            	var yndx2 = new L.Yandex("null", {traffic:true, opacity:0.8, overlay:true});
 	            	
 	            	self.map.addLayer(osm); //set default layer
 	            	self.map.addControl(new L.Control.Layers( {
@@ -72,10 +73,20 @@ steal( '/assets/webapp/models/channels.js',
             			'Google3':ggl3, 
             			'Google4':ggl4,
             			'Bing1':bing1,
-            			'Yandex1':yndx1,
-            			'Yandex2':yndx2
+            			'Bing2':bing2,
+            			'Yandex1':yndx1
         			},{}));
 	            	
+	            	self.iconMarker = L.icon({
+	            	    iconUrl: '/assets/img/marker_icon_openlayer.png',
+	            	    //shadowUrl: '/assets/img/marker_icon_openlayer.png',
+
+	            	    iconSize:     [22, 31], // size of the icon
+	            	    //shadowSize:   [50, 64], // size of the shadow
+	            	    //iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+	            	    //shadowAnchor: [4, 62],  // the same for the shadow
+	            	    //popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+	            	});
 	            	
 	            	// DEMO MARKER
 	            	//var marker = L.marker([pos.coords.latitude, pos.coords.longitude], {draggable:true}).addTo(self.map)
@@ -93,6 +104,8 @@ steal( '/assets/webapp/models/channels.js',
 					var pos = {coords: self.options.coords};
 					initMap(pos);
 				}
+				
+				this.angle = 0;
 			},
 			
 			/*
@@ -101,12 +114,14 @@ steal( '/assets/webapp/models/channels.js',
 			_updateMarker: function(event, data) {
 				var marker;
 				if (typeof (marker = this.markers[data.marker]) == 'undefined') {
-					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title}).addTo(this.map).bindPopup(data.title);
+					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title, icon: this.iconMarker}).addTo(this.map).bindPopup(data.title);
 				} else {
 					marker.setLatLng([data.lat, data.lng]);
+					marker.setIconAngle(this.angle);
+					this.angle = (this.angle + 0.5) % 360;
 				}
 			},
-			
+
 			_removeAllMarkers: function() {
 				for (var k in this.markers) {
 					this.map.removeLayer(this.markers[k])

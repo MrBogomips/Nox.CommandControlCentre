@@ -54,6 +54,7 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 							minLength: 0,
 							select: function( event, ui ){
 								that._subscribe_channel(ui.item.label, false);
+								that.element.parent().parent().find('.updown').addClass('closeRows').click();
 							}
 						});
 					}
@@ -71,20 +72,17 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 				this._call();
 				//alert("You've subscribed to " + name);
 			},
-			
-			'#testSubmit submit' : function(event) {
-				var ch_name = this.element.find("input.channel_name").val();
-				this._subscribe_channel(ch_name, false);
-			},
 
 			'.subscribeOne click' : function(el, ev) {
 				var ch_name = this.element.find("input.channel_name").val();
 				this._subscribe_channel(ch_name, false);
+				this.element.parent().parent().find('.updown').addClass('closeRows').click();
 			} ,
 
 			'.subscribeAll click' : function(el, ev) {
 				var ch_name = this.element.find("input.channel_name").val();
 				this._subscribe_channel(ch_name, true);
+				this.element.parent().parent().find('.updown').addClass('closeRows').click();
 			}
 
 		});
