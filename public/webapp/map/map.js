@@ -2,8 +2,13 @@ steal( '/assets/webapp/models/channels.js',
 	   '/assets/webapp/models/device.js',
 	   '/assets/webapp/table/row/row.js',
 	   '/assets/leaflet/leaflet.js', 
-   	'/assets/leaflet/leaflet.css')
-.then(function($){
+	   '/assets/leaflet/leaflet.css',
+	   '/assets/leaflet/maps.google.js',
+	   '/assets/leaflet/ymaps.js'
+	   )
+.then( '/assets/leaflet/Bing.js',
+	   '/assets/leaflet/Google.js',
+	   '/assets/leaflet/Yandex.js', function($){
 
 		/**
 		 * @class Webapp.table
@@ -35,15 +40,41 @@ steal( '/assets/webapp/models/channels.js',
 				
 				
 				var initMap = function (pos) {
-	            	self.map = L.map('map', {
+	            	self.map = new L.map('map', {
 	            		attributionControl: self.options.attributionControl,
 	            		crs: L.CRS.EPSG3857
 	            		}
 	            	).setView([pos.coords.latitude, pos.coords.longitude], 13);
-	            	L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	            	
+	            	/*L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	    				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
 					    maxZoom: 18
-					}).addTo(self.map);
+					}).addTo(self.map);*/
+	            	
+	            	var ggl = new L.Google('SATELLITE'); //Google leayer: [SATELLITE, ROADMAP, HYBRID, TERRAIN]
+	            	var ggl2 = new L.Google('ROADMAP');
+	            	var ggl3 = new L.Google('HYBRID');
+	            	var ggl4 = new L.Google('TERRAIN'); 
+	            	
+	            	var bingCode = "LfO3DMI9S6GnXD7d0WGs~bq2DRVkmIAzSOFdodzZLvw~Arx8dclDxmZA0Y38tHIJlJfnMbGq5GXeYmrGOUIbS2VLFzRKCK0Yv_bAl6oe-DOc"; 
+	                var bing1 = new L.BingLayer(bingCode, {type: "Aerial"});// AerialWithLabels | Birdseye | BirdseyeWithLabels | Road
+	            	
+	            	var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+	            	
+	            	var yndx1 = new L.Yandex();
+	            	var yndx2 = new L.Yandex("null", {traffic:true, opacity:0.8, overlay:true});
+	            	
+	            	self.map.addLayer(osm); //set default layer
+	            	self.map.addControl(new L.Control.Layers( {
+            			'Openstreetmap':osm, 
+            			'Google1':ggl, 
+            			'Google2':ggl2, 
+            			'Google3':ggl3, 
+            			'Google4':ggl4,
+            			'Bing1':bing1,
+            			'Yandex1':yndx1,
+            			'Yandex2':yndx2
+        			},{}));
 	            	
 	            	
 	            	// DEMO MARKER
