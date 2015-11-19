@@ -144,8 +144,17 @@ steal( '/assets/webapp/models/channels.js',
 			},
 			
 			'#devices .updown click' : function(el, ev) {
+				var e = this.element.find(".updown");
 				var rows = this.element.find(".table tbody");
-				rows.toggle();
+				if (e.hasClass("closeRows")) {
+					rows.show();
+					e.removeClass("closeRows").addClass("openRows");
+					e.html("#");
+				} else {
+					rows.hide();
+					e.removeClass("openRows").addClass("closeRows");
+					e.html("# <span class='badge'>" + this.element.find(".table tbody tr").not('.noresults').length + "</span>");
+				}
 			}, 
 			
 			'#devices .leftright click' : function(el, ev) {
