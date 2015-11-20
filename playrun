@@ -3,6 +3,7 @@
 
 cd /root/nox/NoxSpheraWebApp
 
+play clean
 play stage
 target/universal/stage/bin/commandcontrolcentre -Dhttp.port=80 -Dconfig.file=conf/application.prod.conf
 #play start -Dhttp.port=80 -Dconfig.file=conf/application.prod.conf
