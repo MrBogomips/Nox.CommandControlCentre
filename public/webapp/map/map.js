@@ -68,13 +68,13 @@ steal( '/assets/webapp/models/channels.js',
 	            	self.map.addLayer(osm); //set default layer
 	            	self.map.addControl(new L.Control.Layers( {
             			'Openstreetmap':osm, 
-            			'Google1':ggl, 
-            			'Google2':ggl2, 
-            			'Google3':ggl3, 
-            			'Google4':ggl4,
-            			'Bing1':bing1,
-            			'Bing2':bing2,
-            			'Yandex1':yndx1
+            			'G Satellite':ggl, 
+            			'G Roadmap':ggl2, 
+            			'G Hybrid':ggl3, 
+            			'G Terrain':ggl4,
+            			'Bing Aerial':bing1,
+            			'Bing Road':bing2,
+            			'Yandex':yndx1
         			},{}));
 	            	
 	            	self.iconMarker = L.icon({
