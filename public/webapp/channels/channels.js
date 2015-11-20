@@ -30,24 +30,33 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 				    }}
 				).done(
 					function(result) {
-						that.channelsList = '[';
+						//that.channelsList = '[';
 						that.channels = [];
 						for (var i = 0; i < result.channels.length; i++) {
-							that.channels[i] = { 'value' : result.channels[i] , 'subscribed' : false , 'events' : false };
-							that.channelsList += '"' + result.channels[i] + '"';
-							if (i < (result.channels.length - 1)) {
-								that.channelsList += ',';
-							}
+							that.channels[i] = { 'value' : result.channels[i] ,'label' : result.channels[i], 'subscribed' : false , 'events' : false };
+							//that.channelsList += '"' + result.channels[i] + '"';
+							//if (i < (result.channels.length - 1)) {
+								//that.channelsList += ',';
+							//}
 						}
-						that.channelsList += ']';
+						//that.channelsList += ']';
 					}
 				).fail(
 					function (jqXHR, textStatus) {
-						that.channelsList = '';
+						//that.channelsList = '';
 					}
 				).always(
 					function() {
-						that.element.html('/assets/webapp/channels/views/channels.ejs', { 'channelsarray' : that.channelsList });
+						that.element.html('/assets/webapp/channels/views/channels.ejs',{});
+						var inputElement = $(".channel_name");
+						inputElement.autocomplete({
+							source: that.channels,
+							minLength: 0,
+							select: function( event, ui ){
+								that._subscribe_channel(ui.item.label, false);
+								that.element.parent().parent().find('.updown').addClass('closeRows').click();
+							}
+						});
 					}
 				);
 			} ,
@@ -67,11 +76,13 @@ steal( '/assets/webapp/channels/views/channels.ejs',
 			'.subscribeOne click' : function(el, ev) {
 				var ch_name = this.element.find("input.channel_name").val();
 				this._subscribe_channel(ch_name, false);
+				this.element.parent().parent().find('.updown').addClass('closeRows').click();
 			} ,
 
 			'.subscribeAll click' : function(el, ev) {
 				var ch_name = this.element.find("input.channel_name").val();
 				this._subscribe_channel(ch_name, true);
+				this.element.parent().parent().find('.updown').addClass('closeRows').click();
 			}
 
 		});

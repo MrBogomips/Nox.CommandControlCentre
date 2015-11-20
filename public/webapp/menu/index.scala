@@ -3,7 +3,7 @@
 	<div class="navbar navbar-static">
 		<div class="navbar-inner">
 			<div class="container" style="width: auto;">
-				<a class="brand" href="#">NoxST::CCC</a>
+				<a class="brand" href="#">Nox</a>
 
 				<ul class="nav" role="navigation">
 					<!-- 
@@ -148,7 +148,7 @@
 	<div class="navbar navbar-static">
 		<div class="navbar-inner">
 			<div class="container" style="width: auto;" id="containerProva">
-				<a class="brand" href="#">NoxST::CCC</a>
+				<a class="brand" href="#">Nox</a>
 			</div>
 		</div>
 	</div>

@@ -26,6 +26,19 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 				this.data = this.options;
 				this.commandQueue = {txs: {}, device: this.data.device};
 				this.element.html('/assets/webapp/table/row/views/row2.ejs', self.options );
+				this.sessionstart = 0;//this.options.times.sessionstart;
+				this.frequencyCount = 0;
+				this.frequency = "";
+				this.data.times.lasttime = new Date();
+				
+				setInterval(function() { 
+					self.frequency = self.frequencyCount;
+					self.frequencyCount = 0;
+					
+					//frequency
+					var e = $(self.element.find(".frequency:eq(0)"));
+					e.html(self.frequency+"Hz");
+				}, 1000);				
 			} ,
 
 			'.tool mousein' : function(el, ev) {
@@ -83,20 +96,22 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 				var data_type = data.message_subtype
 				switch (data_type) {
 				case "info":
-					if (this.data.times == undefined) {
-						this.data.times = {  };
-					}
-					var times = this.data.times;
-					var info = this.data.info;
+					//this.data.times = { 'lasttime' : { 'day' : now.getDate() , 'month' : now.getMonth() , 'year' : now.getYear() , 'hours' : now.getHours() , 'minutes' : now.getMinutes() , 'seconds' : now.getSeconds() } };
+					var now = new Date();
+					var dateData = new Date(data.data.ts)
+					var delay = now - new Date(dateData.getTime() - dateData.getTimezoneOffset() * 60 * 1000);
+					var interval = now - this.data.times.lasttime;
+					this.frequencyCount++;
+					data.times = {};
+					data.times.lasttime = now;
+					data.times.interval = interval;
+					data.times.delay = delay;
 					this.data = data;
-					this.data.times = times;
-					this.data.info = info;
-					now = new Date();
-					this.data.times = { 'lasttime' : { 'day' : now.getDate() , 'month' : now.getMonth() , 'year' : now.getYear() , 'hours' : now.getHours() , 'minutes' : now.getMinutes() , 'seconds' : now.getSeconds() } };
+					
+					//counter event
 					var e = $(this.element.find(".counter:eq(0)"));
 					e.html(parseInt(e.html()) + 1);
-					// ignition
-			
+					//ignition		
 					var e = $(this.element.find(".ignition:eq(0)"));
 					if (data.data.objs.ignition == 1) {
 						e.html("on")
@@ -107,7 +122,7 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 						 .addClass("label-important")
 						 .removeClass("label-success");
 					}
-					// moving
+					//moving
 					var e = $(this.element.find(".moving:eq(0)"));
 					if (data.data.objs.ignition == 1) {
 						e.html("moving")
@@ -118,9 +133,25 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 						 .addClass("label-important")
 						 .removeClass("label-success");
 					}
-					// speed
+					//speed
 					var e = $(this.element.find(".speed:eq(0)"));
 					e.html(data.data.speed+"Km/h");
+					
+					//sessionstart
+					if (this.sessionstart == 0) {
+						var e = $(this.element.find(".sessionstart:eq(0)"));
+						e.html(dateData.toLocaleTimeString());
+						this.sessionstart = 1;
+					}
+					
+					//interval
+					var e = $(this.element.find(".interval:eq(0)"));
+					e.html(interval+"ms");
+					//delay
+					var e = $(this.element.find(".delay:eq(0)"));
+					e.html(delay+"ms");
+					
+					
 					break;
 				case "position":
 					alert("controller row: TODO: update position data only");

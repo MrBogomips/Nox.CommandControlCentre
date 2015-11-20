@@ -1,21 +1,24 @@
 
-	<td><a class="devicename" name="<%=device%>"><%=device%></a></td>
-	<!-- <td></td> -->
+	<td>
+		<a class="devicename" name="<%=device%>"><%=device%></a>
+	</td>
 	<td>
 		<a class="tool" data-original-title="" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="Position">
 			<span class="label label-info counter" >1</span>
 		</a>
+	</td>	
+	<td>
+		<span class="speed"><%=data.speed%>Km/h</span>
 	</td>
-	<td><% var cign = (data.objs.ignition == 1 ? "success" : "important"); 
-		   var tign = (data.objs.ignition == 1 ? "on" : "off");
-		%>
-		<span class="label ignition label-<%=cign%>" ><%=tign%></span>
+	<td class="collapse">
+		<span style="white-space: nowrap;" class="sessionstart"><%=data.sessionstart%></span>
 	</td>
-	<td><% var cmov = (data.objs.moving_status == 1 ? "success" : "important"); 
-		   var tmov = (data.objs.moving_status == 1 ? "moving" : "stop");
-		%>	
-		<span class="label moving label-<%=cmov%>" ><%=tmov%></span>	
-	<td><span class="speed"><%=data.speed%>Km/h</span></td>
+	<td class="collapse">
+		<span class="frequency"><%=data.frequency%></span>
+	</td>
+	<td class="collapse">
+		<span class="delay"><%=data.delay%></span>
+	</td>
 	<td>
 		<a class="btn btn-mini more" type="button" href="#"><i class="icon-info-sign"></i></a>
 		
@@ -36,6 +39,9 @@
 		</a>				
 		<div class="anchorInfo"></div>
 	</td>
+	
+	
+
 
 
 

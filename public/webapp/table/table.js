@@ -141,7 +141,43 @@ steal( '/assets/webapp/models/channels.js',
 						$(arrRows[i]).remove();
 					}
 				}
-			}
+			},
+			
+			'#devices .updown click' : function(el, ev) {
+				var self = this;
+				var e = self.element.find(".updown");
+				var rows = self.element.find(".table tbody");
+				if (e.hasClass("closeRows")) {
+					//rows.show();
+					rows.fadeIn("fast", function() {
+						e.removeClass("closeRows").removeClass("icon-arrow-down").addClass("openRows").addClass("icon-arrow-up");
+						//e.html("#");
+					});
+					
+				} else {
+					//rows.hide();
+					rows.fadeOut("fast", function() {
+						e.removeClass("openRows").removeClass("icon-arrow-up").addClass("closeRows").addClass("icon-arrow-down");
+						//e.html("# <span class='badge'>" + self.element.find(".table tbody tr").not('.noresults').length + "</span>");
+					});
+				}
+			}, 
+			
+			'#devices .leftright click' : function(el, ev) {
+				var columns = this.element.find(".table .collapse");
+				var e = this.element;
+				if (e.find('.leftright').hasClass("closeColumns")) {
+					e.find('.leftright').removeClass("closeColumns").removeClass("icon-plus").addClass("openColumns").addClass("icon-minus");
+					e.parent().css("min-width", "650px");
+					columns.show();
+				} else {
+					e.find('.leftright').removeClass("openColumns").removeClass("icon-minus").addClass("closeColumns").addClass("icon-plus");
+					e.parent().css("min-width", "450px");
+					columns.hide();
+				}
+				
+
+			} 
 
 		});
 

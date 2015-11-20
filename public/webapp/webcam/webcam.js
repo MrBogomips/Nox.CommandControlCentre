@@ -36,25 +36,22 @@ steal('./jwplayer.js',
 				}
 				*/
 				
-				self.element.html('/assets/webapp/webcam/views/webcam.ejs' , { 'id' : self.options.id } ,
-					function() {
-						jwplayer('containerWebcam' + self.options.id).setup({
-						    sources: [
-						        {
-						            file: self.options.file
-						        }
-						    ],
-						//    image: self.options.image,
-						    autostart: self.options.autostart,
-						    width: self.options.width,
-						    height: self.options.height,
-						    primary: 'flash'
-						});
-					}
-				);
+				self.element.html('/assets/webapp/webcam/views/webcam.ejs' , { 'id' : self.options.id , 'file' : self.options.file } , function() {
+					jwplayer('containerWebcam' + self.options.id).setup({
+					    sources: [
+					        {
+					            file: self.options.file
+					        }
+					    ],
+				    	//image: self.options.image,
+					    autostart: self.options.autostart,
+					    width: self.options.width,
+					    controls: false,
+					    height: self.options.height,
+					    primary: 'flash'
+					});		
 
-					
-
+				});
 			},
 			
 			".btn.command click" :  function (el, ev) {
