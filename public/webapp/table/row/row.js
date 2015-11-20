@@ -26,7 +26,7 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 				this.data = this.options;
 				this.commandQueue = {txs: {}, device: this.data.device};
 				this.element.html('/assets/webapp/table/row/views/row2.ejs', self.options );
-				this.sessionstart = this.options.times.sessionstart;
+				this.sessionstart = 0;//this.options.times.sessionstart;
 				this.frequencyCount = 0;
 				this.frequency = "";
 				this.data.times.lasttime = new Date();
@@ -108,8 +108,6 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					data.times.delay = delay;
 					this.data = data;
 					
-					
-					
 					//counter event
 					var e = $(this.element.find(".counter:eq(0)"));
 					e.html(parseInt(e.html()) + 1);
@@ -138,9 +136,13 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					//speed
 					var e = $(this.element.find(".speed:eq(0)"));
 					e.html(data.data.speed+"Km/h");
+					
 					//sessionstart
-					var e = $(this.element.find(".sessionstart:eq(0)"));
-					e.html(this.sessionstart.toLocaleTimeString());
+					if (this.sessionstart == 0) {
+						var e = $(this.element.find(".sessionstart:eq(0)"));
+						e.html(dateData.toLocaleTimeString());
+						this.sessionstart = 1;
+					}
 					
 					//interval
 					var e = $(this.element.find(".interval:eq(0)"));
@@ -148,9 +150,6 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					//delay
 					var e = $(this.element.find(".delay:eq(0)"));
 					e.html(delay+"ms");
-					
-					
-					
 					
 					
 					break;

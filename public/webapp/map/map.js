@@ -114,7 +114,7 @@ steal( '/assets/webapp/models/channels.js',
 			_updateMarker: function(event, data) {
 				var marker;
 				if (typeof (marker = this.markers[data.marker]) == 'undefined') {
-					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title, icon: this.iconMarker}).addTo(this.map).bindPopup(data.title);
+					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title}).addTo(this.map).bindPopup(data.title);
 				} else {
 					marker.setLatLng([data.lat, data.lng]);
 					marker.setIconAngle(this.angle);
