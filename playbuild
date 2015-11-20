@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+
+cd /root/nox/NoxSpheraWebApp
+
+play clean && \
+play stage && \
+#play start -Dhttp.port=80 -Dconfig.file=conf/application.prod.conf
+
+echo "servizio in memoria e in esecuzione..."
+
+echo "ho eseguito...";

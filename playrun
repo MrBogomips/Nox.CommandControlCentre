@@ -3,11 +3,8 @@
 
 cd /root/nox/NoxSpheraWebApp
 
-play clean
-play stage
 target/universal/stage/bin/commandcontrolcentre -Dhttp.port=80 -Dconfig.file=conf/application.prod.conf
 #play start -Dhttp.port=80 -Dconfig.file=conf/application.prod.conf
 
-echo "servizio in memoria e in esecuzione..."
+echo Servizio in esecuzione!
 
-echo "ho eseguito...";
