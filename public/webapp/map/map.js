@@ -78,12 +78,12 @@ steal( '/assets/webapp/models/channels.js',
         			},{}));
 	            	
 	            	self.iconMarker = L.icon({
-	            	    iconUrl: '/assets/img/marker_icon_openlayer.png',
+	            	    iconUrl: '/assets/img/markerNew.svg',
 	            	    //shadowUrl: '/assets/img/marker_icon_openlayer.png',
 
-	            	    iconSize:     [22, 31], // size of the icon
+	            	    iconSize:     [22, 28], // size of the icon
 	            	    //shadowSize:   [50, 64], // size of the shadow
-	            	    //iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+	            	    iconAnchor:   [11, 14] // point of the icon which will correspond to marker's location
 	            	    //shadowAnchor: [4, 62],  // the same for the shadow
 	            	    //popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
 	            	});
@@ -114,10 +114,10 @@ steal( '/assets/webapp/models/channels.js',
 			_updateMarker: function(event, data) {
 				var marker;
 				if (typeof (marker = this.markers[data.marker]) == 'undefined') {
-					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title}).addTo(this.map).bindPopup(data.title);
+					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title, icon: this.iconMarker}).addTo(this.map).bindPopup(data.title);
 				} else {
 					marker.setLatLng([data.lat, data.lng]);
-					marker.setIconAngle(this.angle);
+					//marker.setIconAngle(this.angle);
 					this.angle = (this.angle + 0.5) % 360;
 				}
 			},
