@@ -150,7 +150,31 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					//delay
 					var e = $(this.element.find(".delay:eq(0)"));
 					e.html(delay+"ms");
-					
+					//led							
+					var e = $(this.element.find(".led_on:eq(0)"));
+					if (data.data.objs.hasOwnProperty("led_on")) {
+						if (data.data.objs.led_on == 1) {
+							e.html("on")
+							 .addClass("label-success")
+							 .removeClass("label-important");
+						} else {
+							e.html("off")
+							 .addClass("label-important")
+							 .removeClass("label-success");
+						}						
+					}
+					var e = $(this.element.find(".led_backup:eq(0)"));
+					if (data.data.objs.hasOwnProperty("led_backup")) {
+						if (data.data.objs.led_backup == 1) {
+							e.html("on")
+							 .addClass("label-success")
+							 .removeClass("label-important");
+						} else {
+							e.html("off")
+							 .addClass("label-important")
+							 .removeClass("label-success");
+						}
+					}
 					
 					break;
 				case "position":
