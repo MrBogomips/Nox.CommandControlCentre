@@ -107,13 +107,16 @@ steal( '/assets/webapp/models/channels.js',
 			_notDiscard : function(discard, data) {
 				// prepare data for map {marker: "marker id", lat: <double>, lng: <double>, title: <text>}
 				if (!discard) {
-					var markerInfo = {
-						marker: data.device,
-						lat: data.data.coords.lat,
-						lng: data.data.coords.lon,
-						title: data.device
-					};
+					if(data.data.hasOwnProperty("coords") && data.data.coords != null){
+						var markerInfo = {
+							marker: data.device,
+							lat: data.data.coords.lat,
+							lng: data.data.coords.lon,
+							angle: (data.data.hasOwnProperty("angle") ? data.data.angle : 0),
+							title: data.device
+						};
 					this.MapChannel.trigger("marker_position", markerInfo);
+					}
 				}
 			},
 

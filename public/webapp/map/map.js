@@ -117,8 +117,7 @@ steal( '/assets/webapp/models/channels.js',
 					this.markers[data.marker] = L.marker([data.lat, data.lng], {title:data.title, icon: this.iconMarker}).addTo(this.map).bindPopup(data.title);
 				} else {
 					marker.setLatLng([data.lat, data.lng]);
-					//marker.setIconAngle(this.angle);
-					this.angle = (this.angle + 0.5) % 360;
+					marker.setIconAngle(data.angle);
 				}
 			},
 
