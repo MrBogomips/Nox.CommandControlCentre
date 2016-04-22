@@ -137,6 +137,20 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 					var e = $(this.element.find(".speed:eq(0)"));
 					e.html(data.data.speed+"Km/h");
 					
+					//g_force
+					var e = $(this.element.find(".gforce:eq(0)"));
+					var textGForce = "-";
+					if (data.data.objs.g_force != undefined)
+						textGForce = "x: " + (Math.round(data.data.objs.g_force[0] * 1000)/1000) + "<br>y: " + (Math.round(data.data.objs.g_force[1] * 1000)/1000) + "<br>z: " + (Math.round(data.data.objs.g_force[2] * 1000)/1000);
+					e.html(textGForce);
+					//ypr
+					var e = $(this.element.find(".ypr:eq(0)"));
+					var textYpr = "-";
+					if (data.data.objs.ypr != undefined)
+						textYpr = "y: " +(Math.round(data.data.objs.ypr[0] * 1000)/1000) + "<br>p: " + (Math.round(data.data.objs.ypr[1] * 1000)/1000) + "<br>r: " + (Math.round(data.data.objs.ypr[2] * 1000)/1000);
+					e.html(textYpr);
+					
+					
 					//sessionstart
 					if (this.sessionstart == 0) {
 						var e = $(this.element.find(".sessionstart:eq(0)"));
@@ -163,6 +177,7 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 							 .removeClass("label-success");
 						}						
 					}
+					//led_backup	
 					var e = $(this.element.find(".led_backup:eq(0)"));
 					if (data.data.objs.hasOwnProperty("led_backup")) {
 						if (data.data.objs.led_backup == 1) {

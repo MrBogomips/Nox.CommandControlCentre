@@ -109,7 +109,7 @@ steal( '/assets/webapp/models/channels.js',
 			},
 			
 			/*
-			 * data is expected to be {marker: "marker id", lat: <double>, lng: <double>, title: <text>}
+			 * data is expected to be {marker: "marker id", lat: <double>, lng: <double>, angle_ <int>, title: <text>}
 			 */
 			_updateMarker: function(event, data) {
 				var marker;

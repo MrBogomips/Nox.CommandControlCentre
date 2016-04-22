@@ -112,7 +112,7 @@ steal( '/assets/webapp/models/channels.js',
 							marker: data.device,
 							lat: data.data.coords.lat,
 							lng: data.data.coords.lon,
-							angle: (data.data.hasOwnProperty("angle") ? data.data.angle : 0),
+							angle: (data.data.objs.hasOwnProperty("ypr") ? data.data.objs.ypr[0] : 0),
 							title: data.device
 						};
 					this.MapChannel.trigger("marker_position", markerInfo);
@@ -171,11 +171,11 @@ steal( '/assets/webapp/models/channels.js',
 				var e = this.element;
 				if (e.find('.leftright').hasClass("closeColumns")) {
 					e.find('.leftright').removeClass("closeColumns").removeClass("icon-plus").addClass("openColumns").addClass("icon-minus");
-					e.parent().css("min-width", "650px");
+					e.parent().css("min-width", "815px");
 					columns.show();
 				} else {
 					e.find('.leftright').removeClass("openColumns").removeClass("icon-minus").addClass("closeColumns").addClass("icon-plus");
-					e.parent().css("min-width", "450px");
+					e.parent().css("min-width", "660px");
 					columns.hide();
 				}
 				
