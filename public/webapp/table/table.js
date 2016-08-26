@@ -171,11 +171,11 @@ steal( '/assets/webapp/models/channels.js',
 				var e = this.element;
 				if (e.find('.leftright').hasClass("closeColumns")) {
 					e.find('.leftright').removeClass("closeColumns").removeClass("icon-plus").addClass("openColumns").addClass("icon-minus");
-					e.parent().css("min-width", "815px");
+					e.parent().css("min-width", "930px");
 					columns.show();
 				} else {
 					e.find('.leftright').removeClass("openColumns").removeClass("icon-minus").addClass("closeColumns").addClass("icon-plus");
-					e.parent().css("min-width", "660px");
+					e.parent().css("min-width", "765px");
 					columns.hide();
 				}
 				

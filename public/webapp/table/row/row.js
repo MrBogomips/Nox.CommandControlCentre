@@ -191,6 +191,41 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 						}
 					}
 					
+					//people_counter
+					if (data.data.objs.hasOwnProperty("people_counter")) {
+						for (var i = 0; i < data.data.objs.people_counter.length; i++) {
+							var port = data.data.objs.people_counter[i];
+							var e = $(this.element.find(".port" + port.door + ":eq(0)"));
+
+							switch (port.status) {
+								case "WRN_DARK": //anomalia
+									e.find(".status").html("WARNING_DARK").css("background-color", "yellow");
+									break;
+								case "ERR_COVERED": //anomalia
+									e.find(".status").html("ERROR_COVERED").css("background-color", "yellow");
+									break;
+								case "WRN_BRIGHT": //anomalia
+									e.find(".status").html("WARNING_BRIGHT").css("background-color", "yellow");
+									break;
+								case "OK": //status OK
+									if (port.door_sts == "DOOR_OPEN") {
+										e.find(".status").css("background-color", "green");
+									} else {
+										e.find(".status").css("background-color", "red");
+									}
+									break;
+							}
+
+							if (port.msg_type == "boarding") {
+								e.find(".cnt_out").html(port.tmp_cnt_out);
+								e.find(".cnt_in").html(port.tmp_cnt_in);
+							} else { //definitive
+								e.find(".cnt_out").html(port.cnt_out);
+								e.find(".cnt_in").html(port.cnt_in);
+							}
+						}
+					}
+					
 					break;
 				case "position":
 					alert("controller row: TODO: update position data only");
