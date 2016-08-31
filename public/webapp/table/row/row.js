@@ -216,6 +216,8 @@ steal( '/assets/webapp/table/row/device_info/device_info.js',
 									break;
 							}
 
+							e.find(".cnt_out_img").html("<img alt=\"\" src=\"assets/img/freccia.svg\" />");
+							e.find(".cnt_in_img").html("<img alt=\"\" src=\"assets/img/freccia.svg\" />");
 							if (port.msg_type == "boarding") {
 								e.find(".cnt_out").html(port.tmp_cnt_out);
 								e.find(".cnt_in").html(port.tmp_cnt_in);
